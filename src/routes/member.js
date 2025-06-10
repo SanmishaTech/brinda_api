@@ -160,58 +160,6 @@ router.get("/", auth, acl("members.read"), getMembers);
 
 /**
  * @swagger
- * /api/members:
- *   post:
- *     summary: Create a new member
- *     tags: [Members]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               memberName:
- *                 type: string
- *                 description: Name of the member
- *               memberUsername:
- *                 type: string
- *                 description: Username of the member
- *               memberEmail:
- *                 type: string
- *                 description: Email of the member
- *               memberMobile:
- *                 type: string
- *                 description: Mobile number of the member
- *               memberState:
- *                 type: string
- *                 description: State of the member
- *               tPin:
- *                 type: string
- *                 description: Transaction PIN
- *               positionToParent:
- *                 type: string
- *                 description: Position relative to parent
- *               status:
- *                 type: string
- *                 description: Status of the member
- *               walletBalance:
- *                 type: number
- *                 description: Wallet balance of the member
- *     responses:
- *       201:
- *         description: Member created successfully
- *       400:
- *         description: Bad request
- *       500:
- *         description: Failed to create member
- */
-router.post("/", auth, acl("members.write"), createMember);
-
-/**
- * @swagger
  * /api/members/all:
  *   get:
  *     summary: Get all members without pagination, sorting, and search
