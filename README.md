@@ -76,8 +76,13 @@ A simple Node.js REST API project built with Express, Prisma, and JWT.
     npx prisma generate
     ```
 
+8.  Populate the database with initial test data, run:
 
-8.  Start the server:
+    ```bash
+    npm run seed
+    ```
+
+9.  Start the server:
 
     ```bash
     npm start
@@ -126,9 +131,3 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 [License](https://choosealicense.com/licenses/mit/)
 
-## 🌱 Database Seeding
-
-To populate the database with initial test data, run:
-
-```bash
-npm run seed
