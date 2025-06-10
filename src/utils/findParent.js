@@ -1,4 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
+const { late } = require("zod");
+const { transform } = require("zod/v4");
 const prisma = new PrismaClient();
 
 /**
@@ -9,39 +11,28 @@ const prisma = new PrismaClient();
  * @returns {Promise<Object|null>} - The last matched member object or null if not found.
  */
 const findParent = async (sponsorId, position) => {
-  const parent = await prisma.member.findUnique({
+  const sponsorer = await prisma.member.findUnique({
     where: { memberUsername: sponsorId },
     select: { id: true },
   });
 
-  let latestParent = await prisma.member.findFirst({
-    where: {
-      parentId: parent.id,
-      positionToParent: position,
-    },
-  });
+  let parent = sponsorer;
+  let latestParent = null;
 
-  if (!latestParent) {
-    return parent;
-  }
-
-  let current = latestParent;
-
-  while (current) {
-    const next = await prisma.member.findFirst({
+  do {
+    latestParent = await prisma.member.findFirst({
       where: {
-        parentId: current.id,
+        parentId: parent.id,
         positionToParent: position,
       },
     });
 
-    if (!next) break;
+    if(latestParent) {
+      parent = latestParent;
+    }
+  } while (latestParent);
 
-    latestParent = next;
-    current = next;
-  }
-
-  return latestParent || null;
+  return parent || null;
 };
 
 module.exports = { findParent };
