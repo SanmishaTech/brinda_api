@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  username        String    @unique
+  email              String?    
+  mobile            String?     
+  address            String?   @db.Text
+  gender             String?   
+  dateOfBirth        DateTime?
+  password           String
+  role               String
+  active             Boolean   @default(true)
+  lastLogin          DateTime?
+  resetToken         String?   
+  resetTokenExpires  DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  member             Member? 
+
+  @@map("users")
+}
+
+model Member {
+  id              Int       @id @default(autoincrement())
+  userId          Int        @unique
+  user            User      @relation(fields: [userId], references: [id]) // One-to-one relationship with User
+  sponsorId       Int?
+  sponsor          Member?   @relation("MemberSponsor", fields: [sponsorId], references: [id], onDelete: Restrict)
+  sponsorChildren   Member[]  @relation("MemberSponsor") // Inverse of sponsor
+
+  parentId        Int?
+  parent          Member?   @relation("MemberParent", fields: [parentId], references: [id], onDelete: Restrict)
+  parentChildren        Member[]  @relation("MemberParent") // Inverse of parent
+
+  memberName      String
+  memberUsername  String    @unique
+  memberEmail     String?   
+  memberMobile    String?   
+  memberDob        DateTime?
+  memberState     String
+  tPin            String
+  positionToParent        String
+  status          String
+  walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("members")
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  productName String?
+  hsnCode     String?
+  mrp         Decimal?   @db.Decimal(10, 2)
+  mfgRate     Decimal?   @db.Decimal(10, 2)
+  gst         Decimal?   @db.Decimal(5, 2)
+  dspRate     Decimal?   @db.Decimal(10, 2)
+  pv          Decimal?   @db.Decimal(10, 2)
+  bv          Decimal?   @db.Decimal(10, 2)
+  bvPrice     Decimal?   @db.Decimal(10, 2)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("products")
+}
