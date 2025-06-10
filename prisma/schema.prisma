@@ -13,9 +13,6 @@ model User {
   username        String    @unique
   email              String?    
   mobile            String?     
-  address            String?   @db.Text
-  gender             String?   
-  dateOfBirth        DateTime?
   password           String
   role               String
   active             Boolean   @default(true)
@@ -40,13 +37,18 @@ model Member {
   parentId        Int?
   parent          Member?   @relation("MemberParent", fields: [parentId], references: [id], onDelete: Restrict)
   parentChildren        Member[]  @relation("MemberParent") // Inverse of parent
-
   memberName      String
   memberUsername  String    @unique
+  memberState     String
+  leftCount       Int        @default(0)
+  leftDirectCount Int        @default(0)
+  rightCount      Int        @default(0)
+  rightDirectCount Int       @default(0)
   memberEmail     String?   
   memberMobile    String?   
   memberDob        DateTime?
-  memberState     String
+  memberAddress    String?   @db.Text
+  memberGender    String?
   tPin            String
   positionToParent        String?
   status          String

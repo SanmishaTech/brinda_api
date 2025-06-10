@@ -1,5 +1,7 @@
 // src/seeders/seeder.js
 const { PrismaClient } = require("@prisma/client");
+const { TOP, ACTIVE } = require("../config/data");
+const { MEMBER, ADMIN } = require("../config/roles");
 require("dotenv").config();
 
 const prisma = new PrismaClient();
@@ -9,12 +11,12 @@ async function seed() {
     // Create user
     const admin = await prisma.user.create({
       data: {
-        name: "admin",
-        username: "admin",
+        name: "brinda",
+        username: "brinda",
         email: "admin@gmail.com",
         mobile: "1234567890",
         password: "abcd123",
-        role: "admin",
+        role: ADMIN,
         active: true,
       },
     });
@@ -26,7 +28,7 @@ async function seed() {
         email: "member@gmail.com",
         mobile: "2222222222",
         password: "abcd123",
-        role: "member",
+        role: MEMBER,
         active: true,
         member: {
           create: {
@@ -34,10 +36,10 @@ async function seed() {
             memberUsername: "06250001",
             memberEmail: "member@gmail.com",
             memberMobile: "2222222222",
-            positionToParent: "left",
+            positionToParent: TOP,
             memberState: "Maharashtra",
             tPin: "abcd123",
-            status: "Active",
+            status: ACTIVE,
           },
         },
       },

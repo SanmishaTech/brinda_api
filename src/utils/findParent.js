@@ -9,24 +9,20 @@ const prisma = new PrismaClient();
  * @returns {Promise<Object|null>} - The last matched member object or null if not found.
  */
 const findParent = async (sponsorId, position) => {
-  const parentId = await prisma.member.findUnique({
+  const parent = await prisma.member.findUnique({
     where: { memberUsername: sponsorId },
     select: { id: true },
   });
 
-  if (!parentId) {
-    return { error: "Invalid Sponsor ID" };
-  }
-
   let latestParent = await prisma.member.findFirst({
     where: {
-      parentId: parentId.id,
+      parentId: parent.id,
       positionToParent: position,
     },
   });
 
   if (!latestParent) {
-    return parentId;
+    return parent;
   }
 
   let current = latestParent;

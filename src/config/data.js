@@ -35,9 +35,23 @@ const GENDER_MALE = "Male";
 const GENDER_FEMALE = "Female";
 const GENDER_OTHER = "Other";
 
+const LEFT = "Left";
+const TOP = "Top";
+const RIGHT = "Right";
+
+const ACTIVE = "Active";
+const INACTIVE = "Inactive";
+const PENDING = "Pending";
+
 module.exports = {
   stateOptions,
   GENDER_MALE,
   GENDER_FEMALE,
   GENDER_OTHER,
+  LEFT,
+  TOP,
+  RIGHT,
+  ACTIVE,
+  INACTIVE,
+  PENDING,
 };

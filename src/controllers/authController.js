@@ -12,6 +12,8 @@ const { SUPER_ADMIN } = require("../config/roles");
 const { generatePassword } = require("../utils/generatePassword");
 const dayjs = require("dayjs");
 const { findParent } = require("../utils/findParent");
+const { LEFT, RIGHT } = require("../config/data");
+const { incrementCount } = require("../utils/incrementCount");
 // Register a new user
 const MAX_RETRIES = 3;
 
@@ -88,30 +90,18 @@ const register = async (req, res, next) => {
     const { name, sponsorId, position, email, mobile, state } = req.body;
     const password = generatePassword(6);
     const tPin = generatePassword(6);
-
     let attempt = 0;
-    let user = null;
-
-    //  start
-
-    const parentId = await prisma.member.findUnique({
+    let result = null;
+    const sponsorData = await prisma.member.findUnique({
       where: { memberUsername: sponsorId },
       select: { id: true },
     });
-
-    if (!parentId) {
-      return res.status(400).json({
-        errors: {
-          message: "Invalid Sponsor ID",
-        },
-      });
-    }
 
     const parentData = await findParent(sponsorId, position);
 
     while (attempt < MAX_RETRIES) {
       try {
-        user = await prisma.$transaction(async (tx) => {
+        result = await prisma.$transaction(async (tx) => {
           const now = dayjs();
           const prefix = now.format("MMYY");
 
@@ -134,7 +124,7 @@ const register = async (req, res, next) => {
 
           const username = `${prefix}${String(newNumber).padStart(4, "0")}`;
 
-          return await tx.user.create({
+          const newUser = await tx.user.create({
             data: {
               name,
               username,
@@ -146,7 +136,7 @@ const register = async (req, res, next) => {
                 create: {
                   memberName: name,
                   memberUsername: username,
-                  sponsorId: parentId.id,
+                  sponsorId: sponsorData.id,
                   parentId: parentData.id,
                   tPin,
                   memberEmail: email,
@@ -161,6 +151,10 @@ const register = async (req, res, next) => {
               member: true,
             },
           });
+
+          incrementCount(newUser.member);
+
+          return { newUser };
         });
 
         // Success: exit retry loop
@@ -182,7 +176,7 @@ const register = async (req, res, next) => {
       }
     }
 
-    res.status(201).json(user);
+    res.status(201).json(result.newUser);
   } catch (error) {
     return res.status(500).json({
       errors: {
