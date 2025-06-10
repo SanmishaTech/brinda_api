@@ -49,10 +49,10 @@ const getMembers = async (req, res) => {
     const trimmedSearch = search?.trim();
     const whereClause = {
       OR: [
-        { memberName: { contains: trimmedSearch, mode: "insensitive" } },
-        { memberUsername: { contains: trimmedSearch, mode: "insensitive" } },
-        { memberEmail: { contains: trimmedSearch, mode: "insensitive" } },
-        { memberMobile: { contains: trimmedSearch, mode: "insensitive" } },
+        { memberName: { contains: trimmedSearch } },
+        { memberUsername: { contains: trimmedSearch } },
+        { memberEmail: { contains: trimmedSearch } },
+        { memberMobile: { contains: trimmedSearch } },
       ],
     };
 
