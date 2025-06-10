@@ -11,6 +11,7 @@ const jwtConfig = require("../config/jwt");
 const { SUPER_ADMIN } = require("../config/roles");
 const { generatePassword } = require("../utils/generatePassword");
 const dayjs = require("dayjs");
+const { findParent } = require("../utils/findParent");
 // Register a new user
 const MAX_RETRIES = 3;
 
@@ -91,18 +92,22 @@ const register = async (req, res, next) => {
     let attempt = 0;
     let user = null;
 
+    //  start
+
     const parentId = await prisma.member.findUnique({
       where: { memberUsername: sponsorId },
       select: { id: true },
     });
 
     if (!parentId) {
-      return res.status(500).json({
+      return res.status(400).json({
         errors: {
           message: "Invalid Sponsor ID",
         },
       });
     }
+
+    const parentData = await findParent(sponsorId, position);
 
     while (attempt < MAX_RETRIES) {
       try {
@@ -142,7 +147,7 @@ const register = async (req, res, next) => {
                   memberName: name,
                   memberUsername: username,
                   sponsorId: parentId.id,
-                  parentId: parentId.id,
+                  parentId: parentData.id,
                   tPin,
                   memberEmail: email,
                   memberMobile: mobile,

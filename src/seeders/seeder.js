@@ -34,7 +34,7 @@ async function seed() {
             memberUsername: "06250001",
             memberEmail: "member@gmail.com",
             memberMobile: "2222222222",
-            positionToParent: "Left",
+            positionToParent: "left",
             memberState: "Maharashtra",
             tPin: "abcd123",
             status: "Active",
