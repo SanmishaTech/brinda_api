@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate",
+    "seed": "node src/seeders/seeder.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

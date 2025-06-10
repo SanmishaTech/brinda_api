@@ -48,7 +48,7 @@ model Member {
   memberDob        DateTime?
   memberState     String
   tPin            String
-  positionToParent        String
+  positionToParent        String?
   status          String
   walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
   createdAt       DateTime  @default(now())
