@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getSponsorNameByUsername,
   getMembers,
   getMemberById,
   updateMember,
@@ -27,61 +26,6 @@ const acl = require("../middleware/acl");
  *       scheme: bearer
  *       bearerFormat: JWT
  */
-
-/**
- * @swagger
- * /members/{username}:
- *   get:
- *     summary: Get sponsor name by username
- *     tags: [Members]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: username
- *         schema:
- *           type: string
- *         required: true
- *         description: Username of the sponsor
- *     responses:
- *       200:
- *         description: Sponsor name retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 sponsor:
- *                   type: object
- *                   properties:
- *                     memberName:
- *                       type: string
- *                       example: "John Doe"
- *       404:
- *         description: Sponsor not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Sponsor not found"
- *       500:
- *         description: Failed to fetch sponsor
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Failed to fetch sponsor"
- *                 details:
- *                   type: string
- *                   example: "Error details here"
- */
-router.get("/:username", getSponsorNameByUsername);
 
 /**
  * @swagger
@@ -228,6 +172,8 @@ router.get("/all", auth, acl("members.read"), getAllMembers);
  *         description: Failed to fetch member
  */
 router.get("/:id", auth, acl("members.read"), getMemberById);
+
+
 
 /**
  * @swagger

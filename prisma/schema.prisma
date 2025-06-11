@@ -19,6 +19,7 @@ model User {
   lastLogin          DateTime?
   resetToken         String?   
   resetTokenExpires  DateTime?
+  adminWalletTransactions WalletTransaction[] 
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   member             Member? 
@@ -46,13 +47,21 @@ model Member {
   rightDirectCount Int       @default(0)
   memberEmail     String?   
   memberMobile    String?   
-  memberDob        DateTime?
-  memberAddress    String?   @db.Text
-  memberGender    String?
   tPin            String
   positionToParent        String?
   status          String
   walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
+    memberDob        DateTime?
+  memberAddress    String?   @db.Text
+  memberPincode     Int?
+  memberGender    String?
+  panNumber       String?   @unique
+  aadharNumber    String?   @unique
+  bankName        String?
+  bankAccountNumber String?
+  bankIfscCode    String?
+  bankAccountType String?
+  walletTransactions WalletTransaction[] // Relation to WalletTransaction
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -74,4 +83,31 @@ model Product {
   updatedAt   DateTime  @updatedAt
 
   @@map("products")
+}
+
+
+model WalletTransaction {
+  id                 Int               @id @default(autoincrement())
+  memberId           Int
+  member              Member         @relation(fields: [memberId], references: [id]) // Relation to User is now optional
+
+  amount             Decimal   @db.Decimal(10, 2)
+  status             String
+  type               String     // e.g., CREDIT for top-up, DEBIT for withdrawal
+
+  // Optional details from original model, can be kept
+  paymentMethod      String?           // e.g., "Cash", "Bank Transfer", "UPI"
+  referenceNumber    String?           // e.g., Cheque number, UPI transaction ID
+  notes              String?           @db.Text
+
+  processedByAdminId Int?              // Foreign key to User (admin who approved/processed the transaction). Renamed from adminId & made optional.
+  processedByAdmin   User?             @relation( fields: [processedByAdminId], references: [id]) // Renamed relation
+
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([processedByAdminId])   
+  @@index([memberId])     
+
+  @@map("wallet_transactions")
 }

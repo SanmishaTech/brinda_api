@@ -12,6 +12,7 @@ const airlineRoutes = require("./routes/airline");
 const stateRoutes = require("./routes/state");
 const memberRoutes = require("./routes/member");
 const productRoutes = require("./routes/product");
+const walletTransactionRoutes = require("./routes/walletTransaction");
 const swaggerRouter = require("./swagger");
 const path = require("path");
 const config = require("./config/config");
@@ -42,6 +43,7 @@ app.use("/api/airlines", airlineRoutes);
 app.use("/api/states", stateRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/wallet-transactions", walletTransactionRoutes); // Ensure this route is defined in walletTransactionRoutes
 
 app.use(swaggerRouter); // Add this line to include Swagger documentation
 

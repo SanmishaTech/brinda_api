@@ -1,6 +1,6 @@
-const express = require('express');
-const profileController = require('../controllers/profileController');
-const auth = require('../middleware/auth');
+const express = require("express");
+const profileController = require("../controllers/profileController");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ const router = express.Router();
  *       404:
  *         description: User not found
  */
-router.get('/', auth, profileController.getProfile);
+router.get("/", auth, profileController.getProfile);
 
 /**
  * @swagger
@@ -49,7 +49,36 @@ router.get('/', auth, profileController.getProfile);
  *       401:
  *         description: Unauthorized
  */
-router.post('/', auth, profileController.updateProfile);
+router.post("/", auth, profileController.updateProfile);
+
+/**
+ * @swagger
+ * /profile/user:
+ *   post:
+ *     summary: Update logged-in user's profile
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User profile updated successfully
+ *       400:
+ *         description: Bad request (e.g., email already exists)
+ *       401:
+ *         description: Unauthorized
+ */
+router.post("/user", auth, profileController.updateUserProfile);
 
 /**
  * @swagger
@@ -78,6 +107,6 @@ router.post('/', auth, profileController.updateProfile);
  *       404:
  *         description: User not found
  */
-router.post('/change-password', auth, profileController.changePassword);
+router.post("/change-password", auth, profileController.changePassword);
 
 module.exports = router;

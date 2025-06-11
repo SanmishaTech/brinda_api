@@ -1,7 +1,7 @@
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
-const authController = require('../controllers/authController');
+const authController = require("../controllers/authController");
 
 /**
  * @swagger
@@ -40,7 +40,7 @@ const authController = require('../controllers/authController');
  *       403:
  *         description: Registration is disabled
  */
-router.post('/register', authController.register);
+router.post("/register", authController.register);
 
 /**
  * @swagger
@@ -94,7 +94,7 @@ router.post('/register', authController.register);
  *       403:
  *         description: Account is inactive
  */
-router.post('/login', authController.login);
+router.post("/login", authController.login);
 
 /**
  * @swagger
@@ -120,7 +120,7 @@ router.post('/login', authController.login);
  *       404:
  *         description: User not found
  */
-router.post('/forgot-password', authController.forgotPassword);
+router.post("/forgot-password", authController.forgotPassword);
 
 /**
  * @swagger
@@ -151,7 +151,7 @@ router.post('/forgot-password', authController.forgotPassword);
  *       400:
  *         description: Invalid or expired token
  */
-router.post('/reset-password/:token', authController.resetPassword);
+router.post("/reset-password/:token", authController.resetPassword);
 
 /**
  * @swagger
@@ -163,8 +163,63 @@ router.post('/reset-password/:token', authController.resetPassword);
  *       200:
  *         description: Logged out successfully
  */
-router.post('/logout', (req, res) => {
-  res.json({ message: 'Logged out' });
+router.post("/logout", (req, res) => {
+  res.json({ message: "Logged out" });
 });
+
+/**
+ * @swagger
+ * /auth/{username}:
+ *   get:
+ *     summary: Get sponsor name by username
+ *     tags: [auth]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Username of the sponsor
+ *     responses:
+ *       200:
+ *         description: Sponsor name retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sponsor:
+ *                   type: object
+ *                   properties:
+ *                     memberName:
+ *                       type: string
+ *                       example: "John Doe"
+ *       404:
+ *         description: Sponsor not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Sponsor not found"
+ *       500:
+ *         description: Failed to fetch sponsor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to fetch sponsor"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+router.get("/:username", authController.getSponsorNameByUsername);
 
 module.exports = router;

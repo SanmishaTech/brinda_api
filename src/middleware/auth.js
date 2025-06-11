@@ -12,6 +12,9 @@ module.exports = async (req, res, next) => {
     const decoded = jwt.verify(token, secret);
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
+      include: {
+        member: true,
+      },
     });
     if (!user) {
       return next(createError(401, "Unauthorized"));

@@ -13,7 +13,7 @@ const { generatePassword } = require("../utils/generatePassword");
 const dayjs = require("dayjs");
 const { findParent } = require("../utils/findParent");
 const { LEFT, RIGHT } = require("../config/data");
-const { incrementCount } = require("../utils/incrementCount");
+const { updateCount } = require("../utils/updateCount");
 // Register a new user
 const MAX_RETRIES = 3;
 
@@ -152,7 +152,7 @@ const register = async (req, res, next) => {
             },
           });
 
-          incrementCount(newUser.member);
+          updateCount(newUser.member);
 
           return { newUser };
         });
@@ -325,9 +325,42 @@ const resetPassword = async (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * Get sponsor name by username
+ */
+const getSponsorNameByUsername = async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    // Fetch the sponsor by username
+    const sponsor = await prisma.member.findUnique({
+      where: { memberUsername: username },
+      select: { memberName: true },
+    });
+
+    if (!sponsor) {
+      return res.status(404).json({
+        message: "Sponsor not found",
+      });
+    }
+
+    res.status(200).json({
+      sponsor,
+    });
+  } catch (error) {
+    console.error("Error fetching sponsor:", error);
+    res.status(500).json({
+      message: "Failed to fetch sponsor",
+      details: error.message,
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   forgotPassword,
   resetPassword,
+  getSponsorNameByUsername,
 };

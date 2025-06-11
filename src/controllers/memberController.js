@@ -4,37 +4,6 @@ const prisma = new PrismaClient();
 const { z } = require("zod");
 
 /**
- * Get sponsor name by username
- */
-const getSponsorNameByUsername = async (req, res) => {
-  const { username } = req.params;
-
-  try {
-    // Fetch the sponsor by username
-    const sponsor = await prisma.member.findUnique({
-      where: { memberUsername: username },
-      select: { memberName: true },
-    });
-
-    if (!sponsor) {
-      return res.status(404).json({
-        message: "Sponsor not found",
-      });
-    }
-
-    res.status(200).json({
-      sponsor,
-    });
-  } catch (error) {
-    console.error("Error fetching sponsor:", error);
-    res.status(500).json({
-      message: "Failed to fetch sponsor",
-      details: error.message,
-    });
-  }
-};
-
-/**
  * Get all members with pagination, sorting, and search
  */
 const getMembers = async (req, res) => {
@@ -58,7 +27,7 @@ const getMembers = async (req, res) => {
 
     const members = await prisma.member.findMany({
       where: whereClause,
-      include: { user: true },
+      include: { user: true, sponsor: { select: { memberUsername: true } } },
       skip,
       take: limit,
       orderBy: { [sortBy]: sortOrder },
@@ -275,7 +244,6 @@ const getAllMembers = async (req, res) => {
 };
 
 module.exports = {
-  getSponsorNameByUsername,
   getMembers,
   getMemberById,
   updateMember,
