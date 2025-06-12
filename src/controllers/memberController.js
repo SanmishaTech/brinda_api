@@ -229,8 +229,9 @@ const deleteMember = async (req, res) => {
 const getAllMembers = async (req, res) => {
   try {
     const members = await prisma.member.findMany({
-      include: {
-        user: true, // This includes the related user data
+      select: {
+        id: true,
+        memberName: true,
       },
     });
 

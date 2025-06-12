@@ -2,12 +2,18 @@ const { PrismaClient, Prisma } = require("@prisma/client");
 const validateRequest = require("../utils/validateRequest");
 const prisma = new PrismaClient();
 const { z } = require("zod");
-
+const {
+  CREDIT,
+  DEBIT,
+  PENDING,
+  APPROVED,
+  TRANSFERRED,
+} = require("../config/data");
 /**
  * Get all wallet transactions for a member with pagination, sorting, and search
  */
 const getMemberTransactions = async (req, res) => {
-  const { memberId } = req.user.member.id;
+  const memberId = req.user.member.id;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
@@ -55,30 +61,21 @@ const getMemberTransactions = async (req, res) => {
 };
 
 /**
- * Add a wallet amount request (CREDIT or DEBIT)
+ * Add a wallet amount request (CREDIT)
  */
 const addWalletAmountRequest = async (req, res) => {
-  const schema = z.object({
-    paymentMethod: z.string().optional(),
-    referenceNumber: z.string().optional(),
-    notes: z.string().optional(),
-  });
-  const { memberId } = req.user.member.id;
+  const memberId = req.user.member.id;
 
-  const validationErrors = await validateRequest(schema, req.body, res);
-
-  const { amount, type, paymentMethod, referenceNumber, notes } = req.body;
+  const { amount } = req.body;
 
   try {
     const newTransaction = await prisma.walletTransaction.create({
       data: {
         memberId,
         amount: new Prisma.Decimal(amount),
-        type,
-        status: "PENDING",
-        paymentMethod,
-        referenceNumber,
-        notes,
+        transactionDate: new Date(),
+        type: CREDIT,
+        status: PENDING,
       },
     });
 
@@ -95,21 +92,41 @@ const addWalletAmountRequest = async (req, res) => {
  * Update a wallet amount request (e.g., approve or reject)
  */
 const updateWalletAmountRequest = async (req, res) => {
-  const validationErrors = await validateRequest(schema, req.body, res);
-  const { adminId } = req.user.id;
+  const adminId = req.user.id;
   const { id } = req.params;
-  const { status } = req.body;
+  const { paymentMethod, referenceNumber, notes, status } = req.body;
 
   try {
-    const updatedTransaction = await prisma.walletTransaction.update({
-      where: { id: parseInt(id) },
-      data: {
-        status,
-        processedByAdminId: adminId,
-      },
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Update the wallet transaction
+      const updatedTransaction = await tx.walletTransaction.update({
+        where: { id: parseInt(id) },
+        data: {
+          status,
+          processedByAdminId: adminId,
+          paymentMethod: paymentMethod || null,
+          referenceNumber: referenceNumber || null,
+          notes: notes || null,
+        },
+      });
+
+      if (status === APPROVED) {
+        const updatedMember = await tx.member.update({
+          where: { id: updatedTransaction.memberId },
+          data: {
+            walletBalance: {
+              increment: updatedTransaction.amount,
+            },
+          },
+        });
+      }
+
+      return {
+        updatedTransaction,
+      };
     });
 
-    res.status(200).json(updatedTransaction);
+    res.status(200).json(result.updatedTransaction);
   } catch (error) {
     return res.status(500).json({
       message: "Failed to update wallet transaction request",
@@ -145,25 +162,48 @@ const getWalletTransactionById = async (req, res) => {
 };
 
 /**
- * Get wallet transactions by member ID
+ * Get wallet transactions by member ID For Admin
  */
 const getWalletTransactionsByMemberId = async (req, res) => {
-  const { memberId } = req.params; // Extract memberId from request parameters
   const page = parseInt(req.query.page) || 1;
+  const memberId = parseInt(req.params.memberId); // Get from req.params
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
   const search = req.query.search || "";
   const sortBy = req.query.sortBy || "id";
   const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  const trimmedSearch = search?.trim();
+  const isSearchNumber =
+    trimmedSearch !== "" &&
+    !isNaN(Number(trimmedSearch)) &&
+    /^\d+(\.\d{1,2})?$/.test(trimmedSearch);
 
   try {
     const whereClause = {
-      memberId: parseInt(memberId),
+      memberId: memberId,
       OR: [
-        { type: { contains: search, mode: "insensitive" } },
-        { status: { contains: search, mode: "insensitive" } },
-        { paymentMethod: { contains: search, mode: "insensitive" } },
-        { referenceNumber: { contains: search, mode: "insensitive" } },
+        { type: { contains: trimmedSearch } },
+        { status: { contains: trimmedSearch } },
+        { paymentMethod: { contains: trimmedSearch } },
+        { referenceNumber: { contains: trimmedSearch } },
+        {
+          member: {
+            is: {
+              memberName: {
+                contains: trimmedSearch,
+              },
+            },
+          },
+        },
+        ...(isSearchNumber
+          ? [
+              {
+                amount: {
+                  equals: new Prisma.Decimal(trimmedSearch),
+                },
+              },
+            ]
+          : []),
       ],
     };
 
@@ -174,6 +214,10 @@ const getWalletTransactionsByMemberId = async (req, res) => {
       orderBy: { [sortBy]: sortOrder },
     });
 
+    const member = await prisma.member.findUnique({
+      where: { id: memberId },
+    });
+
     const totalTransactions = await prisma.walletTransaction.count({
       where: whereClause,
     });
@@ -181,6 +225,7 @@ const getWalletTransactionsByMemberId = async (req, res) => {
 
     res.status(200).json({
       walletTransactions,
+      member,
       page,
       totalPages,
       totalTransactions,
@@ -214,7 +259,7 @@ const getWalletAmount = async (req, res) => {
     // }
 
     res.status(200).json({
-      walletBalance: walletBalance,
+      walletBalance: Number(walletBalance),
     });
   } catch (error) {
     return res.status(500).json({
@@ -224,11 +269,246 @@ const getWalletAmount = async (req, res) => {
   }
 };
 
+/**
+ * Transfer amount from one member to another
+ */
+const transferAmount = async (req, res) => {
+  const { amount, memberId } = req.body; // Extract amount and memberId from the request body
+  const senderId = req.user.member.id; // Get the sender's member ID from the authenticated user
+
+  try {
+    // Validate the sender's wallet balance
+    const sender = await prisma.member.findUnique({
+      where: { id: senderId },
+      select: { walletBalance: true, memberName: true, memberUsername: true },
+    });
+
+    if (!sender || sender.walletBalance < amount) {
+      return res.status(500).json({
+        errors: {
+          message: "Insufficient wallet balance",
+        },
+      });
+    }
+
+    // Validate the recipient member
+    const recipient = await prisma.member.findUnique({
+      where: { id: memberId },
+      select: { id: true, memberName: true, memberUsername: true },
+    });
+
+    if (!recipient) {
+      return res.status(404).json({
+        message: "Recipient member not found",
+      });
+    }
+
+    // Perform the transfer within a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Deduct the amount from the sender's wallet
+      await tx.member.update({
+        where: { id: senderId },
+        data: {
+          walletBalance: {
+            decrement: amount,
+          },
+        },
+      });
+
+      // Add the amount to the recipient's wallet
+      await tx.member.update({
+        where: { id: memberId },
+        data: {
+          walletBalance: {
+            increment: amount,
+          },
+        },
+      });
+
+      // Create a transaction record for the sender
+      const senderTransaction = await tx.walletTransaction.create({
+        data: {
+          memberId: senderId,
+          amount: new Prisma.Decimal(amount),
+          type: DEBIT,
+          transactionDate: new Date(),
+
+          status: TRANSFERRED,
+          notes: `Transferred ₹${amount} to ${recipient.memberName}(${recipient.memberUsername})`,
+        },
+      });
+
+      // Create a transaction record for the recipient
+      const recipientTransaction = await tx.walletTransaction.create({
+        data: {
+          memberId: memberId,
+          amount: new Prisma.Decimal(amount),
+          type: CREDIT,
+          transactionDate: new Date(),
+          status: TRANSFERRED,
+          notes: `Received ₹${amount} from  ${sender.memberName}(${sender.memberUsername})`,
+        },
+      });
+
+      return { senderTransaction, recipientTransaction };
+    });
+
+    res.status(200).json({
+      message: "Amount transferred successfully",
+      transactions: result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to transfer amount",
+      details: error.message,
+    });
+  }
+};
+
+/**
+ * Deposit amount to a member's wallet
+ */
+const depositAmount = async (req, res) => {
+  const { paymentMode, referenceNumber, notes, amountToCredit } = req.body; // Extract details from the request body
+  const adminId = req.user.id; // Get the admin's ID from the authenticated user
+  const memberId = parseInt(req.params.memberId);
+  try {
+    // Validate the recipient member
+    const recipient = await prisma.member.findUnique({
+      where: { id: memberId },
+      select: { id: true, memberName: true, walletBalance: true },
+    });
+
+    if (!recipient) {
+      return res.status(404).json({
+        message: "Recipient member not found",
+      });
+    }
+
+    // Perform the deposit within a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Add the amount to the recipient's wallet
+      const updatedMember = await tx.member.update({
+        where: { id: memberId },
+        data: {
+          walletBalance: {
+            increment: amountToCredit,
+          },
+        },
+      });
+
+      // Create a transaction record for the deposit
+      const depositTransaction = await tx.walletTransaction.create({
+        data: {
+          memberId,
+          amount: new Prisma.Decimal(amountToCredit),
+          type: CREDIT,
+          transactionDate: new Date(),
+          status: APPROVED,
+          paymentMethod: paymentMode,
+          referenceNumber: referenceNumber || null,
+          notes: notes || null,
+          processedByAdminId: adminId,
+        },
+      });
+
+      return { updatedMember, depositTransaction };
+    });
+
+    res.status(200).json({
+      message: "Amount deposited successfully",
+      result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to deposit amount",
+      details: error.message,
+    });
+  }
+};
+
+/**
+ * Withdraw amount from a member's wallet
+ */
+const withdrawAmount = async (req, res) => {
+  const { paymentMode, referenceNumber, notes, amount } = req.body; // Extract details from the request body
+  const adminId = req.user.id; // Get the admin's ID from the authenticated user
+  const memberId = parseInt(req.params.memberId);
+
+  try {
+    // Validate the recipient member
+    const member = await prisma.member.findUnique({
+      where: { id: memberId },
+      select: { id: true, memberName: true, walletBalance: true },
+    });
+
+    if (!member) {
+      return res.status(500).json({
+        errors: {
+          message: "Member not found",
+        },
+      });
+    }
+
+    // Check if the member has sufficient wallet balance
+    if (Number(member.walletBalance) < Number(amount)) {
+      return res.status(500).json({
+        errors: {
+          message: "Insufficient wallet balance",
+        },
+      });
+    }
+
+    // Perform the withdrawal within a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Deduct the amount from the member's wallet
+      const updatedMember = await tx.member.update({
+        where: { id: memberId },
+        data: {
+          walletBalance: {
+            decrement: amount,
+          },
+        },
+      });
+
+      // Create a transaction record for the withdrawal
+      const withdrawalTransaction = await tx.walletTransaction.create({
+        data: {
+          memberId,
+          amount: new Prisma.Decimal(amount),
+          type: DEBIT,
+          transactionDate: new Date(),
+          status: APPROVED,
+          paymentMethod: paymentMode,
+          referenceNumber: referenceNumber || null,
+          notes: notes || null,
+          processedByAdminId: adminId,
+        },
+      });
+
+      return { updatedMember, withdrawalTransaction };
+    });
+
+    res.status(200).json({
+      message: "Amount withdrawn successfully",
+      result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to withdraw amount",
+      details: error.message,
+    });
+  }
+};
+
 module.exports = {
-  getMemberTransactions,
-  addWalletAmountRequest,
-  updateWalletAmountRequest,
-  getWalletTransactionById,
-  getWalletTransactionsByMemberId,
-  getWalletAmount,
+  getMemberTransactions, //transaction history
+  addWalletAmountRequest, // member amount add
+  updateWalletAmountRequest, //admin approval
+  getWalletTransactionById, // get transaction by id
+  getWalletTransactionsByMemberId, //admin list
+  getWalletAmount, // get wallet amount
+  transferAmount, // transfer amount between members
+  depositAmount,
+  withdrawAmount,
 };

@@ -336,7 +336,7 @@ const getSponsorNameByUsername = async (req, res) => {
     // Fetch the sponsor by username
     const sponsor = await prisma.member.findUnique({
       where: { memberUsername: username },
-      select: { memberName: true },
+      select: { memberName: true, id: true },
     });
 
     if (!sponsor) {
@@ -346,7 +346,8 @@ const getSponsorNameByUsername = async (req, res) => {
     }
 
     res.status(200).json({
-      sponsor,
+      name: sponsor.memberName,
+      id: sponsor.id,
     });
   } catch (error) {
     console.error("Error fetching sponsor:", error);

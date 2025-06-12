@@ -92,14 +92,14 @@ model WalletTransaction {
   member              Member         @relation(fields: [memberId], references: [id]) // Relation to User is now optional
 
   amount             Decimal   @db.Decimal(10, 2)
-  status             String
+  status             String     //pending, approved ,transferred, failed
   type               String     // e.g., CREDIT for top-up, DEBIT for withdrawal
 
   // Optional details from original model, can be kept
   paymentMethod      String?           // e.g., "Cash", "Bank Transfer", "UPI"
   referenceNumber    String?           // e.g., Cheque number, UPI transaction ID
   notes              String?           @db.Text
-
+  transactionDate     DateTime         // Date of the transaction, can be null if not applicable
   processedByAdminId Int?              // Foreign key to User (admin who approved/processed the transaction). Renamed from adminId & made optional.
   processedByAdmin   User?             @relation( fields: [processedByAdminId], references: [id]) // Renamed relation
 

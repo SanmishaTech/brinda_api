@@ -41,6 +41,13 @@ const RIGHT = "Right";
 
 const ACTIVE = "Active";
 const INACTIVE = "Inactive";
+
+const DEBIT = "Debit";
+const CREDIT = "Credit";
+
+const TRANSFERRED = "Transferred";
+const APPROVED = "Approved";
+const REJECTED = "Rejected";
 const PENDING = "Pending";
 
 module.exports = {
@@ -54,4 +61,9 @@ module.exports = {
   ACTIVE,
   INACTIVE,
   PENDING,
+  DEBIT,
+  CREDIT,
+  TRANSFERRED,
+  APPROVED,
+  REJECTED,
 };

@@ -7,6 +7,9 @@ const {
   getWalletTransactionById,
   getWalletTransactionsByMemberId,
   getWalletAmount,
+  transferAmount,
+  withdrawAmount,
+  depositAmount,
 } = require("../controllers/walletTransactionController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -77,6 +80,105 @@ router.get(
   auth,
   acl("walletTransactions.read"),
   getWalletAmount
+);
+
+/**
+ * @swagger
+ * /api/wallet-transactions/member:
+ *   get:
+ *     summary: Get wallet transactions for the authenticated member
+ *     tags: [WalletTransactions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of transactions per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for transaction type, status, payment method, or reference number
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: id
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: asc
+ *         description: Sort order
+ *     responses:
+ *       200:
+ *         description: List of wallet transactions for the authenticated member
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 walletTransactions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       memberId:
+ *                         type: integer
+ *                       amount:
+ *                         type: number
+ *                       type:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       paymentMethod:
+ *                         type: string
+ *                       referenceNumber:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                 page:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 totalTransactions:
+ *                   type: integer
+ *       500:
+ *         description: Failed to fetch wallet transactions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to fetch wallet transactions"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+router.get(
+  "/member",
+  auth,
+  acl("walletTransactions.read"),
+  getMemberTransactions
 );
 /**
  * @swagger
@@ -308,6 +410,361 @@ router.put(
   auth,
   acl("walletTransactions.write"),
   updateWalletAmountRequest
+);
+
+/**
+ * @swagger
+ * /api/wallet-transactions/transfer:
+ *   post:
+ *     summary: Transfer amount from one member to another
+ *     tags: [WalletTransactions]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 description: Amount to transfer
+ *                 example: 500
+ *               memberId:
+ *                 type: integer
+ *                 description: Recipient member ID
+ *                 example: 123
+ *     responses:
+ *       200:
+ *         description: Amount transferred successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Amount transferred successfully"
+ *                 transactions:
+ *                   type: object
+ *                   properties:
+ *                     senderTransaction:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         memberId:
+ *                           type: integer
+ *                         amount:
+ *                           type: number
+ *                         type:
+ *                           type: string
+ *                           example: "DEBIT"
+ *                         status:
+ *                           type: string
+ *                           example: "APPROVED"
+ *                         notes:
+ *                           type: string
+ *                           example: "Transferred ₹500 to member ID 123"
+ *                     recipientTransaction:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         memberId:
+ *                           type: integer
+ *                         amount:
+ *                           type: number
+ *                         type:
+ *                           type: string
+ *                           example: "CREDIT"
+ *                         status:
+ *                           type: string
+ *                           example: "APPROVED"
+ *                         notes:
+ *                           type: string
+ *                           example: "Received ₹500 from member ID 456"
+ *       400:
+ *         description: Insufficient wallet balance or invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Insufficient wallet balance"
+ *       404:
+ *         description: Recipient member not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Recipient member not found"
+ *       500:
+ *         description: Failed to transfer amount
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to transfer amount"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+router.post("/transfer", auth, acl("walletTransactions.write"), transferAmount);
+
+/**
+ * @swagger
+ * /api/wallet-transactions/deposit/{memberId}:
+ *   post:
+ *     summary: Deposit amount to a member's wallet
+ *     tags: [WalletTransactions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: memberId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID of the member to deposit funds
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 description: Amount to deposit
+ *                 example: 1000
+ *               paymentMode:
+ *                 type: string
+ *                 description: Payment method used for the deposit
+ *                 example: "Bank Transfer"
+ *               referenceNumber:
+ *                 type: string
+ *                 description: Reference number for the transaction
+ *                 example: "ABC123"
+ *               notes:
+ *                 type: string
+ *                 description: Additional notes for the transaction
+ *                 example: "Deposited by admin"
+ *     responses:
+ *       200:
+ *         description: Amount deposited successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Amount deposited successfully"
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     updatedMember:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         memberName:
+ *                           type: string
+ *                         walletBalance:
+ *                           type: number
+ *                     depositTransaction:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         memberId:
+ *                           type: integer
+ *                         amount:
+ *                           type: number
+ *                         type:
+ *                           type: string
+ *                           example: "CREDIT"
+ *                         transactionDate:
+ *                           type: string
+ *                           format: date-time
+ *                         status:
+ *                           type: string
+ *                           example: "APPROVED"
+ *                         paymentMethod:
+ *                           type: string
+ *                         referenceNumber:
+ *                           type: string
+ *                         notes:
+ *                           type: string
+ *                         processedByAdminId:
+ *                           type: integer
+ *       404:
+ *         description: Member not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Recipient member not found"
+ *       500:
+ *         description: Failed to deposit amount
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to deposit amount"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+router.post(
+  "/deposit/:memberId",
+  auth,
+  acl("walletTransactions.write"),
+  depositAmount
+);
+
+/**
+ * @swagger
+ * /api/wallet-transactions/withdraw/{memberId}:
+ *   post:
+ *     summary: Withdraw amount from a member's wallet
+ *     tags: [WalletTransactions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: memberId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID of the member to withdraw funds
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: number
+ *                 description: Amount to withdraw
+ *                 example: 500
+ *               paymentMode:
+ *                 type: string
+ *                 description: Payment method used for the withdrawal
+ *                 example: "Bank Transfer"
+ *               referenceNumber:
+ *                 type: string
+ *                 description: Reference number for the transaction
+ *                 example: "XYZ456"
+ *               notes:
+ *                 type: string
+ *                 description: Additional notes for the transaction
+ *                 example: "Withdrawn by admin"
+ *     responses:
+ *       200:
+ *         description: Amount withdrawn successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Amount withdrawn successfully"
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     updatedMember:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         memberName:
+ *                           type: string
+ *                         walletBalance:
+ *                           type: number
+ *                     withdrawalTransaction:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         memberId:
+ *                           type: integer
+ *                         amount:
+ *                           type: number
+ *                         type:
+ *                           type: string
+ *                           example: "DEBIT"
+ *                         transactionDate:
+ *                           type: string
+ *                           format: date-time
+ *                         status:
+ *                           type: string
+ *                           example: "APPROVED"
+ *                         paymentMethod:
+ *                           type: string
+ *                         referenceNumber:
+ *                           type: string
+ *                         notes:
+ *                           type: string
+ *                         processedByAdminId:
+ *                           type: integer
+ *       404:
+ *         description: Member not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Member not found"
+ *       400:
+ *         description: Insufficient wallet balance
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Insufficient wallet balance"
+ *       500:
+ *         description: Failed to withdraw amount
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to withdraw amount"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+router.post(
+  "/withdraw/:memberId",
+  auth,
+  acl("walletTransactions.write"),
+  withdrawAmount
 );
 
 module.exports = router;
