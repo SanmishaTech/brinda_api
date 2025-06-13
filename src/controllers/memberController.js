@@ -33,6 +33,8 @@ const getMembers = async (req, res) => {
     const orderByClause =
       sortBy === "sponsor"
         ? { sponsor: { memberUsername: sortOrder } }
+        : sortBy === "parent"
+        ? { parent: { memberUsername: sortOrder } }
         : { [sortBy]: sortOrder };
 
     const members = await prisma.member.findMany({
