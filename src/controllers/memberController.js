@@ -37,7 +37,11 @@ const getMembers = async (req, res) => {
 
     const members = await prisma.member.findMany({
       where: whereClause,
-      include: { user: true, sponsor: { select: { memberUsername: true } } },
+      include: {
+        user: true,
+        sponsor: { select: { memberUsername: true } },
+        parent: { select: { memberUsername: true } },
+      },
       skip,
       take: limit,
       orderBy: orderByClause,
