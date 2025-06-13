@@ -340,7 +340,7 @@ const getSponsorNameByUsername = async (req, res) => {
     });
 
     if (!sponsor) {
-      return res.status(404).json({
+      return res.status(500).json({
         message: "Sponsor not found",
       });
     }

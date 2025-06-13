@@ -243,7 +243,7 @@ router.put("/:id", auth, acl("users.write"), userController.updateUser);
  *       404:
  *         description: User not found
  */
-router.delete("/:id", auth, acl("users.delete"), userController.deleteUser);
+// router.delete("/:id", auth, acl("users.delete"), userController.deleteUser);
 
 /**
  * @swagger

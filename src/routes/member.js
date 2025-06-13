@@ -259,6 +259,6 @@ router.put("/:id", auth, acl("members.write"), updateMember);
  *       500:
  *         description: Failed to delete member
  */
-router.delete("/:id", auth, acl("members.delete"), deleteMember);
+// router.delete("/:id", auth, acl("members.delete"), deleteMember);
 
 module.exports = router;

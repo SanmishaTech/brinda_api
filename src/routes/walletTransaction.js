@@ -10,6 +10,7 @@ const {
   transferAmount,
   withdrawAmount,
   depositAmount,
+  getMemberByUsername,
 } = require("../controllers/walletTransactionController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -767,4 +768,73 @@ router.post(
   withdrawAmount
 );
 
+/**
+ * @swagger
+ * /api/wallet-transactions/member/{username}:
+ *   get:
+ *     summary: Get member details by username
+ *     tags: [Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Username of the member
+ *     responses:
+ *       200:
+ *         description: Member details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: Member ID
+ *                   example: 123
+ *                 username:
+ *                   type: string
+ *                   description: Username of the member
+ *                   example: "john_doe"
+ *                 memberName:
+ *                   type: string
+ *                   description: Full name of the member
+ *                   example: "John Doe"
+ *                 walletBalance:
+ *                   type: number
+ *                   description: Current wallet balance of the member
+ *                   example: 1500.75
+ *       404:
+ *         description: Member not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Member not found"
+ *       500:
+ *         description: Failed to fetch member details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to fetch member details"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+router.get(
+  "/member-username/:username",
+  auth,
+  acl("walletTransactions.write"),
+  getMemberByUsername
+);
 module.exports = router;

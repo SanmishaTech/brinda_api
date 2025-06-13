@@ -76,7 +76,7 @@ const updateProfile = async (req, res, next) => {
       const usrId = req.user.id; // Assuming `req.user` contains the authenticated user's data
 
       // Check if a user with the same email already exists, excluding the current user
-      const existingUser = await prisma.user.findUnique({
+      const existingUser = await prisma.user.findFirst({
         where: {
           email: data.email,
         },

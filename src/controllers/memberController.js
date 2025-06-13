@@ -22,15 +22,25 @@ const getMembers = async (req, res) => {
         { memberUsername: { contains: trimmedSearch } },
         { memberEmail: { contains: trimmedSearch } },
         { memberMobile: { contains: trimmedSearch } },
+        { positionToParent: { contains: trimmedSearch } },
+        // { leftCount: { contains: trimmedSearch } },
+        // { rightCount: { contains: trimmedSearch } },
+        // { leftDirectCount: { contains: trimmedSearch } },
+        // { rightDirectCount: { contains: trimmedSearch } },
       ],
     };
+
+    const orderByClause =
+      sortBy === "sponsor"
+        ? { sponsor: { memberUsername: sortOrder } }
+        : { [sortBy]: sortOrder };
 
     const members = await prisma.member.findMany({
       where: whereClause,
       include: { user: true, sponsor: { select: { memberUsername: true } } },
       skip,
       take: limit,
-      orderBy: { [sortBy]: sortOrder },
+      orderBy: orderByClause,
     });
 
     const totalMembers = await prisma.member.count({
@@ -63,7 +73,19 @@ const getMemberById = async (req, res) => {
   try {
     const member = await prisma.member.findUnique({
       where: { id: parseInt(id) },
-      include: { user: true },
+      include: {
+        user: true,
+        parent: {
+          select: {
+            memberUsername: true,
+          },
+        },
+        sponsor: {
+          select: {
+            memberUsername: true,
+          },
+        },
+      },
     });
 
     if (!member) {
@@ -188,40 +210,40 @@ const updateMember = async (req, res) => {
 
 /**
  * Delete member by ID
- */
-const deleteMember = async (req, res) => {
-  const { id } = req.params;
+//  */
+// const deleteMember = async (req, res) => {
+//   const { id } = req.params;
 
-  try {
-    await prisma.member.delete({
-      where: { id: parseInt(id) },
-    });
+//   try {
+//     await prisma.member.delete({
+//       where: { id: parseInt(id) },
+//     });
 
-    res.status(200).json({
-      message: "Member deleted successfully",
-    });
-  } catch (error) {
-    if (
-      error.code === "P2003" ||
-      error.message.includes("Foreign key constraint failed")
-    ) {
-      return res.status(409).json({
-        errors: {
-          message:
-            "Cannot delete this Member because it is referenced in related data.",
-        },
-      });
-    }
-    if (error.code === "P2025") {
-      return res.status(404).json({ errors: { message: "Member not found" } });
-    }
+//     res.status(200).json({
+//       message: "Member deleted successfully",
+//     });
+//   } catch (error) {
+//     if (
+//       error.code === "P2003" ||
+//       error.message.includes("Foreign key constraint failed")
+//     ) {
+//       return res.status(409).json({
+//         errors: {
+//           message:
+//             "Cannot delete this Member because it is referenced in related data.",
+//         },
+//       });
+//     }
+//     if (error.code === "P2025") {
+//       return res.status(404).json({ errors: { message: "Member not found" } });
+//     }
 
-    return res.status(500).json({
-      message: "Failed to delete member",
-      details: error.message,
-    });
-  }
-};
+//     return res.status(500).json({
+//       message: "Failed to delete member",
+//       details: error.message,
+//     });
+//   }
+// };
 
 /**
  * Get all members without pagination
@@ -248,6 +270,6 @@ module.exports = {
   getMembers,
   getMemberById,
   updateMember,
-  deleteMember,
+  // deleteMember,
   getAllMembers,
 };

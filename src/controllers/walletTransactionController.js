@@ -94,7 +94,7 @@ const addWalletAmountRequest = async (req, res) => {
 const updateWalletAmountRequest = async (req, res) => {
   const adminId = req.user.id;
   const { id } = req.params;
-  const { paymentMethod, referenceNumber, notes, status } = req.body;
+  const { paymentMode, referenceNumber, notes, status } = req.body;
 
   try {
     const result = await prisma.$transaction(async (tx) => {
@@ -104,7 +104,7 @@ const updateWalletAmountRequest = async (req, res) => {
         data: {
           status,
           processedByAdminId: adminId,
-          paymentMethod: paymentMethod || null,
+          paymentMethod: paymentMode || null,
           referenceNumber: referenceNumber || null,
           notes: notes || null,
         },
@@ -501,6 +501,46 @@ const withdrawAmount = async (req, res) => {
   }
 };
 
+/**
+ * Get sponsor name by username
+ */
+const getMemberByUsername = async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    // Fetch the sponsor by username
+    const member = await prisma.member.findUnique({
+      where: { memberUsername: username },
+      select: {
+        id: true,
+        memberName: true,
+        memberUsername: true,
+        memberState: true,
+        memberEmail: true,
+        memberMobile: true,
+        memberDob: true,
+        memberAddress: true,
+        memberPincode: true,
+        memberGender: true,
+      },
+    });
+
+    if (!member) {
+      return res.status(500).json({
+        message: "Sponsor not found",
+      });
+    }
+
+    res.status(200).json(member);
+  } catch (error) {
+    console.error("Error fetching sponsor:", error);
+    res.status(500).json({
+      message: "Failed to fetch sponsor",
+      details: error.message,
+    });
+  }
+};
+
 module.exports = {
   getMemberTransactions, //transaction history
   addWalletAmountRequest, // member amount add
@@ -511,4 +551,5 @@ module.exports = {
   transferAmount, // transfer amount between members
   depositAmount,
   withdrawAmount,
+  getMemberByUsername,
 };
