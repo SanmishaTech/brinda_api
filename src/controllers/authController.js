@@ -65,7 +65,7 @@ const register = async (req, res, next) => {
         if (existingEmail) {
           ctx.addIssue({
             path: ["email"],
-            message: `Email ${data.email} already exists.`,
+            message: `Email already exists.`,
             code: z.ZodIssueCode.custom,
           });
         }
