@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { getAllStates } = require("../controllers/stateController");
+const {
+  getAllStates,
+  getMemberState,
+} = require("../controllers/stateController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
 
@@ -47,5 +50,7 @@ const acl = require("../middleware/acl");
  *                       example: "Error details here"
  */
 router.get("/all", getAllStates);
+
+router.get("/member", auth, getMemberState);
 
 module.exports = router;

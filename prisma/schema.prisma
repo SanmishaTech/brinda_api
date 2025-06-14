@@ -62,6 +62,7 @@ model Member {
   bankIfscCode    String?
   bankAccountType String?
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
+  purchases        Purchase[] // Relation to Purchase
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -79,6 +80,7 @@ model Product {
   pv          Decimal?   @db.Decimal(10, 2)
   bv          Decimal?   @db.Decimal(10, 2)
   bvPrice     Decimal?   @db.Decimal(10, 2)
+  purchaseDetails PurchaseDetail[] // Relation to PurchaseDetail
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -110,4 +112,46 @@ model WalletTransaction {
   @@index([memberId])     
 
   @@map("wallet_transactions")
+}
+
+
+model Purchase {
+  id                   Int       @id @default(autoincrement())
+  memberId             Int
+  member               Member    @relation(fields: [memberId], references: [id]) // Relation to Member
+  invoiceNumber        String    @unique
+  purchaseDate         DateTime  @default(now())
+  totalAmountWithoutGst Decimal   @db.Decimal(10, 2)
+  totalAmountWithGst   Decimal   @db.Decimal(10, 2)
+  totalGstAmount       Decimal   @db.Decimal(10, 2)
+  totalProductPV              Decimal   @db.Decimal(10, 2)
+  purchaseDetails      PurchaseDetail[] // Relation to PurchaseDetail
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("purchases")
+}
+
+model PurchaseDetail {
+  id                   Int       @id @default(autoincrement())
+  purchaseId           Int
+  purchase             Purchase  @relation(fields: [purchaseId], references: [id]) // Relation to Purchase
+  productId            Int
+  product              Product   @relation(fields: [productId], references: [id]) // Relation to Product
+  quantity             Int
+  rate                 Decimal   @db.Decimal(10, 2)
+  cgstPercent         Decimal   @db.Decimal(5, 2)
+  sgstPercent         Decimal   @db.Decimal(5, 2)
+  igstPercent         Decimal   @db.Decimal(5, 2)
+  cgstAmount            Decimal   @db.Decimal(10, 2)
+  sgstAmount            Decimal   @db.Decimal(10, 2)
+  igstAmount            Decimal   @db.Decimal(10, 2)
+  amountWithoutGst     Decimal   @db.Decimal(10, 2)
+  amountWithGst        Decimal   @db.Decimal(10, 2)
+  pvPerUnit            Decimal   @db.Decimal(10, 2)
+  totalPV              Decimal   @db.Decimal(10, 2)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("purchase_details")
 }

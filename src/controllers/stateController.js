@@ -14,6 +14,21 @@ const getAllStates = async (req, res, next) => {
   }
 };
 
+// Get a purchase by ID
+const getMemberState = async (req, res) => {
+  try {
+    res.status(200).json({ State: req.user.member.memberState });
+  } catch (error) {
+    res.status(500).json({
+      errors: {
+        message: "Failed to fetch Member State",
+        details: error.message,
+      },
+    });
+  }
+};
+
 module.exports = {
   getAllStates,
+  getMemberState,
 };

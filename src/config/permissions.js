@@ -15,10 +15,13 @@ module.exports = {
   "members.read": ["admin", "member"],
   "members.write": ["admin", "member"],
   "members.delete": ["admin", "member"],
-  "members.export": ["admin", "member"],
   //walletTransactions
   "walletTransactions.read": ["admin", "member"],
   "walletTransactions.write": ["admin", "member"],
   "walletTransactions.delete": ["admin", "member"],
   "walletTransactions.export": ["admin", "member"],
+  //purchases
+  "purchases.read": ["admin", "member"],
+  "purchases.write": ["admin", "member"],
+  "purchases.delete": ["admin", "member"],
 };
