@@ -19,7 +19,7 @@ const getMemberTransactions = async (req, res) => {
   const skip = (page - 1) * limit;
   const search = req.query.search || "";
   const sortBy = req.query.sortBy || "id";
-  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  const sortOrder = req.query.sortOrder || "desc";
 
   try {
     const whereClause = {
@@ -170,8 +170,8 @@ const getWalletTransactionsByMemberId = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
   const search = req.query.search || "";
-  const sortBy = req.query.sortBy || "id";
-  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  const sortBy = req.query.sortBy || "id"; // Default sort by transactionDate
+  const sortOrder = req.query.sortOrder || "desc";
   const trimmedSearch = search?.trim();
   const isSearchNumber =
     trimmedSearch !== "" &&
