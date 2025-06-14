@@ -14,7 +14,6 @@ const dayjs = require("dayjs");
 const { findParent } = require("../utils/findParent");
 const { LEFT, RIGHT } = require("../config/data");
 const { updateCount } = require("../utils/updateCount");
-const { generateTPin } = require("../utils/generateTPin");
 // Register a new user
 const MAX_RETRIES = 3;
 
@@ -36,7 +35,7 @@ const register = async (req, res, next) => {
         }),
       sponsorId: z
         .string()
-        .length(10, "Sponsor ID must be exactly 10 characters."),
+        .length(8, "Sponsor ID must be exactly 8 characters."),
       position: z.string().min(1, "Position is required."),
       state: z.string().min(1, "State field is required."),
       email: z
@@ -90,21 +89,13 @@ const register = async (req, res, next) => {
     await validateRequest(schema, req.body, res);
     const { name, sponsorId, position, email, mobile, state } = req.body;
     const password = generatePassword(6);
-    const tPin = generateTPin(4);
+    const tPin = generatePassword(6);
     let attempt = 0;
     let result = null;
     const sponsorData = await prisma.member.findUnique({
       where: { memberUsername: sponsorId },
       select: { id: true },
     });
-
-    if (!sponsorData) {
-      return res.status(500).json({
-        errors: {
-          message: "Invalid Sponsor ID",
-        },
-      });
-    }
 
     const parentData = await findParent(sponsorId, position);
 
@@ -131,7 +122,7 @@ const register = async (req, res, next) => {
             newNumber = lastNumber + 1;
           }
 
-          const username = `${prefix}${String(newNumber).padStart(6, "0")}`;
+          const username = `${prefix}${String(newNumber).padStart(4, "0")}`;
 
           const newUser = await tx.user.create({
             data: {

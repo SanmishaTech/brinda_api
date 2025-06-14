@@ -11,8 +11,8 @@ async function seed() {
     // Create user
     const admin = await prisma.user.create({
       data: {
-        name: "brinda",
-        username: "brinda",
+        name: "Admin",
+        username: "admin",
         email: "admin@gmail.com",
         mobile: "1234567890",
         password: "abcd123",
@@ -23,22 +23,22 @@ async function seed() {
 
     const member = await prisma.user.create({
       data: {
-        name: "member",
-        username: "06250001",
-        email: "member@gmail.com",
+        name: "Brinda",
+        username: "0625000001",
+        email: "brinda@gmail.com",
         mobile: "2222222222",
         password: "abcd123",
         role: MEMBER,
         active: true,
         member: {
           create: {
-            memberName: "member",
-            memberUsername: "06250001",
-            memberEmail: "member@gmail.com",
+            memberName: "Brinda",
+            memberUsername: "0625000001",
+            memberEmail: "brinda@gmail.com",
             memberMobile: "2222222222",
             positionToParent: TOP,
             memberState: "Maharashtra",
-            tPin: "abcd123",
+            tPin: "6789",
             status: ACTIVE,
           },
         },

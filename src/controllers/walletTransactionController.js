@@ -74,7 +74,7 @@ const addWalletAmountRequest = async (req, res) => {
         memberId,
         amount: new Prisma.Decimal(amount),
         transactionDate: new Date(),
-        type: CREDIT,
+        type: DEBIT,
         status: PENDING,
       },
     });
@@ -273,24 +273,46 @@ const getWalletAmount = async (req, res) => {
  * Transfer amount from one member to another
  */
 const transferAmount = async (req, res) => {
-  const { amount, memberId } = req.body; // Extract amount and memberId from the request body
+  const { amount, memberId, tPin } = req.body; // Extract amount and memberId from the request body
   const senderId = req.user.member.id; // Get the sender's member ID from the authenticated user
 
   try {
     // Validate the sender's wallet balance
+    // Fetch sender details including TPIN hash
     const sender = await prisma.member.findUnique({
       where: { id: senderId },
-      select: { walletBalance: true, memberName: true, memberUsername: true },
+      select: {
+        walletBalance: true,
+        memberName: true,
+        memberUsername: true,
+        tPin: true, // Assuming the TPIN is stored in this field
+      },
     });
 
-    if (!sender || sender.walletBalance < amount) {
-      return res.status(500).json({
+    if (!sender) {
+      return res.status(404).json({
         errors: {
-          message: "Insufficient wallet balance",
+          message: "Sender not founds",
         },
       });
     }
 
+    // Check TPIN
+    const isPinValid = Number(sender.tPin) === Number(tPin);
+    if (!isPinValid) {
+      return res.status(401).json({
+        errors: {
+          message: "Invalid Transaction PIN",
+        },
+      });
+    }
+
+    // Check sufficient balance
+    if (sender.walletBalance < amount) {
+      return res.status(400).json({
+        message: "Insufficient wallet balance",
+      });
+    }
     // Validate the recipient member
     const recipient = await prisma.member.findUnique({
       where: { id: memberId },
@@ -330,7 +352,7 @@ const transferAmount = async (req, res) => {
         data: {
           memberId: senderId,
           amount: new Prisma.Decimal(amount),
-          type: DEBIT,
+          type: CREDIT,
           transactionDate: new Date(),
 
           status: TRANSFERRED,
@@ -343,7 +365,7 @@ const transferAmount = async (req, res) => {
         data: {
           memberId: memberId,
           amount: new Prisma.Decimal(amount),
-          type: CREDIT,
+          type: DEBIT,
           transactionDate: new Date(),
           status: TRANSFERRED,
           notes: `Received ₹${amount} from  ${sender.memberName}(${sender.memberUsername})`,
@@ -402,7 +424,7 @@ const depositAmount = async (req, res) => {
         data: {
           memberId,
           amount: new Prisma.Decimal(amountToCredit),
-          type: CREDIT,
+          type: DEBIT,
           transactionDate: new Date(),
           status: APPROVED,
           paymentMethod: paymentMode,
@@ -476,7 +498,7 @@ const withdrawAmount = async (req, res) => {
         data: {
           memberId,
           amount: new Prisma.Decimal(amount),
-          type: DEBIT,
+          type: CREDIT,
           transactionDate: new Date(),
           status: APPROVED,
           paymentMethod: paymentMode,
