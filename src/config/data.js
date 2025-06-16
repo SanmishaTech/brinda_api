@@ -50,6 +50,9 @@ const APPROVED = "Approved";
 const REJECTED = "Rejected";
 const PENDING = "Pending";
 
+const INCREMENT = "Increment";
+const DECREMENT = "Decrement";
+
 module.exports = {
   stateOptions,
   GENDER_MALE,

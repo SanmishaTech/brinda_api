@@ -4,6 +4,7 @@ const {
   getPurchases,
   createPurchase,
   getPurchaseById,
+  generateUserProductPurchaseInvoice,
 } = require("../controllers/purchaseController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -276,4 +277,57 @@ router.post("/", auth, acl("purchases.write"), createPurchase);
  */
 router.get("/:id", auth, acl("purchases.read"), getPurchaseById);
 
+/**
+ * @swagger
+ * /purchases/{id}/generate-invoice:
+ *   get:
+ *     summary: Generate and download the invoice for a purchase
+ *     tags: [Purchases]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID of the purchase for which the invoice will be generated
+ *     responses:
+ *       200:
+ *         description: Invoice generated and downloaded successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       404:
+ *         description: Purchase not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Purchase details not found"
+ *       500:
+ *         description: Failed to generate invoice
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to generate invoice"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details here"
+ */
+router.get(
+  "/:id/generate-invoice",
+  auth,
+  acl("purchases.read"),
+  generateUserProductPurchaseInvoice
+);
 module.exports = router;

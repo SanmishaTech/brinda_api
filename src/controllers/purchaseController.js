@@ -1,8 +1,20 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { z } = require("zod");
 const validateRequest = require("../utils/validateRequest");
-
+const createError = require("http-errors");
+const dayjs = require("dayjs"); // Import dayjs
+const { numberToWords } = require("../utils/numberToWords");
+const { v4: uuidv4 } = require("uuid");
+const fs = require("fs").promises; // Use promises API
+const path = require("path");
+const { CREDIT, APPROVED } = require("../config/data");
+const {
+  generateProductPurchaseInvoice,
+} = require("../utils/invoice/user/generateProductPurchaseInvoice");
+const {
+  generateProductPurchaseInvoiceNumber,
+} = require("../utils/invoice/user/generateProductPurchaseInvoiceNumber");
 // Get all purchases with pagination, sorting, and search
 const getPurchases = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -63,35 +75,82 @@ const createPurchase = async (req, res) => {
       purchaseDetails,
     } = req.body;
 
-    const newPurchase = await prisma.purchase.create({
-      data: {
-        memberId: user.member.id,
-        purchaseDate: new Date(),
-        totalAmountWithoutGst,
-        totalAmountWithGst,
-        totalGstAmount,
-        totalProductPV,
-        purchaseDetails: {
-          create: purchaseDetails.map((detail) => ({
-            productId: detail.productId,
-            quantity: detail.quantity,
-            rate: detail.rate,
-            cgstPercent: detail.cgstPercent,
-            sgstPercent: detail.sgstPercent,
-            igstPercent: detail.igstPercent,
-            cgstAmount: detail.cgstAmount,
-            sgstAmount: detail.sgstAmount,
-            igstAmount: detail.igstAmount,
-            amountWithoutGst: detail.amountWithoutGst,
-            amountWithGst: detail.amountWithGst,
-            pvPerUnit: detail.pvPerUnit,
-            totalPV: detail.totalPV,
-          })),
+    if (
+      parseFloat(req.user.member.walletBalance).toFixed(2) <
+      parseFloat(totalAmountWithGst).toFixed(2)
+    ) {
+      return res.status(400).json({
+        errors: {
+          message: "Insufficient wallet balance",
         },
-      },
+      });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      const newPurchase = await tx.purchase.create({
+        data: {
+          memberId: req.user.member.id,
+          purchaseDate: new Date(),
+          totalAmountWithoutGst: new Prisma.Decimal(totalAmountWithoutGst),
+          totalAmountWithGst: new Prisma.Decimal(totalAmountWithGst),
+          totalGstAmount: new Prisma.Decimal(totalGstAmount),
+          totalProductPV: new Prisma.Decimal(totalProductPV),
+          purchaseDetails: {
+            create: purchaseDetails.map((detail) => ({
+              productId: parseInt(detail.productId),
+              quantity: detail.quantity,
+              rate: new Prisma.Decimal(detail.rate),
+              cgstPercent: new Prisma.Decimal(detail.cgstPercent),
+              sgstPercent: new Prisma.Decimal(detail.sgstPercent),
+              igstPercent: new Prisma.Decimal(detail.igstPercent),
+              cgstAmount: new Prisma.Decimal(detail.cgstAmount),
+              sgstAmount: new Prisma.Decimal(detail.sgstAmount),
+              igstAmount: new Prisma.Decimal(detail.igstAmount),
+              amountWithoutGst: new Prisma.Decimal(detail.amountWithoutGst),
+              amountWithGst: new Prisma.Decimal(detail.amountWithGst),
+              pvPerUnit: new Prisma.Decimal(detail.pvPerUnit),
+              totalPV: new Prisma.Decimal(detail.totalPV),
+            })),
+          },
+        },
+      });
+
+      const member = await tx.member.update({
+        where: { id: req.user.member.id },
+        data: {
+          pvBalance: {
+            increment: new Prisma.Decimal(totalProductPV),
+          },
+          walletBalance: {
+            decrement: new Prisma.Decimal(totalAmountWithGst),
+          },
+        },
+      });
+
+      const transaction = await tx.walletTransaction.create({
+        data: {
+          memberId: req.user.member.id,
+          amount: new Prisma.Decimal(totalAmountWithGst),
+          type: CREDIT,
+          status: APPROVED,
+          notes: `Products Purchased`,
+          transactionDate: new Date(),
+        },
+      });
+
+      const memberLog = await tx.memberLog.create({
+        data: {
+          memberId: req.user.member.id,
+          message: `Products  Purchased`,
+          purchaseId: newPurchase.id,
+          totalPv: new Prisma.Decimal(totalProductPV),
+        },
+      });
+
+      return { newPurchase, memberLog, member };
     });
 
-    res.status(201).json(newPurchase);
+    res.status(201).json(result.newPurchase);
   } catch (error) {
     return res.status(500).json({
       errors: {
@@ -132,8 +191,188 @@ const getPurchaseById = async (req, res) => {
   }
 };
 
+const generateUserProductPurchaseInvoice = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      // Step 1: Fetch existing booking receipt
+      const existingInvoice = await tx.purchase.findUnique({
+        where: { id: parseInt(id, 10) },
+        select: { invoiceNumber: true }, // only fetch needed field
+      });
+      let purchase = null;
+      // Step 2: Check if invoice number already exists
+      if (existingInvoice.invoiceNumber) {
+        // Don't update invoice number, just return existing
+        purchase = await tx.purchase.update({
+          where: { id: parseInt(id, 10) },
+          data: {
+            invoiceDate: new Date(),
+          },
+        });
+      } else {
+        const invoiceNumber = await generateProductPurchaseInvoiceNumber(tx);
+
+        purchase = await tx.purchase.update({
+          where: { id: parseInt(id, 10) },
+          data: {
+            invoiceDate: new Date(),
+            invoiceNumber: invoiceNumber,
+          },
+        });
+      }
+
+      return {
+        purchase: purchase,
+      };
+    });
+
+    const purchaseData = await prisma.purchase.findUnique({
+      where: { id: parseInt(id, 10) },
+      include: {
+        purchaseDetails: {
+          include: {
+            product: true, // Include product details
+          },
+        },
+        member: true,
+      },
+    });
+
+    if (!purchaseData) {
+      return res.status(404).json({ error: "Purchase details not found" });
+    }
+
+    // ✅ Step 2: Format data for generateInvoicePdf
+    const invoiceData = {
+      invoiceNumber: purchaseData.invoiceNumber,
+      invoiceDate: purchaseData.invoiceDate,
+      member: {
+        memberName: purchaseData.member?.memberName,
+        addressLines: [purchaseData.member?.memberAddress || "", ""].filter(
+          Boolean
+        ),
+        pincode: purchaseData.member?.memberPincode || "",
+      },
+      memberDetails: {
+        name: "Brinda Health Care",
+        addressLines: [
+          "B/03, Pinak CHS, Kelkar Rd, Near Vrindavan Hotel, Opp. Gurudev Hotel Aai Bunglow, Ram Nagar.",
+          "Thane, Dombivli East - 421201, IN",
+        ],
+        city: "Dombivli",
+        pincode: "421201",
+        gstin: "27AACHL3089A2ZF",
+        email: "brinda@gmail.com",
+        logoPath: "",
+      },
+      items: purchaseData.purchaseDetails.map((detail, index) => ({
+        srNo: index + 1,
+        description: detail.product.productName || "N/A",
+        hsnSac: detail.product.hsnCode || "998551", // or from your DB
+        quantity: detail.quantity,
+        rate: parseFloat(detail.rate),
+        amountWithoutGst: parseFloat(detail.amountWithoutGst),
+        cgstPercent: parseFloat(detail.cgstPercent || 0),
+        sgstPercent: parseFloat(detail.sgstPercent || 0),
+        igstPercent: parseFloat(detail.igstPercent || 0),
+        cgstAmount: parseFloat(detail.cgstAmount || 0),
+        sgstAmount: parseFloat(detail.sgstAmount || 0),
+        igstAmount: parseFloat(detail.igstAmount || 0),
+        amountWithGst: parseFloat(detail.amountWithGst),
+      })),
+      totals: {
+        totalAmountWithoutGst: parseFloat(purchaseData.totalAmountWithoutGst),
+        cgstAmount: parseFloat(purchaseData.cgstAmount || 0),
+        cgstPercent: purchaseData.cgstPercent || 0,
+        sgstAmount: parseFloat(purchaseData.sgstAmount || 0),
+        sgstPercent: purchaseData.sgstPercent || 0,
+        igstAmount: parseFloat(purchaseData.igstAmount || 0),
+        igstPercent: purchaseData.igstPercent || 0,
+        totalGstAmount: parseFloat(purchaseData.totalGstAmount),
+        totalAmountWithGst: parseFloat(purchaseData.totalAmountWithGst),
+        amountInWords: numberToWords(
+          parseFloat(purchaseData.totalAmountWithGst)
+        ),
+      },
+    };
+
+    // ✅ Step 3: Define file path
+
+    const oldPath = purchaseData.invoicePath;
+    const sanitizedInvoiceNumber = purchaseData.invoiceNumber.replace(
+      /[\/\\]/g,
+      "-"
+    );
+
+    const uuidFolder = uuidv4();
+    const invoiceDir = path.join(
+      __dirname,
+      "..",
+      "..",
+      "invoices",
+      "UserPurchases",
+      uuidFolder
+    );
+    const filePath = path.join(
+      invoiceDir,
+      `invoice-${sanitizedInvoiceNumber}.pdf`
+    );
+    try {
+      if (oldPath) {
+        await fs.unlink(oldPath);
+        console.log("Old invoice deleted:", oldPath);
+
+        const folderToDelete = path.dirname(oldPath);
+        const files = await fs.readdir(folderToDelete);
+
+        if (files.length === 0) {
+          await fs.rmdir(folderToDelete);
+          console.log("Empty folder deleted:", folderToDelete);
+        }
+      }
+    } catch (err) {
+      console.error("Error deleting invoice or folder:", err);
+    }
+    // end
+    console.log("Writing PDF to:", filePath);
+
+    // ✅ Step 4: Generate the PDF
+    await generateProductPurchaseInvoice(invoiceData, filePath);
+    await prisma.purchase.update({
+      where: { id: parseInt(id, 10) },
+      data: {
+        invoicePath: filePath, // Save relative or absolute path based on your use-case
+      },
+    });
+
+    res.setHeader("Content-Type", "application/pdf");
+
+    // ✅ Step 5: Send file to client
+    res.download(filePath, (err) => {
+      if (err) {
+        console.error("Download error:", err);
+        res.status(500).send("Failed to download invoice");
+      } else {
+        // Optionally delete file after download
+        // fs.unlink(filePath, () => {});
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      errors: {
+        message: "Failed to generate invoice",
+        details: error.message,
+      },
+    });
+  }
+};
+
 module.exports = {
   getPurchases,
   createPurchase,
   getPurchaseById,
+  generateUserProductPurchaseInvoice,
 };
