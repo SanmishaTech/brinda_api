@@ -129,6 +129,7 @@ model Purchase {
   totalAmountWithGst   Decimal   @db.Decimal(10, 2)
   totalGstAmount       Decimal   @db.Decimal(10, 2)
   totalProductPV              Decimal   @db.Decimal(10, 2)
+  state                 String   // e.g., "Pending", "Completed", "Cancelled"
   purchaseDetails      PurchaseDetail[] // Relation to PurchaseDetail
   memberLogs          memberLog[] // Relation to memberLog 
   createdAt            DateTime  @default(now())
@@ -172,5 +173,5 @@ model memberLog {
   totalPv     Decimal   @db.Decimal(10, 2)
   createdAt   DateTime @default(now())
   updatedAt            DateTime  @updatedAt
-    @@map("member_logs")
+
 }

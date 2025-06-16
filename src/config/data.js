@@ -52,7 +52,7 @@ const PENDING = "Pending";
 
 const INCREMENT = "Increment";
 const DECREMENT = "Decrement";
-
+const MAHARASHTRA = "Maharashtra";
 module.exports = {
   stateOptions,
   GENDER_MALE,
@@ -69,4 +69,7 @@ module.exports = {
   TRANSFERRED,
   APPROVED,
   REJECTED,
+  MAHARASHTRA,
+  INCREMENT,
+  DECREMENT,
 };

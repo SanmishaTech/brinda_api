@@ -15,6 +15,22 @@ const {
 const {
   generateProductPurchaseInvoiceNumber,
 } = require("../utils/invoice/user/generateProductPurchaseInvoiceNumber");
+
+const decimalString = (fieldName, maxDigits, decimalPlaces) =>
+  z
+    .string()
+    .nonempty(`${fieldName} is required.`)
+    .refine(
+      (val) => {
+        const regex = new RegExp(
+          `^\\d{1,${maxDigits - decimalPlaces}}(\\.\\d{1,${decimalPlaces}})?$`
+        );
+        return regex.test(val);
+      },
+      {
+        message: `${fieldName} must be a valid number with up to ${decimalPlaces} decimal places.`,
+      }
+    );
 // Get all purchases with pagination, sorting, and search
 const getPurchases = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -66,6 +82,14 @@ const getPurchases = async (req, res) => {
 
 // Create a new purchase
 const createPurchase = async (req, res) => {
+  const schema = z.object({
+    totalAmountWithoutGst: decimalString("Total Amount Without GST", 10, 2),
+    totalAmountWithGst: decimalString("Total Amount With GST", 10, 2),
+    totalGstAmount: decimalString("Total GST Amount", 10, 2),
+    totalProductPV: decimalString("Total PV", 10, 2),
+  });
+
+  const validationErrors = await validateRequest(schema, req.body, res);
   try {
     const {
       totalAmountWithoutGst,
@@ -76,9 +100,14 @@ const createPurchase = async (req, res) => {
     } = req.body;
 
     if (
-      parseFloat(req.user.member.walletBalance).toFixed(2) <
-      parseFloat(totalAmountWithGst).toFixed(2)
+      parseFloat(req.user.member.walletBalance) < parseFloat(totalAmountWithGst)
     ) {
+      console.log(
+        "Wallet Balance = ",
+        parseFloat(req.user.member.walletBalance).toFixed(2),
+        "Total Amount With GST =",
+        parseFloat(totalAmountWithGst).toFixed(2)
+      );
       return res.status(400).json({
         errors: {
           message: "Insufficient wallet balance",
@@ -95,6 +124,7 @@ const createPurchase = async (req, res) => {
           totalAmountWithGst: new Prisma.Decimal(totalAmountWithGst),
           totalGstAmount: new Prisma.Decimal(totalGstAmount),
           totalProductPV: new Prisma.Decimal(totalProductPV),
+          state: req.user.member.memberState,
           purchaseDetails: {
             create: purchaseDetails.map((detail) => ({
               productId: parseInt(detail.productId),
@@ -254,6 +284,7 @@ const generateUserProductPurchaseInvoice = async (req, res) => {
           Boolean
         ),
         pincode: purchaseData.member?.memberPincode || "",
+        state: purchaseData?.state,
       },
       memberDetails: {
         name: "Brinda Health Care",

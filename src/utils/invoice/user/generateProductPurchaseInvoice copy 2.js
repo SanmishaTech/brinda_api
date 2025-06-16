@@ -3,7 +3,6 @@ const fs = require("fs");
 const path = require("path");
 
 const vfsCandidate = require("pdfmake/build/vfs_fonts.js");
-const { MAHARASHTRA } = require("../../../config/data");
 let vfsData =
   vfsCandidate?.pdfMake?.vfs || vfsCandidate?.vfs || vfsCandidate || {};
 const fonts = {
@@ -51,7 +50,6 @@ const generateProductPurchaseInvoice = async (invoiceData, filePath) => {
   const { invoiceNumber, invoiceDate, member, memberDetails, items, totals } =
     invoiceData;
   const companyDetails = memberDetails;
-  const isMaharashtra = member?.state === MAHARASHTRA;
 
   const itemTableBody = [
     [
@@ -60,17 +58,9 @@ const generateProductPurchaseInvoice = async (invoiceData, filePath) => {
       { text: "Qty", style: "tableHeader" },
       { text: "Rate", style: "tableHeader" },
       { text: "Amount", style: "tableHeader" },
-      ...(isMaharashtra
-        ? [
-            { text: "CGST %", style: "tableHeader" },
-            { text: "CGST Amount", style: "tableHeader" },
-            { text: "SGST %", style: "tableHeader" },
-            { text: "SGST Amount", style: "tableHeader" },
-          ]
-        : [
-            { text: "IGST %", style: "tableHeader" },
-            { text: "IGST Amount", style: "tableHeader" },
-          ]),
+      { text: "CGST %", style: "tableHeader" },
+      { text: "SGST %", style: "tableHeader" },
+      { text: "IGST %", style: "tableHeader" },
       { text: "Total", style: "tableHeader" },
     ],
     ...items.map((item) => [
@@ -79,28 +69,25 @@ const generateProductPurchaseInvoice = async (invoiceData, filePath) => {
       { text: item.quantity?.toString() || "N/A", style: "tableCell" },
       { text: safeFixed(item.rate), style: "tableCell" },
       { text: safeFixed(item.amountWithoutGst), style: "tableCell" },
-      ...(isMaharashtra
-        ? [
-            { text: safeFixed(item.cgstPercent), style: "tableCell" },
-            { text: safeFixed(item.cgstAmount), style: "tableCell" },
-            { text: safeFixed(item.sgstPercent), style: "tableCell" },
-            { text: safeFixed(item.sgstAmount), style: "tableCell" },
-          ]
-        : [
-            { text: safeFixed(item.igstPercent), style: "tableCell" },
-            { text: safeFixed(item.igstAmount), style: "tableCell" },
-          ]),
+      { text: safeFixed(item.cgstPercent), style: "tableCell" },
+      { text: safeFixed(item.sgstPercent), style: "tableCell" },
+      { text: safeFixed(item.igstPercent), style: "tableCell" },
       { text: safeFixed(item.amountWithGst), style: "tableCell" },
     ]),
-    // Totals row — simplified layout depending on column count
     [
       {
         text: "Total Amount (Without GST)",
-        colSpan: isMaharashtra ? 9 : 7,
+        colSpan: 8,
         alignment: "right",
         style: "tableTotalsLabelBold",
       },
-      ...Array(isMaharashtra ? 8 : 6).fill({}),
+      {},
+      {},
+      {},
+      {},
+      {},
+      { text: "", colSpan: 2 },
+      {},
       {
         text: safeFixed(totals.totalAmountWithoutGst),
         style: "tableCell",
@@ -109,11 +96,17 @@ const generateProductPurchaseInvoice = async (invoiceData, filePath) => {
     [
       {
         text: "Total GST Amount",
-        colSpan: isMaharashtra ? 9 : 7,
+        colSpan: 8,
         alignment: "right",
         style: "tableTotalsLabelBold",
       },
-      ...Array(isMaharashtra ? 8 : 6).fill({}),
+      {},
+      {},
+      {},
+      {},
+      {},
+      { text: "", colSpan: 2 },
+      {},
       {
         text: safeFixed(totals.totalGstAmount),
         style: "tableCell",
@@ -122,11 +115,17 @@ const generateProductPurchaseInvoice = async (invoiceData, filePath) => {
     [
       {
         text: "Total Amount (With GST)",
-        colSpan: isMaharashtra ? 9 : 7,
+        colSpan: 8,
         alignment: "right",
         style: "tableTotalsLabelBold",
       },
-      ...Array(isMaharashtra ? 8 : 6).fill({}),
+      {},
+      {},
+      {},
+      {},
+      {},
+      { text: "", colSpan: 2 },
+      {},
       {
         text: safeFixed(totals.totalAmountWithGst),
         style: "tableCell",
@@ -224,21 +223,17 @@ const generateProductPurchaseInvoice = async (invoiceData, filePath) => {
       {
         table: {
           headerRows: 1,
-          widths: isMaharashtra
-            ? [
-                "auto",
-                "*",
-                "auto",
-                "auto",
-                "auto",
-                "auto",
-                "auto",
-                "auto",
-                "auto",
-                "auto",
-              ]
-            : ["auto", "*", "auto", "auto", "auto", "auto", "auto", "auto"],
-
+          widths: [
+            "auto",
+            "*",
+            "auto",
+            "auto",
+            "auto",
+            "auto",
+            "auto",
+            "auto",
+            "auto",
+          ],
           body: itemTableBody,
         },
         layout: {

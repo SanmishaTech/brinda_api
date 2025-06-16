@@ -6,6 +6,7 @@ const {
   updateMember,
   deleteMember,
   getAllMembers,
+  getMemberLogs,
 } = require("../controllers/memberController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -133,6 +134,82 @@ router.get("/all", auth, acl("members.read"), getAllMembers);
 
 /**
  * @swagger
+ * /api/members/logs:
+ *   get:
+ *     summary: Get member logs with pagination, sorting, and search
+ *     tags: [Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of logs per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for log messages
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: id
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: asc
+ *         description: Sort order
+ *     responses:
+ *       200:
+ *         description: List of member logs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 memberLogs:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       memberId:
+ *                         type: integer
+ *                       message:
+ *                         type: string
+ *                         description: Log message
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                 page:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 totalMemberLogs:
+ *                   type: integer
+ *       500:
+ *         description: Failed to fetch member logs
+ */
+router.get("/logs", auth, acl("members.read"), getMemberLogs);
+
+/**
+ * @swagger
  * /api/members/{id}:
  *   get:
  *     summary: Get member by ID
@@ -172,8 +249,6 @@ router.get("/all", auth, acl("members.read"), getAllMembers);
  *         description: Failed to fetch member
  */
 router.get("/:id", auth, acl("members.read"), getMemberById);
-
-
 
 /**
  * @swagger

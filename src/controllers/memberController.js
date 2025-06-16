@@ -272,10 +272,60 @@ const getAllMembers = async (req, res) => {
   }
 };
 
+const getMemberLogs = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+
+  try {
+    const trimmedSearch = search?.trim();
+    const whereClause = {
+      memberId: req.user.member.id,
+      OR: [{ message: { contains: trimmedSearch } }],
+    };
+
+    const orderByClause = { [sortBy]: sortOrder };
+
+    const memberLogs = await prisma.memberLog.findMany({
+      where: whereClause,
+      include: {
+        purchase: true,
+        member: true,
+      },
+      skip,
+      take: limit,
+      orderBy: orderByClause,
+    });
+
+    const totalMemberLogs = await prisma.memberLog.count({
+      where: whereClause,
+    });
+    const totalPages = Math.ceil(totalMemberLogs / limit);
+
+    res.json({
+      memberLogs,
+      page,
+      totalPages,
+      totalMemberLogs,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      errors: {
+        message: "Failed to fetch members logs.",
+        details: error.message,
+      },
+    });
+  }
+};
+
 module.exports = {
   getMembers,
   getMemberById,
   updateMember,
   // deleteMember,
   getAllMembers,
+  getMemberLogs,
 };
