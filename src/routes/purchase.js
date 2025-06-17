@@ -4,7 +4,7 @@ const {
   getPurchases,
   createPurchase,
   getPurchaseById,
-  generateUserProductPurchaseInvoice,
+  DownloadPurchaseInvoice,
 } = require("../controllers/purchaseController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -325,9 +325,9 @@ router.get("/:id", auth, acl("purchases.read"), getPurchaseById);
  *                   example: "Error details here"
  */
 router.get(
-  "/:id/generate-invoice",
+  "/:uuid/:filename/:purchaseId/generate-invoice",
   auth,
   acl("purchases.read"),
-  generateUserProductPurchaseInvoice
+  DownloadPurchaseInvoice
 );
 module.exports = router;

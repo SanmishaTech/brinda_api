@@ -1,9 +1,8 @@
 // src/seeders/seeder.js
 const { PrismaClient } = require("@prisma/client");
-const { TOP, ACTIVE } = require("../config/data");
+const { TOP, DIAMOND } = require("../config/data");
 const { MEMBER, ADMIN } = require("../config/roles");
 require("dotenv").config();
-
 const prisma = new PrismaClient();
 
 async function seed() {
@@ -39,7 +38,7 @@ async function seed() {
             positionToParent: TOP,
             memberState: "Maharashtra",
             tPin: "6789",
-            status: ACTIVE,
+            status: DIAMOND,
           },
         },
       },

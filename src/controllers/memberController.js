@@ -2,6 +2,7 @@ const { PrismaClient, Prisma } = require("@prisma/client");
 const validateRequest = require("../utils/validateRequest");
 const prisma = new PrismaClient();
 const { z } = require("zod");
+const { LEFT, RIGHT } = require("../config/data");
 
 /**
  * Get all members with pagination, sorting, and search
@@ -292,7 +293,6 @@ const getMemberLogs = async (req, res) => {
     const memberLogs = await prisma.memberLog.findMany({
       where: whereClause,
       include: {
-        purchase: true,
         member: true,
       },
       skip,
@@ -320,6 +320,126 @@ const getMemberLogs = async (req, res) => {
     });
   }
 };
+const myGenealogy = async (req, res, next) => {
+  try {
+    const { memberId } = req.params;
+
+    const rootMember = await prisma.member.findUnique({
+      where: { id: parseInt(memberId) },
+      select: {
+        id: true,
+        memberName: true,
+        memberUsername: true,
+        positionToParent: true,
+        status: true,
+      },
+    });
+
+    const leftMember = await prisma.member.findFirst({
+      where: {
+        parentId: rootMember.id,
+        positionToParent: LEFT,
+      },
+      select: {
+        id: true,
+        memberName: true,
+        memberUsername: true,
+        positionToParent: true,
+        status: true,
+      },
+    });
+
+    const leftsLeftMember = leftMember
+      ? await prisma.member.findFirst({
+          where: {
+            parentId: leftMember.id,
+            positionToParent: LEFT,
+          },
+          select: {
+            id: true,
+            memberName: true,
+            memberUsername: true,
+            positionToParent: true,
+            status: true,
+          },
+        })
+      : null;
+
+    const leftsRightMember = leftMember
+      ? await prisma.member.findFirst({
+          where: {
+            parentId: leftMember.id,
+            positionToParent: RIGHT,
+          },
+          select: {
+            id: true,
+            memberName: true,
+            memberUsername: true,
+            positionToParent: true,
+            status: true,
+          },
+        })
+      : null;
+
+    const rightMember = await prisma.member.findFirst({
+      where: {
+        parentId: rootMember.id,
+        positionToParent: RIGHT,
+      },
+      select: {
+        id: true,
+        memberName: true,
+        memberUsername: true,
+        positionToParent: true,
+        status: true,
+      },
+    });
+
+    const rightsLeftMember = rightMember
+      ? await prisma.member.findFirst({
+          where: {
+            parentId: rightMember.id,
+            positionToParent: LEFT,
+          },
+          select: {
+            id: true,
+            memberName: true,
+            memberUsername: true,
+            positionToParent: true,
+            status: true,
+          },
+        })
+      : null;
+
+    const rightsRightMember = rightMember
+      ? await prisma.member.findFirst({
+          where: {
+            parentId: rightMember.id,
+            positionToParent: RIGHT,
+          },
+          select: {
+            id: true,
+            memberName: true,
+            memberUsername: true,
+            positionToParent: true,
+            status: true,
+          },
+        })
+      : null;
+
+    res.json({
+      rootMember,
+      leftMember,
+      leftsLeftMember,
+      leftsRightMember,
+      rightMember,
+      rightsLeftMember,
+      rightsRightMember,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getMembers,
@@ -328,4 +448,5 @@ module.exports = {
   // deleteMember,
   getAllMembers,
   getMemberLogs,
+  myGenealogy,
 };

@@ -24,4 +24,9 @@ module.exports = {
   "purchases.read": ["admin", "member"],
   "purchases.write": ["admin", "member"],
   "purchases.delete": ["admin", "member"],
+
+  //dashboards
+  "dashboards.read": ["admin", "member"],
+  "dashboards.write": ["admin", "member"],
+  "dashboards.delete": ["admin", "member"],
 };

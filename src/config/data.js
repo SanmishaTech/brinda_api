@@ -39,9 +39,6 @@ const LEFT = "Left";
 const TOP = "Top";
 const RIGHT = "Right";
 
-const ACTIVE = "Active";
-const INACTIVE = "Inactive";
-
 const DEBIT = "Debit";
 const CREDIT = "Credit";
 
@@ -53,6 +50,14 @@ const PENDING = "Pending";
 const INCREMENT = "Increment";
 const DECREMENT = "Decrement";
 const MAHARASHTRA = "Maharashtra";
+
+//Member Status
+const INACTIVE = "Inactive";
+const ASSOCIATE = "Associate";
+const SILVER = "Silver";
+const GOLD = "Gold";
+const DIAMOND = "Diamond";
+
 module.exports = {
   stateOptions,
   GENDER_MALE,
@@ -61,7 +66,6 @@ module.exports = {
   LEFT,
   TOP,
   RIGHT,
-  ACTIVE,
   INACTIVE,
   PENDING,
   DEBIT,
@@ -72,4 +76,8 @@ module.exports = {
   MAHARASHTRA,
   INCREMENT,
   DECREMENT,
+  ASSOCIATE,
+  SILVER,
+  GOLD,
+  DIAMOND,
 };

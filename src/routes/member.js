@@ -7,6 +7,7 @@ const {
   deleteMember,
   getAllMembers,
   getMemberLogs,
+  myGenealogy,
 } = require("../controllers/memberController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -335,5 +336,79 @@ router.put("/:id", auth, acl("members.write"), updateMember);
  *         description: Failed to delete member
  */
 // router.delete("/:id", auth, acl("members.delete"), deleteMember);
+
+/**
+ * @swagger
+ * /api/members/genealogy/{memberId}:
+ *   get:
+ *     summary: Get binary tree (genealogy) structure for a member
+ *     tags: [Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: memberId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Member ID to get genealogy for
+ *     responses:
+ *       200:
+ *         description: Binary tree of member genealogy (3 levels)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 rootMember:
+ *                   $ref: '#/components/schemas/Member'
+ *                 leftMember:
+ *                   $ref: '#/components/schemas/Member'
+ *                 leftsLeftMember:
+ *                   $ref: '#/components/schemas/Member'
+ *                 leftsRightMember:
+ *                   $ref: '#/components/schemas/Member'
+ *                 rightMember:
+ *                   $ref: '#/components/schemas/Member'
+ *                 rightsLeftMember:
+ *                   $ref: '#/components/schemas/Member'
+ *                 rightsRightMember:
+ *                   $ref: '#/components/schemas/Member'
+ *       404:
+ *         description: Member not found
+ *       500:
+ *         description: Failed to fetch genealogy
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Member:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         memberName:
+ *           type: string
+ *         memberUsername:
+ *           type: string
+ *         positionToParent:
+ *           type: string
+ *         parentId:
+ *           type: integer
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
+router.get(
+  "/genealogy/:memberId",
+  auth,
+  acl("members.read"),
+  myGenealogy
+);
 
 module.exports = router;

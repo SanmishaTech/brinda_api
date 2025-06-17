@@ -27,6 +27,16 @@ model User {
   @@map("users")
 }
 
+// Define the enum
+enum MemberStatus {
+  Inactive
+  Associate
+  Silver
+  Gold
+  Diamond
+}
+
+
 model Member {
   id              Int       @id @default(autoincrement())
   userId          Int        @unique
@@ -49,7 +59,7 @@ model Member {
   memberMobile    String?   
   tPin            String
   positionToParent        String?
-  status          String
+  status          MemberStatus @default(Inactive) 
   walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
     memberDob        DateTime?
   memberAddress    String?   @db.Text
@@ -131,7 +141,6 @@ model Purchase {
   totalProductPV              Decimal   @db.Decimal(10, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
   purchaseDetails      PurchaseDetail[] // Relation to PurchaseDetail
-  memberLogs          memberLog[] // Relation to memberLog 
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -167,11 +176,11 @@ model memberLog {
   id          Int      @id @default(autoincrement())
   memberId    Int
   member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  purchaseId  Int?
-  purchase             Purchase?  @relation(fields: [purchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
   message     String?
-  totalPv     Decimal   @db.Decimal(10, 2)
+  pv          Decimal   @db.Decimal(10, 2)
   createdAt   DateTime @default(now())
   updatedAt            DateTime  @updatedAt
+
+    @@map("member_logs")
 
 }

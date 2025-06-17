@@ -14,6 +14,7 @@ const memberRoutes = require("./routes/member");
 const productRoutes = require("./routes/product");
 const walletTransactionRoutes = require("./routes/walletTransaction");
 const purchaseRoutes = require("./routes/purchase");
+const dashboardRoutes = require("./routes/dashboard");
 const swaggerRouter = require("./swagger");
 const path = require("path");
 const config = require("./config/config");
@@ -46,6 +47,8 @@ app.use("/api/members", memberRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/wallet-transactions", walletTransactionRoutes); // Ensure this route is defined in walletTransactionRoutes
 app.use("/api/purchases", purchaseRoutes);
+app.use("/api/dashboards", dashboardRoutes);
+
 app.use(swaggerRouter); // Add this line to include Swagger documentation
 
 app.use((req, res, next) => {

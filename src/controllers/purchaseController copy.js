@@ -156,21 +156,6 @@ const createPurchase = async (req, res) => {
         },
       });
 
-      const invoiceNumber = await generateUserProductPurchaseInvoice(
-        tx,
-        newPurchase.id,
-        res,
-        req
-      );
-
-      const memberLog = await tx.memberLog.create({
-        data: {
-          memberId: req.user.member.id,
-          message: `Products  Purchased (${invoiceNumber})`,
-          pv: new Prisma.Decimal(totalProductPV),
-        },
-      });
-
       await updatePVBalance(tx, INCREMENT, totalProductPV, req.user.member.id);
 
       const transaction = await tx.walletTransaction.create({
@@ -179,13 +164,32 @@ const createPurchase = async (req, res) => {
           amount: new Prisma.Decimal(totalAmountWithGst),
           type: CREDIT,
           status: APPROVED,
-          notes: `Products Purchased (${invoiceNumber})`,
+          notes: `Products Purchased`,
           transactionDate: new Date(),
         },
       });
 
       return { newPurchase, member };
     });
+
+    // Generate invoice after DB commit
+    try {
+      const invoiceNumber = await generateUserProductPurchaseInvoice(
+        result.newPurchase.id,
+        res,
+        req
+      );
+
+      const memberLog = await prisma.memberLog.create({
+        data: {
+          memberId: req.user.member.id,
+          message: `Products  Purchased (${invoiceNumber})`,
+          pv: new Prisma.Decimal(totalProductPV),
+        },
+      });
+    } catch (invoiceError) {
+      console.error("Invoice generation failed:", invoiceError.message);
+    }
 
     return res.status(201).json(result.newPurchase);
   } catch (error) {
@@ -228,22 +232,28 @@ const getPurchaseById = async (req, res) => {
   }
 };
 
-const generateUserProductPurchaseInvoice = async (tx, purchaseId, res, req) => {
+const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
   try {
-    let purchase = null;
-    // Step 2: Check if invoice number already exists
+    const result = await prisma.$transaction(async (tx) => {
+      let purchase = null;
+      // Step 2: Check if invoice number already exists
 
-    const invoiceNumber = await generateProductPurchaseInvoiceNumber(tx);
+      const invoiceNumber = await generateProductPurchaseInvoiceNumber(tx);
 
-    purchase = await tx.purchase.update({
-      where: { id: parseInt(purchaseId, 10) },
-      data: {
-        invoiceDate: new Date(),
-        invoiceNumber: invoiceNumber,
-      },
+      purchase = await tx.purchase.update({
+        where: { id: parseInt(purchaseId, 10) },
+        data: {
+          invoiceDate: new Date(),
+          invoiceNumber: invoiceNumber,
+        },
+      });
+
+      return {
+        purchase: purchase,
+      };
     });
 
-    const purchaseData = await tx.purchase.findUnique({
+    const purchaseData = await prisma.purchase.findUnique({
       where: { id: parseInt(purchaseId, 10) },
       include: {
         purchaseDetails: {
@@ -354,7 +364,7 @@ const generateUserProductPurchaseInvoice = async (tx, purchaseId, res, req) => {
 
     // ✅ Step 4: Generate the PDF
     await generateProductPurchaseInvoice(invoiceData, filePath);
-    await tx.purchase.update({
+    await prisma.purchase.update({
       where: { id: parseInt(purchaseId, 10) },
       data: {
         invoicePath: filePath, // Save relative or absolute path based on your use-case
@@ -373,7 +383,7 @@ const generateUserProductPurchaseInvoice = async (tx, purchaseId, res, req) => {
     //     // fs.unlink(filePath, () => {});
     //   }
     // });
-    return invoiceNumber;
+    return;
   } catch (error) {
     res.status(500).json({
       errors: {

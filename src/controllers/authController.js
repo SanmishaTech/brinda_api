@@ -152,7 +152,6 @@ const register = async (req, res, next) => {
                   memberMobile: mobile,
                   memberState: state,
                   positionToParent: position,
-                  status: "Pending",
                 },
               },
             },
@@ -237,6 +236,7 @@ const login = async (req, res, next) => {
       token,
       user: {
         id: user.id,
+        memberId: user.member?.id,
         name: user.name,
         email: user.email,
         role: user.role,
