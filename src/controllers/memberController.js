@@ -216,43 +216,6 @@ const updateMember = async (req, res) => {
 };
 
 /**
- * Delete member by ID
-//  */
-// const deleteMember = async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//     await prisma.member.delete({
-//       where: { id: parseInt(id) },
-//     });
-
-//     res.status(200).json({
-//       message: "Member deleted successfully",
-//     });
-//   } catch (error) {
-//     if (
-//       error.code === "P2003" ||
-//       error.message.includes("Foreign key constraint failed")
-//     ) {
-//       return res.status(409).json({
-//         errors: {
-//           message:
-//             "Cannot delete this Member because it is referenced in related data.",
-//         },
-//       });
-//     }
-//     if (error.code === "P2025") {
-//       return res.status(404).json({ errors: { message: "Member not found" } });
-//     }
-
-//     return res.status(500).json({
-//       message: "Failed to delete member",
-//       details: error.message,
-//     });
-//   }
-// };
-
-/**
  * Get all members without pagination
  */
 const getAllMembers = async (req, res) => {
@@ -437,7 +400,146 @@ const myGenealogy = async (req, res, next) => {
       rightsRightMember,
     });
   } catch (error) {
-    next(error);
+    return res.status(500).json({
+      errors: {
+        message: "Failed to fetch Genealogy.",
+        details: error.message,
+      },
+    });
+  }
+};
+
+// const myDirectReferralList = async (req, res, next) => {
+//   try {
+//     const memberId = req.user.member.id;
+
+//     const rightReferrals = await prisma.member.findMany({
+//       where: {
+//         parentId: parseInt(memberId), // Ensure this parses the ID correctly
+//         positionToParent: RIGHT, // Assuming RIGHT is a string enum or value
+//       },
+//       select: {
+//         id: true,
+//         memberName: true,
+//         memberUsername: true,
+//         positionToParent: true,
+//         status: true,
+//       },
+//     });
+
+//     const leftReferrals = await prisma.member.findMany({
+//       where: {
+//         parentId: parseInt(memberId), // Ensure this parses the ID correctly
+//         positionToParent: LEFT, // Assuming RIGHT is a string enum or value
+//       },
+//       select: {
+//         id: true,
+//         memberName: true,
+//         memberUsername: true,
+//         positionToParent: true,
+//         status: true,
+//       },
+//     });
+
+//     res.json({
+//       referrals: {
+//         rightReferrals,
+//         leftReferrals,
+//       },
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       errors: {
+//         message: "Failed to fetch Referrals.",
+//         details: error.message,
+//       },
+//     });
+//   }
+// };
+
+const myDirectReferralList = async (req, res, next) => {
+  try {
+    const memberId = req.user.member.id;
+
+    // Pagination inputs
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Optional sorting
+    const sortBy = req.query.sortBy || "id";
+    const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+
+    // Optional search
+    const search = req.query.search || "";
+
+    // Build search condition
+    const searchCondition = search
+      ? {
+          OR: [
+            {
+              memberName: {
+                contains: search,
+              },
+            },
+            {
+              memberUsername: {
+                contains: search,
+              },
+            },
+          ],
+        }
+      : {};
+
+    // Combined referrals (LEFT or RIGHT)
+    const referrals = await prisma.member.findMany({
+      where: {
+        sponsorId: parseInt(memberId),
+        positionToParent: {
+          in: [LEFT, RIGHT], // Assumes positionToParent is a string
+        },
+        ...searchCondition,
+      },
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        memberName: true,
+        memberUsername: true,
+        positionToParent: true,
+        status: true,
+      },
+    });
+
+    // Count total referrals
+    const totalReferrals = await prisma.member.count({
+      where: {
+        parentId: parseInt(memberId),
+        positionToParent: {
+          in: [LEFT, RIGHT],
+        },
+        ...searchCondition,
+      },
+    });
+
+    const totalPages = Math.ceil(totalReferrals / limit);
+
+    res.json({
+      referrals,
+      page,
+      totalPages,
+      totalReferrals,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      errors: {
+        message: "Failed to fetch referrals.",
+        details: error.message,
+      },
+    });
   }
 };
 
@@ -445,8 +547,8 @@ module.exports = {
   getMembers,
   getMemberById,
   updateMember,
-  // deleteMember,
   getAllMembers,
   getMemberLogs,
   myGenealogy,
+  myDirectReferralList,
 };

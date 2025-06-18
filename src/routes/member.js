@@ -4,10 +4,10 @@ const {
   getMembers,
   getMemberById,
   updateMember,
-  deleteMember,
   getAllMembers,
   getMemberLogs,
   myGenealogy,
+  myDirectReferralList,
 } = require("../controllers/memberController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -103,6 +103,48 @@ const acl = require("../middleware/acl");
  *         description: Failed to fetch members
  */
 router.get("/", auth, acl("members.read"), getMembers);
+
+/**
+ * @swagger
+ * /api/members/direct-referrals:
+ *   get:
+ *     summary: Get direct referral list of a member
+ *     tags: [Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: memberId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Member ID to get direct referrals for
+ *     responses:
+ *       200:
+ *         description: List of direct referrals
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 memberId:
+ *                   type: integer
+ *                   description: ID of the member whose referrals are being returned
+ *                 directReferrals:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Member'
+ *       404:
+ *         description: Member not found or no direct referrals
+ *       500:
+ *         description: Failed to fetch direct referral list
+ */
+router.get(
+  "/direct-referrals",
+  auth,
+  acl("members.read"),
+  myDirectReferralList
+);
 
 /**
  * @swagger
@@ -404,11 +446,6 @@ router.put("/:id", auth, acl("members.write"), updateMember);
  *           type: string
  *           format: date-time
  */
-router.get(
-  "/genealogy/:memberId",
-  auth,
-  acl("members.read"),
-  myGenealogy
-);
+router.get("/genealogy/:memberId", auth, acl("members.read"), myGenealogy);
 
 module.exports = router;
