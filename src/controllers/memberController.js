@@ -2,7 +2,7 @@ const { PrismaClient, Prisma } = require("@prisma/client");
 const validateRequest = require("../utils/validateRequest");
 const prisma = new PrismaClient();
 const { z } = require("zod");
-const { LEFT, RIGHT } = require("../config/data");
+const { LEFT, RIGHT, PENDING } = require("../config/data");
 
 /**
  * Get all members with pagination, sorting, and search
@@ -543,6 +543,64 @@ const myDirectReferralList = async (req, res, next) => {
   }
 };
 
+const getMembersWithPendingTransactions = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder || "desc";
+
+  try {
+    const whereClause = {
+      walletTransactions: {
+        some: {
+          status: PENDING,
+        },
+      },
+      OR: [
+        { memberUsername: { contains: search } },
+        { memberName: { contains: search } },
+      ],
+    };
+
+    const members = await prisma.member.findMany({
+      where: whereClause,
+      skip,
+      take: limit,
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+      include: {
+        walletTransactions: {
+          where: {
+            status: PENDING,
+          },
+        },
+      },
+    });
+
+    const totalMembers = await prisma.member.count({
+      where: whereClause,
+    });
+
+    const totalPages = Math.ceil(totalMembers / limit);
+
+    res.status(200).json({
+      members,
+      page,
+      totalPages,
+      totalMembers,
+    });
+  } catch (error) {
+    console.error("Error fetching members with pending transactions:", error);
+    res.status(500).json({
+      message: "Failed to fetch members",
+      details: error.message,
+    });
+  }
+};
+
 module.exports = {
   getMembers,
   getMemberById,
@@ -551,4 +609,5 @@ module.exports = {
   getMemberLogs,
   myGenealogy,
   myDirectReferralList,
+  getMembersWithPendingTransactions,
 };

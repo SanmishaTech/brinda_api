@@ -8,6 +8,7 @@ const {
   getMemberLogs,
   myGenealogy,
   myDirectReferralList,
+  getMembersWithPendingTransactions,
 } = require("../controllers/memberController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -103,6 +104,104 @@ const acl = require("../middleware/acl");
  *         description: Failed to fetch members
  */
 router.get("/", auth, acl("members.read"), getMembers);
+/**
+ * @swagger
+ * /api/members/pending-wallet-transactions:
+ *   get:
+ *     summary: Get members who have at least one pending wallet transaction
+ *     tags: [Members]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of members per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term for member name or username
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: id
+ *         description: Field to sort by (e.g., id, memberName, memberUsername)
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: asc
+ *         description: Sort order (ascending or descending)
+ *     responses:
+ *       200:
+ *         description: List of members with at least one pending transaction
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 members:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       memberName:
+ *                         type: string
+ *                       memberUsername:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                       walletTransactions:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: integer
+ *                             amount:
+ *                               type: number
+ *                             type:
+ *                               type: string
+ *                             status:
+ *                               type: string
+ *                             transactionDate:
+ *                               type: string
+ *                               format: date-time
+ *                             createdAt:
+ *                               type: string
+ *                               format: date-time
+ *                 page:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 totalMembers:
+ *                   type: integer
+ *       500:
+ *         description: Failed to fetch members with pending transactions
+ */
+router.get(
+  "/pending-wallet-transactions",
+  auth,
+  acl("members.read"),
+  getMembersWithPendingTransactions
+);
 
 /**
  * @swagger
