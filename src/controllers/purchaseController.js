@@ -8,8 +8,9 @@ const { numberToWords } = require("../utils/numberToWords");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs").promises; // Use promises API
 const path = require("path");
-const { CREDIT, APPROVED, INCREMENT } = require("../config/data");
+const { CREDIT, APPROVED, INCREMENT, INACTIVE } = require("../config/data");
 const { updatePVBalance } = require("../utils/updatePVBalance");
+const { updateCount } = require("../utils/updateCount");
 const {
   generateProductPurchaseInvoice,
 } = require("../utils/invoice/user/generateProductPurchaseInvoice");
@@ -104,12 +105,12 @@ const createPurchase = async (req, res) => {
     if (
       parseFloat(req.user.member.walletBalance) < parseFloat(totalAmountWithGst)
     ) {
-      console.log(
-        "Wallet Balance = ",
-        parseFloat(req.user.member.walletBalance).toFixed(2),
-        "Total Amount With GST =",
-        parseFloat(totalAmountWithGst).toFixed(2)
-      );
+      // console.log(
+      //   "Wallet Balance = ",
+      //   parseFloat(req.user.member.walletBalance).toFixed(2),
+      //   "Total Amount With GST =",
+      //   parseFloat(totalAmountWithGst).toFixed(2)
+      // );
       return res.status(400).json({
         errors: {
           message: "Insufficient wallet balance",
@@ -147,7 +148,7 @@ const createPurchase = async (req, res) => {
         },
       });
 
-      const member = await tx.member.update({
+      let member = await tx.member.update({
         where: { id: req.user.member.id },
         data: {
           walletBalance: {
@@ -171,7 +172,13 @@ const createPurchase = async (req, res) => {
         },
       });
 
-      await updatePVBalance(tx, INCREMENT, totalProductPV, req.user.member.id);
+      member = await updatePVBalance(
+        tx,
+        INCREMENT,
+        totalProductPV,
+        req.user.member.id
+      );
+    
 
       const transaction = await tx.walletTransaction.create({
         data: {

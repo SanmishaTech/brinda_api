@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { updateCount } = require("./updateCount");
 const {
   INCREMENT,
   DECREMENT,
@@ -9,6 +10,7 @@ const {
   GOLD,
   DIAMOND,
 } = require("../config/data");
+const { checkDirectMatch } = require("./checkDirectMatch");
 const updatePVBalance = async (
   tx = prisma,
   type = INCREMENT,
@@ -34,7 +36,13 @@ const updatePVBalance = async (
             decrement: 1,
           },
         },
+        include: {
+          sponsor: true,
+        },
       });
+      updateCount(member);
+
+      checkDirectMatch(member.sponsor);
       await tx.memberLog.create({
         data: {
           memberId: member.id,
@@ -105,6 +113,7 @@ const updatePVBalance = async (
     }
   }
 
+  return member;
   /*
   Inactive = 0
   Associate = 1

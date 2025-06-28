@@ -160,7 +160,7 @@ const register = async (req, res, next) => {
             },
           });
 
-          updateCount(newUser.member);
+          // updateCount(newUser.member);
 
           return { newUser };
         });

@@ -59,9 +59,17 @@ model Member {
   memberMobile    String?   
   tPin            String
   positionToParent        String?
-  status          MemberStatus @default(Inactive) 
+  status          MemberStatus @default(Inactive)
+  leftBalance Int       @default(0)
+  rightBalance Int       @default(0)
+  is2_1Pass   Boolean @default(false)
+  isDirectMatch Boolean  @default(false)
+  isDoubleMatch Boolean  @default(false)
+  matchingMentorIncomeL1   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
+  matchingMentorIncomeL2   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
   walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
-    memberDob        DateTime?
+  matchingIncomeWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
+  memberDob        DateTime?
   memberAddress    String?   @db.Text
   memberPincode     Int?
   memberGender    String?
