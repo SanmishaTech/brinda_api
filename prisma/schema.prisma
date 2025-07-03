@@ -63,12 +63,17 @@ model Member {
   leftBalance Int       @default(0)
   rightBalance Int       @default(0)
   is2_1Pass   Boolean @default(false)
+  is1_1Pass   Boolean @default(false)   //not required
   isDirectMatch Boolean  @default(false)
   isDoubleMatch Boolean  @default(false)
   matchingMentorIncomeL1   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
   matchingMentorIncomeL2   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
   walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
   matchingIncomeWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
+  commissionCount    Int     @default(0)
+  commissionDate        DateTime?            // the date the counter applies to
+  isLeftChildrenSilver   Boolean @default(false)
+  isRightChildrenSilver   Boolean @default(false)
   memberDob        DateTime?
   memberAddress    String?   @db.Text
   memberPincode     Int?

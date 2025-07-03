@@ -57,7 +57,7 @@ const ASSOCIATE = "Associate";
 const SILVER = "Silver";
 const GOLD = "Gold";
 const DIAMOND = "Diamond";
-
+const MAX_COMMISSIONS_PER_DAY = 25;
 module.exports = {
   stateOptions,
   GENDER_MALE,
@@ -80,4 +80,5 @@ module.exports = {
   SILVER,
   GOLD,
   DIAMOND,
+  MAX_COMMISSIONS_PER_DAY,
 };

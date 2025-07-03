@@ -23,7 +23,7 @@ async function seed() {
     const member = await prisma.user.create({
       data: {
         name: "Brinda",
-        username: "0625000001",
+        username: "0725000001",
         email: "brinda@gmail.com",
         mobile: "2222222222",
         password: "abcd123",
@@ -32,16 +32,46 @@ async function seed() {
         member: {
           create: {
             memberName: "Brinda",
-            memberUsername: "0625000001",
+            memberUsername: "0725000001",
             memberEmail: "brinda@gmail.com",
             memberMobile: "2222222222",
             positionToParent: TOP,
             memberState: "Maharashtra",
             tPin: "6789",
             status: DIAMOND,
+            isDirectMatch: true,
+            is2_1Pass: true,
+            isDoubleMatch: true,
           },
         },
       },
+    });
+
+    await prisma.product.createMany({
+      data: [
+        {
+          productName: "Aloe Vera Juice",
+          hsnCode: "30049011",
+          mrp: 450.0,
+          mfgRate: 380.0,
+          gst: 12.0,
+          dspRate: 400.0,
+          pv: 1.0,
+          bv: 3.0,
+          bvPrice: 350.0,
+        },
+        {
+          productName: "Protein Powder",
+          hsnCode: "21069099",
+          mrp: 950.0,
+          mfgRate: 800.0,
+          gst: 18.0,
+          dspRate: 880.0,
+          pv: 0.5,
+          bv: 6.0,
+          bvPrice: 780.0,
+        },
+      ],
     });
 
     console.log("✅ Seeding completed.");

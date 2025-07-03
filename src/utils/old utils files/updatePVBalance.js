@@ -45,6 +45,7 @@ const updatePVBalance = async (
         },
       });
       member = await updateCount(member);
+     
 
       await tx.memberLog.create({
         data: {

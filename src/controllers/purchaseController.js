@@ -343,21 +343,21 @@ const generateUserProductPurchaseInvoice = async (tx, purchaseId, res, req) => {
     try {
       if (oldPath) {
         await fs.unlink(oldPath);
-        console.log("Old invoice deleted:", oldPath);
+        // console.log("Old invoice deleted:", oldPath);
 
         const folderToDelete = path.dirname(oldPath);
         const files = await fs.readdir(folderToDelete);
 
         if (files.length === 0) {
           await fs.rmdir(folderToDelete);
-          console.log("Empty folder deleted:", folderToDelete);
+          // console.log("Empty folder deleted:", folderToDelete);
         }
       }
     } catch (err) {
       console.error("Error deleting invoice or folder:", err);
     }
     // end
-    console.log("Writing PDF to:", filePath);
+    // console.log("Writing PDF to:", filePath);
 
     // ✅ Step 4: Generate the PDF
     await generateProductPurchaseInvoice(invoiceData, filePath);
@@ -393,7 +393,7 @@ const generateUserProductPurchaseInvoice = async (tx, purchaseId, res, req) => {
 
 const DownloadPurchaseInvoice = async (req, res, next) => {
   const { uuid, filename, purchaseId } = req.params;
-  console.log("working");
+  // console.log("working");
   try {
     // Construct the file path
     const filePath = path.join(
