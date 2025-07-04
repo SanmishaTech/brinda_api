@@ -98,7 +98,6 @@ const check2_1Pass = async (member) => {
             const availableCommissionCount =
               MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
             if (minAssociateBalance > availableCommissionCount) {
-             
               matchingIncomeWalletBalance +=
                 availableCommissionCount * ASSOCIATE_COMMISSION;
 
@@ -107,7 +106,6 @@ const check2_1Pass = async (member) => {
               };
               // matchingMentorIncomeL1 = availableCommissionCount;
             } else {
-              
               matchingIncomeWalletBalance +=
                 minAssociateBalance * ASSOCIATE_COMMISSION;
 
@@ -120,13 +118,11 @@ const check2_1Pass = async (member) => {
         } else {
           updates.commissionDate = today;
           if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
-         
             matchingIncomeWalletBalance +=
               minAssociateBalance * ASSOCIATE_COMMISSION;
             updates.associateCommissionCount = minAssociateBalance;
             // matchingMentorIncomeL1 = minBalance;
           } else {
-            
             matchingIncomeWalletBalance +=
               MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
             updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
@@ -482,9 +478,14 @@ const check2_1Pass = async (member) => {
           },
         },
       });
+
+      parent = await checkMatchingMentorIncomeL1(
+        parent,
+        matchingIncomeWalletBalance
+      );
     } else {
       // 2:1 no true
-
+      let matchingIncomeWalletBalance = 0;
       const leftTotal = parent.leftCount + parent.leftDirectCount;
       const rightTotal = parent.rightCount + parent.rightDirectCount;
 
@@ -545,14 +546,17 @@ const check2_1Pass = async (member) => {
           updates.matchingIncomeWalletBalance = {
             increment: ASSOCIATE_COMMISSION,
           };
+          matchingIncomeWalletBalance += ASSOCIATE_COMMISSION;
         } else if (parent.status === SILVER) {
           updates.commissionDate = today;
-          updates.associateCommissionCount = 1;
+          updates.associateCommissionCount = 1; //since 2:1 is not true that means silverCommissionCount must be 0
           updates.silverCommissionCount = minSilverBalance;
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
           updates.matchingIncomeWalletBalance = {
             increment: totalSilverCommission + ASSOCIATE_COMMISSION,
           };
+          matchingIncomeWalletBalance +=
+            totalSilverCommission + ASSOCIATE_COMMISSION;
         } else if (parent.status === GOLD) {
           updates.commissionDate = today;
           updates.associateCommissionCount = 1;
@@ -566,6 +570,8 @@ const check2_1Pass = async (member) => {
               totalSilverCommission +
               ASSOCIATE_COMMISSION,
           };
+          matchingIncomeWalletBalance +=
+            totalGoldCommission + totalSilverCommission + ASSOCIATE_COMMISSION;
         } else if (parent.status === DIAMOND) {
           updates.commissionDate = today;
           updates.associateCommissionCount = 1;
@@ -582,6 +588,11 @@ const check2_1Pass = async (member) => {
               totalSilverCommission +
               ASSOCIATE_COMMISSION,
           };
+          matchingIncomeWalletBalance +=
+            totalDiamondCommission +
+            totalGoldCommission +
+            totalSilverCommission +
+            ASSOCIATE_COMMISSION;
         }
       }
 
@@ -591,7 +602,10 @@ const check2_1Pass = async (member) => {
           ...updates,
         },
       });
-      // await checkMatchingMentorIncomeL1(parent, 1);
+      parent = await checkMatchingMentorIncomeL1(
+        parent,
+        matchingIncomeWalletBalance
+      );
     }
 
     currentMember = parent;
