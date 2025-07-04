@@ -13,8 +13,13 @@ const {
 const { checkDirectMatch } = require("./checkDirectMatch");
 const { check2_1Pass } = require("./check2_1Pass");
 const { incrementMemberStatusCount } = require("./incrementMemberStatusCount");
-const updatePVBalance = async (type = INCREMENT, value, memberId) => {
-  let member = await prisma.member.update({
+const updatePVBalance = async (
+  tx = prisma,
+  type = INCREMENT,
+  value,
+  memberId
+) => {
+  let member = await tx.member.update({
     where: { id: memberId },
     data: {
       pvBalance: {
@@ -28,7 +33,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
 
   if (member.status === INACTIVE) {
     if (member.pvBalance >= 1) {
-      member = await prisma.member.update({
+      member = await tx.member.update({
         where: { id: memberId },
         data: {
           status: ASSOCIATE,
@@ -40,14 +45,10 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
           sponsor: true,
         },
       });
-      newUserId = await updateCount(member);
-      member = await prisma.member.findUnique({
-        where: { id: newUserId },
-        include: { sponsor: true },
-      });
+      member = await updateCount(member);
       console.log("working i");
       member = await incrementMemberStatusCount(member);
-      await prisma.memberLog.create({
+      await tx.memberLog.create({
         data: {
           memberId: member.id,
           pv: -1,
@@ -58,7 +59,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
   }
   if (member.status === ASSOCIATE) {
     if (member.pvBalance >= 2) {
-      member = await prisma.member.update({
+      member = await tx.member.update({
         where: { id: memberId },
         data: {
           status: SILVER,
@@ -73,7 +74,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
       console.log("working a");
       member = await incrementMemberStatusCount(member);
 
-      await prisma.memberLog.create({
+      await tx.memberLog.create({
         data: {
           memberId: member.id,
           pv: -2,
@@ -84,7 +85,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
   }
   if (member.status === SILVER) {
     if (member.pvBalance >= 7) {
-      member = await prisma.member.update({
+      member = await tx.member.update({
         where: { id: memberId },
         data: {
           status: GOLD,
@@ -100,7 +101,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
 
       member = await incrementMemberStatusCount(member);
 
-      await prisma.memberLog.create({
+      await tx.memberLog.create({
         data: {
           memberId: member.id,
           pv: -7,
@@ -111,7 +112,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
   }
   if (member.status === GOLD) {
     if (member.pvBalance >= 10) {
-      member = await prisma.member.update({
+      member = await tx.member.update({
         where: { id: memberId },
         data: {
           status: DIAMOND,
@@ -127,7 +128,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
 
       member = await incrementMemberStatusCount(member);
 
-      await prisma.memberLog.create({
+      await tx.memberLog.create({
         data: {
           memberId: member.id,
           pv: -10,

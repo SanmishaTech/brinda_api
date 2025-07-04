@@ -61,12 +61,9 @@ const updateCount = async (newUser) => {
     currentPosition = parent.positionToParent;
   } while (parent.positionToParent !== TOP);
 
-  newUser = await prisma.member.findUnique({
-    where: { id: newUserId },
-    include: { sponsor: true },
-  });
+ 
 
-  return newUser;
+  return newUserId;
 };
 
 module.exports = { updateCount };

@@ -58,6 +58,10 @@ const SILVER = "Silver";
 const GOLD = "Gold";
 const DIAMOND = "Diamond";
 const MAX_COMMISSIONS_PER_DAY = 25;
+const ASSOCIATE_COMMISSION = 100;
+const SILVER_COMMISSION = 200;
+const GOLD_COMMISSION = 700;
+const DIAMOND_COMMISSION = 1000;
 module.exports = {
   stateOptions,
   GENDER_MALE,
@@ -81,4 +85,8 @@ module.exports = {
   GOLD,
   DIAMOND,
   MAX_COMMISSIONS_PER_DAY,
+  ASSOCIATE_COMMISSION,
+  SILVER_COMMISSION,
+  GOLD_COMMISSION,
+  DIAMOND_COMMISSION,
 };

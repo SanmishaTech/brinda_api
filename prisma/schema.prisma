@@ -44,7 +44,6 @@ model Member {
   sponsorId       Int?
   sponsor          Member?   @relation("MemberSponsor", fields: [sponsorId], references: [id], onDelete: Restrict)
   sponsorChildren   Member[]  @relation("MemberSponsor") // Inverse of sponsor
-
   parentId        Int?
   parent          Member?   @relation("MemberParent", fields: [parentId], references: [id], onDelete: Restrict)
   parentChildren        Member[]  @relation("MemberParent") // Inverse of parent
@@ -63,17 +62,26 @@ model Member {
   leftBalance Int       @default(0)
   rightBalance Int       @default(0)
   is2_1Pass   Boolean @default(false)
-  is1_1Pass   Boolean @default(false)   //not required
   isDirectMatch Boolean  @default(false)
-  isDoubleMatch Boolean  @default(false)
+  isMatchingMentorL1 Boolean  @default(false)
+  isMatchingMentorL2 Boolean  @default(false)
   matchingMentorIncomeL1   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
   matchingMentorIncomeL2   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
   walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
   matchingIncomeWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
-  commissionCount    Int     @default(0)
   commissionDate        DateTime?            // the date the counter applies to
-  isLeftChildrenSilver   Boolean @default(false)
-  isRightChildrenSilver   Boolean @default(false)
+  leftAssociateBalance Int     @default(0)
+  leftSilverBalance Int     @default(0)
+  leftGoldBalance Int     @default(0)
+  leftDiamondBalance Int     @default(0)
+  rightAssociateBalance Int     @default(0)
+  rightSilverBalance Int     @default(0)
+  rightGoldBalance Int     @default(0)
+  rightDiamondBalance Int     @default(0)
+  associateCommissionCount Int     @default(0)
+  silverCommissionCount Int     @default(0)
+  goldCommissionCount Int     @default(0)
+  diamondCommissionCount Int     @default(0)
   memberDob        DateTime?
   memberAddress    String?   @db.Text
   memberPincode     Int?

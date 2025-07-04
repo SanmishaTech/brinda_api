@@ -18,18 +18,6 @@ const checkDirectMatch = async (member) => {
     }
   }
 
-  if (!member.sponsor.isDoubleMatch) {
-    if (
-      member.sponsor.leftDirectCount > 1 &&
-      member.sponsor.rightDirectCount > 1
-    ) {
-      sponsorData = await prisma.member.update({
-        where: { id: member.sponsor.id },
-        data: { isDoubleMatch: true },
-      });
-    }
-  }
-
   return sponsorData;
 };
 

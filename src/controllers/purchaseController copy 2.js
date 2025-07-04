@@ -118,76 +118,81 @@ const createPurchase = async (req, res) => {
       });
     }
 
-    const newPurchase = await prisma.purchase.create({
-      data: {
-        memberId: req.user.member.id,
-        purchaseDate: new Date(),
-        totalAmountWithoutGst: new Prisma.Decimal(totalAmountWithoutGst),
-        totalAmountWithGst: new Prisma.Decimal(totalAmountWithGst),
-        totalGstAmount: new Prisma.Decimal(totalGstAmount),
-        totalProductPV: new Prisma.Decimal(totalProductPV),
-        state: req.user.member.memberState,
-        purchaseDetails: {
-          create: purchaseDetails.map((detail) => ({
-            productId: parseInt(detail.productId),
-            quantity: detail.quantity,
-            rate: new Prisma.Decimal(detail.rate),
-            cgstPercent: new Prisma.Decimal(detail.cgstPercent),
-            sgstPercent: new Prisma.Decimal(detail.sgstPercent),
-            igstPercent: new Prisma.Decimal(detail.igstPercent),
-            cgstAmount: new Prisma.Decimal(detail.cgstAmount),
-            sgstAmount: new Prisma.Decimal(detail.sgstAmount),
-            igstAmount: new Prisma.Decimal(detail.igstAmount),
-            amountWithoutGst: new Prisma.Decimal(detail.amountWithoutGst),
-            amountWithGst: new Prisma.Decimal(detail.amountWithGst),
-            pvPerUnit: new Prisma.Decimal(detail.pvPerUnit),
-            totalPV: new Prisma.Decimal(detail.totalPV),
-          })),
+    const result = await prisma.$transaction(async (tx) => {
+      const newPurchase = await tx.purchase.create({
+        data: {
+          memberId: req.user.member.id,
+          purchaseDate: new Date(),
+          totalAmountWithoutGst: new Prisma.Decimal(totalAmountWithoutGst),
+          totalAmountWithGst: new Prisma.Decimal(totalAmountWithGst),
+          totalGstAmount: new Prisma.Decimal(totalGstAmount),
+          totalProductPV: new Prisma.Decimal(totalProductPV),
+          state: req.user.member.memberState,
+          purchaseDetails: {
+            create: purchaseDetails.map((detail) => ({
+              productId: parseInt(detail.productId),
+              quantity: detail.quantity,
+              rate: new Prisma.Decimal(detail.rate),
+              cgstPercent: new Prisma.Decimal(detail.cgstPercent),
+              sgstPercent: new Prisma.Decimal(detail.sgstPercent),
+              igstPercent: new Prisma.Decimal(detail.igstPercent),
+              cgstAmount: new Prisma.Decimal(detail.cgstAmount),
+              sgstAmount: new Prisma.Decimal(detail.sgstAmount),
+              igstAmount: new Prisma.Decimal(detail.igstAmount),
+              amountWithoutGst: new Prisma.Decimal(detail.amountWithoutGst),
+              amountWithGst: new Prisma.Decimal(detail.amountWithGst),
+              pvPerUnit: new Prisma.Decimal(detail.pvPerUnit),
+              totalPV: new Prisma.Decimal(detail.totalPV),
+            })),
+          },
         },
-      },
-    });
+      });
 
-    let member = await prisma.member.update({
-      where: { id: req.user.member.id },
-      data: {
-        walletBalance: {
-          decrement: new Prisma.Decimal(totalAmountWithGst),
+      let member = await tx.member.update({
+        where: { id: req.user.member.id },
+        data: {
+          walletBalance: {
+            decrement: new Prisma.Decimal(totalAmountWithGst),
+          },
         },
-      },
+      });
+
+      const invoiceNumber = await generateUserProductPurchaseInvoice(
+        tx,
+        newPurchase.id,
+        res,
+        req
+      );
+
+      const memberLog = await tx.memberLog.create({
+        data: {
+          memberId: req.user.member.id,
+          message: `Products  Purchased (${invoiceNumber})`,
+          pv: new Prisma.Decimal(totalProductPV),
+        },
+      });
+
+      member = await updatePVBalance(
+        INCREMENT,
+        totalProductPV,
+        req.user.member.id
+      );
+
+      const transaction = await tx.walletTransaction.create({
+        data: {
+          memberId: req.user.member.id,
+          amount: new Prisma.Decimal(totalAmountWithGst),
+          type: CREDIT,
+          status: APPROVED,
+          notes: `Products Purchased (${invoiceNumber})`,
+          transactionDate: new Date(),
+        },
+      });
+
+      return { newPurchase, member };
     });
 
-    const invoiceNumber = await generateUserProductPurchaseInvoice(
-      newPurchase.id,
-      res,
-      req
-    );
-
-    const memberLog = await prisma.memberLog.create({
-      data: {
-        memberId: req.user.member.id,
-        message: `Products  Purchased (${invoiceNumber})`,
-        pv: new Prisma.Decimal(totalProductPV),
-      },
-    });
-
-    member = await updatePVBalance(
-      INCREMENT,
-      totalProductPV,
-      req.user.member.id
-    );
-
-    const transaction = await prisma.walletTransaction.create({
-      data: {
-        memberId: req.user.member.id,
-        amount: new Prisma.Decimal(totalAmountWithGst),
-        type: CREDIT,
-        status: APPROVED,
-        notes: `Products Purchased (${invoiceNumber})`,
-        transactionDate: new Date(),
-      },
-    });
-
-    return res.status(201).json(newPurchase);
+    return res.status(201).json(result.newPurchase);
   } catch (error) {
     return res.status(500).json({
       errors: {
@@ -228,14 +233,14 @@ const getPurchaseById = async (req, res) => {
   }
 };
 
-const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
+const generateUserProductPurchaseInvoice = async (tx, purchaseId, res, req) => {
   try {
     let purchase = null;
     // Step 2: Check if invoice number already exists
 
-    const invoiceNumber = await generateProductPurchaseInvoiceNumber();
+    const invoiceNumber = await generateProductPurchaseInvoiceNumber(tx);
 
-    purchase = await prisma.purchase.update({
+    purchase = await tx.purchase.update({
       where: { id: parseInt(purchaseId, 10) },
       data: {
         invoiceDate: new Date(),
@@ -243,7 +248,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
       },
     });
 
-    const purchaseData = await prisma.purchase.findUnique({
+    const purchaseData = await tx.purchase.findUnique({
       where: { id: parseInt(purchaseId, 10) },
       include: {
         purchaseDetails: {
@@ -354,7 +359,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
 
     // ✅ Step 4: Generate the PDF
     await generateProductPurchaseInvoice(invoiceData, filePath);
-    await prisma.purchase.update({
+    await tx.purchase.update({
       where: { id: parseInt(purchaseId, 10) },
       data: {
         invoicePath: filePath, // Save relative or absolute path based on your use-case

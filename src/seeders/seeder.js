@@ -41,7 +41,6 @@ async function seed() {
             status: DIAMOND,
             isDirectMatch: true,
             is2_1Pass: true,
-            isDoubleMatch: true,
           },
         },
       },
