@@ -12,6 +12,9 @@ const {
 
 const incrementMemberStatusCount = async (newUser) => {
   let parentId = newUser.parentId;
+  if (!parentId) {
+    return newUser;
+  }
   let newUserId = newUser.id;
   const status = newUser.status;
 

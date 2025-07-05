@@ -3,7 +3,10 @@ const prisma = new PrismaClient();
 const { LEFT, RIGHT, TOP } = require("../config/data");
 
 const updateCount = async (newUser) => {
-  let parentId = newUser.parentId;
+  let parentId = newUser?.parentId;
+  if (!parentId) {
+    return newUser.id;
+  }
   let newUserId = newUser.id;
 
   let currentPosition = newUser.positionToParent;
@@ -60,8 +63,6 @@ const updateCount = async (newUser) => {
     parentId = parent.parentId;
     currentPosition = parent.positionToParent;
   } while (parent.positionToParent !== TOP);
-
- 
 
   return newUserId;
 };

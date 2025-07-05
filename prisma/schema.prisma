@@ -69,7 +69,10 @@ model Member {
   matchingMentorIncomeL2   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
   walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
   matchingIncomeWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
-  commissionDate        DateTime?            // the date the counter applies to
+  associateCommissionDate        DateTime?            // the date the counter applies to
+  silverCommissionDate        DateTime?
+  goldCommissionDate        DateTime?
+  diamondCommissionDate        DateTime?
   leftAssociateBalance Int     @default(0)
   leftSilverBalance Int     @default(0)
   leftGoldBalance Int     @default(0)
