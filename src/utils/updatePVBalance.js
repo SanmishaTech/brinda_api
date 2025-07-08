@@ -40,12 +40,8 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
           sponsor: true,
         },
       });
-      newUserId = await updateCount(member);
-      member = await prisma.member.findUnique({
-        where: { id: newUserId },
-        include: { sponsor: true },
-      });
-      console.log("working i");
+      member = await updateCount(member);
+
       member = await incrementMemberStatusCount(member);
       await prisma.memberLog.create({
         data: {
@@ -70,7 +66,6 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
           sponsor: true,
         },
       });
-      console.log("working a");
       member = await incrementMemberStatusCount(member);
 
       await prisma.memberLog.create({
@@ -96,7 +91,6 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
           sponsor: true,
         },
       });
-      console.log("working s");
 
       member = await incrementMemberStatusCount(member);
 
@@ -123,7 +117,6 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
           sponsor: true,
         },
       });
-      console.log("working g");
 
       member = await incrementMemberStatusCount(member);
 

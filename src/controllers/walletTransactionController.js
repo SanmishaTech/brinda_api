@@ -245,7 +245,7 @@ const getWalletTransactionsByMemberId = async (req, res) => {
  */
 const getWalletAmount = async (req, res) => {
   const walletBalance = req.user.member.walletBalance; // Extract memberId from authenticated user
-  console.log(req.user);
+  // console.log(req.user);
   try {
     // const walletAmount = await prisma.member.findUnique({
     //   where: { id: parseInt(memberId) },

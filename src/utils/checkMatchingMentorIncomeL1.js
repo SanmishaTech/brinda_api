@@ -3,11 +3,11 @@ const prisma = new PrismaClient();
 const { LEFT, RIGHT, TOP, GOLD, SILVER, DIAMOND } = require("../config/data");
 
 const checkMatchingMentorIncomeL1 = async (parent, value) => {
-  if (parent?.sponsor?.isMatchingMentorL1 && value > 0) {
+  if (parent?.sponsor?.isMatchingMentorL1 === true && value > 0) {
     const sponsor = await prisma.member.update({
       where: { id: parent.sponsor.id },
       data: {
-        matchingMentorIncomeL1: { increment: value * 0.05 },
+        matchingMentorIncomeL1: { increment: value * 0.1 },
       },
     });
   } else if (
@@ -19,7 +19,7 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
       data: {
         isMatchingMentorL1: true,
         ...(value > 0 && {
-          matchingMentorIncomeL1: { increment: value * 0.05 },
+          matchingMentorIncomeL1: { increment: value * 0.1 },
         }),
       },
     });

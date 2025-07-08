@@ -4,6 +4,7 @@ const { GOLD, DIAMOND, LEFT, RIGHT } = require("../config/data");
 
 const checkMatchingMentorIncomeL2 = async (parent, value) => {
   const L1SponsorId = parent?.sponsor?.id;
+
   if (!L1SponsorId) return;
 
   // Get L1 Sponsor with their own sponsor (L2)
@@ -15,6 +16,7 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   });
 
   const L2SponsorId = L1Sponsor?.sponsor?.id;
+
   if (!L2SponsorId) return;
 
   // Get L2Sponsor with their parentChildren
@@ -39,10 +41,11 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
       where: { id: L2Sponsor.id },
       data: {
         ...(value > 0 && {
-          matchingMentorIncomeL2: { increment: value * 0.2 },
+          matchingMentorIncomeL2: { increment: value * 0.4 },
         }),
       },
     });
+
     return;
   }
 
@@ -118,7 +121,7 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     data: {
       isMatchingMentorL2: true,
       ...(value > 0 && {
-        matchingMentorIncomeL2: { increment: value * 0.2 },
+        matchingMentorIncomeL2: { increment: value * 0.4 },
       }),
     },
   });

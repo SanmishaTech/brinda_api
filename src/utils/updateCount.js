@@ -5,7 +5,7 @@ const { LEFT, RIGHT, TOP } = require("../config/data");
 const updateCount = async (newUser) => {
   let parentId = newUser?.parentId;
   if (!parentId) {
-    return newUser.id;
+    return newUser;
   }
   let newUserId = newUser.id;
 
@@ -26,7 +26,6 @@ const updateCount = async (newUser) => {
           where: { id: parent.id },
           data: {
             leftDirectCount: { increment: 1 },
-            leftBalance: { increment: 1 },
           },
         });
       } else {
@@ -34,7 +33,6 @@ const updateCount = async (newUser) => {
           where: { id: parent.id },
           data: {
             leftCount: { increment: 1 },
-            leftBalance: { increment: 1 },
           },
         });
       }
@@ -46,7 +44,6 @@ const updateCount = async (newUser) => {
           where: { id: parent.id },
           data: {
             rightDirectCount: { increment: 1 },
-            rightBalance: { increment: 1 },
           },
         });
       } else {
@@ -54,7 +51,6 @@ const updateCount = async (newUser) => {
           where: { id: parent.id },
           data: {
             rightCount: { increment: 1 },
-            rightBalance: { increment: 1 },
           },
         });
       }
@@ -64,7 +60,12 @@ const updateCount = async (newUser) => {
     currentPosition = parent.positionToParent;
   } while (parent.positionToParent !== TOP);
 
-  return newUserId;
+  newUser = await prisma.member.findUnique({
+    where: { id: newUserId },
+    include: { sponsor: true },
+  });
+
+  return newUser;
 };
 
 module.exports = { updateCount };

@@ -21,22 +21,18 @@ const incrementMemberStatusCount = async (newUser) => {
   let currentPosition = newUser.positionToParent;
 
   let parent = null;
-  console.log("inside function");
   do {
     parent = await prisma.member.findFirst({
       where: { id: parentId },
     });
 
     const updates = {};
-    console.log(currentPosition);
     // General side count
     if (currentPosition === LEFT) {
       // Status-specific balance
-      console.log("must be here1");
-      console.log(status, " and ", ASSOCIATE);
+
       switch (status) {
-        case "Associate":
-          console.log("must be here2");
+        case ASSOCIATE:
           updates.leftAssociateBalance = { increment: 1 };
           break;
         case SILVER:
@@ -65,8 +61,6 @@ const incrementMemberStatusCount = async (newUser) => {
           break;
       }
     }
-
-    console.log("success", updates);
 
     await prisma.member.update({
       where: { id: parent.id },

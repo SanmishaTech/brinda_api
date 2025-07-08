@@ -14,7 +14,6 @@ const checkDirectMatch = async (member) => {
       });
     }
   }
-  console.log("done");
   return;
 };
 

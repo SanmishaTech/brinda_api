@@ -39,8 +39,6 @@ const check2_1Pass = async (member) => {
 
     const today = dayjs().utc().startOf("day").toDate(); // ✅ full JS Date in UTC 00:00:00
 
-    // let today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
-
     const isSameAssociateCommissionDay =
       parent.associateCommissionDate &&
       dayjs(parent.associateCommissionDate).utc().isSame(today, "day");
@@ -114,379 +112,349 @@ const check2_1Pass = async (member) => {
         };
       }
 
-      if (parent.status === ASSOCIATE && minAssociateBalance > 0) {
-        if (isSameAssociateCommissionDay) {
-          if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
-            if (minAssociateBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * ASSOCIATE_COMMISSION;
+      if (parent.isDirectMatch) {
+        if (parent.status === ASSOCIATE && minAssociateBalance > 0) {
+          if (isSameAssociateCommissionDay) {
+            if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
+              if (minAssociateBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * ASSOCIATE_COMMISSION;
 
-              updates.associateCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
+                updates.associateCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance +=
+                  minAssociateBalance * ASSOCIATE_COMMISSION;
+
+                updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+                // matchingMentorIncomeL1 = minBalance;
+              }
+            }
+          } else {
+            updates.associateCommissionDate = today;
+            if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
+              matchingIncomeWalletBalance +=
+                minAssociateBalance * ASSOCIATE_COMMISSION;
+              updates.associateCommissionCount = minAssociateBalance;
+              // matchingMentorIncomeL1 = minBalance;
             } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
+              updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
+            }
+          }
+        } else if (parent.status === SILVER) {
+          // FOR ASSOCIATE
+          if (isSameAssociateCommissionDay) {
+            if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
+              if (minAssociateBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * ASSOCIATE_COMMISSION;
+
+                updates.associateCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+                // matchingMentorIncomeL1 = availableCommissionCount;
+              } else {
+                matchingIncomeWalletBalance +=
+                  minAssociateBalance * ASSOCIATE_COMMISSION;
+
+                updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+                // matchingMentorIncomeL1 = minBalance;
+              }
+            }
+          } else {
+            updates.associateCommissionDate = today;
+            if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance +=
                 minAssociateBalance * ASSOCIATE_COMMISSION;
 
-              updates.associateCommissionCount = {
-                increment: minAssociateBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
-            }
-          }
-        } else {
-          updates.associateCommissionDate = today;
-          if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance +=
-              minAssociateBalance * ASSOCIATE_COMMISSION;
-            updates.associateCommissionCount = minAssociateBalance;
-            // matchingMentorIncomeL1 = minBalance;
-          } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
-            updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-      } else if (parent.status === SILVER) {
-        // FOR ASSOCIATE
-        if (isSameAssociateCommissionDay) {
-          if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
-            if (minAssociateBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * ASSOCIATE_COMMISSION;
-
-              updates.associateCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
+              updates.associateCommissionCount = minAssociateBalance;
             } else {
               matchingIncomeWalletBalance +=
-                minAssociateBalance * ASSOCIATE_COMMISSION;
-
-              updates.associateCommissionCount = {
-                increment: minAssociateBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+                MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
+              updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.associateCommissionDate = today;
-          if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance +=
-              minAssociateBalance * ASSOCIATE_COMMISSION;
+          // FOR SILVER
+          if (isSameSilverCommissionDay) {
+            if (parent.silverCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.silverCommissionCount;
+              if (minSilverBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * SILVER_COMMISSION;
 
-            updates.associateCommissionCount = minAssociateBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.silverCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance +=
+                  minSilverBalance * SILVER_COMMISSION;
+
+                updates.silverCommissionCount = {
+                  increment: minSilverBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
-            updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-        // FOR SILVER
-        if (isSameSilverCommissionDay) {
-          if (parent.silverCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.silverCommissionCount;
-            if (minSilverBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * SILVER_COMMISSION;
-
-              updates.silverCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.silverCommissionDate = today;
+            if (minSilverBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance +=
                 minSilverBalance * SILVER_COMMISSION;
 
-              updates.silverCommissionCount = {
-                increment: minSilverBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.silverCommissionCount = minSilverBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
+              updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.silverCommissionDate = today;
-          if (minSilverBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance += minSilverBalance * SILVER_COMMISSION;
+        } else if (parent.status === GOLD) {
+          // FOR ASSOCIATE
+          if (isSameAssociateCommissionDay) {
+            if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
+              if (minAssociateBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * ASSOCIATE_COMMISSION;
 
-            updates.silverCommissionCount = minSilverBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.associateCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance +=
+                  minAssociateBalance * ASSOCIATE_COMMISSION;
+
+                updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
-            updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-      } else if (parent.status === GOLD) {
-        // FOR ASSOCIATE
-        if (isSameAssociateCommissionDay) {
-          if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
-            if (minAssociateBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * ASSOCIATE_COMMISSION;
-
-              updates.associateCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.associateCommissionDate = today;
+            if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance +=
                 minAssociateBalance * ASSOCIATE_COMMISSION;
 
-              updates.associateCommissionCount = {
-                increment: minAssociateBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.associateCommissionCount = minAssociateBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
+              updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.associateCommissionDate = today;
-          if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance +=
-              minAssociateBalance * ASSOCIATE_COMMISSION;
+          // FOR SILVER
+          if (isSameSilverCommissionDay) {
+            if (parent.silverCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.silverCommissionCount;
+              if (minSilverBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * SILVER_COMMISSION;
 
-            updates.associateCommissionCount = minAssociateBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.silverCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance +=
+                  minSilverBalance * SILVER_COMMISSION;
+
+                updates.silverCommissionCount = {
+                  increment: minSilverBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
-            updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-        // FOR SILVER
-        if (isSameSilverCommissionDay) {
-          if (parent.silverCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.silverCommissionCount;
-            if (minSilverBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * SILVER_COMMISSION;
-
-              updates.silverCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.silverCommissionDate = today;
+            if (minSilverBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance +=
                 minSilverBalance * SILVER_COMMISSION;
 
-              updates.silverCommissionCount = {
-                increment: minSilverBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.silverCommissionCount = minSilverBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
+              updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.silverCommissionDate = today;
-          if (minSilverBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance += minSilverBalance * SILVER_COMMISSION;
+          // FOR GOLD
+          if (isSameGoldCommissionDay) {
+            if (parent.goldCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.goldCommissionCount;
+              if (minGoldBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * GOLD_COMMISSION;
 
-            updates.silverCommissionCount = minSilverBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.goldCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
+
+                updates.goldCommissionCount = {
+                  increment: minGoldBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
-            updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-        // FOR GOLD
-        if (isSameGoldCommissionDay) {
-          if (parent.goldCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.goldCommissionCount;
-            if (minGoldBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * GOLD_COMMISSION;
-
-              updates.goldCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.goldCommissionDate = today;
+            if (minGoldBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
-              updates.goldCommissionCount = {
-                increment: minGoldBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.goldCommissionCount = minGoldBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
+              updates.goldCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.goldCommissionDate = today;
-          if (minGoldBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
+        } else if (parent.status === DIAMOND) {
+          // FOR ASSOCIATE
+          if (isSameAssociateCommissionDay) {
+            if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
+              if (minAssociateBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * ASSOCIATE_COMMISSION;
 
-            updates.goldCommissionCount = minGoldBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.associateCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance +=
+                  minAssociateBalance * ASSOCIATE_COMMISSION;
+
+                updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
-            updates.goldCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-      } else if (parent.status === DIAMOND) {
-        // FOR ASSOCIATE
-        if (isSameAssociateCommissionDay) {
-          if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.associateCommissionCount;
-            if (minAssociateBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * ASSOCIATE_COMMISSION;
-
-              updates.associateCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.associateCommissionDate = today;
+            if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance +=
                 minAssociateBalance * ASSOCIATE_COMMISSION;
 
-              updates.associateCommissionCount = {
-                increment: minAssociateBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.associateCommissionCount = minAssociateBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
+              updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.associateCommissionDate = today;
-          if (minAssociateBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance +=
-              minAssociateBalance * ASSOCIATE_COMMISSION;
+          // FOR SILVER
+          if (isSameSilverCommissionDay) {
+            if (parent.silverCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.silverCommissionCount;
+              if (minSilverBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * SILVER_COMMISSION;
 
-            updates.associateCommissionCount = minAssociateBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.silverCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance +=
+                  minSilverBalance * SILVER_COMMISSION;
+
+                updates.silverCommissionCount = {
+                  increment: minSilverBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
-            updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-        // FOR SILVER
-        if (isSameSilverCommissionDay) {
-          if (parent.silverCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.silverCommissionCount;
-            if (minSilverBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * SILVER_COMMISSION;
-
-              updates.silverCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.silverCommissionDate = today;
+            if (minSilverBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance +=
                 minSilverBalance * SILVER_COMMISSION;
 
-              updates.silverCommissionCount = {
-                increment: minSilverBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.silverCommissionCount = minSilverBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
+              updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.silverCommissionDate = today;
-          if (minSilverBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance += minSilverBalance * SILVER_COMMISSION;
+          // FOR GOLD
+          if (isSameGoldCommissionDay) {
+            if (parent.goldCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.goldCommissionCount;
+              if (minGoldBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * GOLD_COMMISSION;
 
-            updates.silverCommissionCount = minSilverBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.goldCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
+
+                updates.goldCommissionCount = {
+                  increment: minGoldBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
-            updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-        // FOR GOLD
-        if (isSameGoldCommissionDay) {
-          if (parent.goldCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.goldCommissionCount;
-            if (minGoldBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * GOLD_COMMISSION;
-
-              updates.goldCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.goldCommissionDate = today;
+            if (minGoldBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
-              updates.goldCommissionCount = {
-                increment: minGoldBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.goldCommissionCount = minGoldBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
+              updates.goldCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
           }
-        } else {
-          updates.goldCommissionDate = today;
-          if (minGoldBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
+          // FOR DIAMOND
+          if (isSameDiamondCommissionDay) {
+            if (parent.diamondCommissionCount < MAX_COMMISSIONS_PER_DAY) {
+              const availableCommissionCount =
+                MAX_COMMISSIONS_PER_DAY - parent.diamondCommissionCount;
+              if (minDiamondBalance > availableCommissionCount) {
+                matchingIncomeWalletBalance +=
+                  availableCommissionCount * DIAMOND_COMMISSION;
 
-            updates.goldCommissionCount = minGoldBalance;
-            // matchingMentorIncomeL1 = minBalance;
+                updates.diamondCommissionCount = {
+                  increment: availableCommissionCount,
+                };
+              } else {
+                matchingIncomeWalletBalance +=
+                  minDiamondBalance * DIAMOND_COMMISSION;
+
+                updates.diamondCommissionCount = {
+                  increment: minDiamondBalance,
+                };
+              }
+            }
           } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
-            updates.goldCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
-          }
-        }
-        // FOR DIAMOND
-        if (isSameDiamondCommissionDay) {
-          if (parent.diamondCommissionCount < MAX_COMMISSIONS_PER_DAY) {
-            const availableCommissionCount =
-              MAX_COMMISSIONS_PER_DAY - parent.diamondCommissionCount;
-            if (minDiamondBalance > availableCommissionCount) {
-              matchingIncomeWalletBalance +=
-                availableCommissionCount * DIAMOND_COMMISSION;
-
-              updates.diamondCommissionCount = {
-                increment: availableCommissionCount,
-              };
-              // matchingMentorIncomeL1 = availableCommissionCount;
-            } else {
+            updates.diamondCommissionDate = today;
+            if (minDiamondBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance +=
                 minDiamondBalance * DIAMOND_COMMISSION;
 
-              updates.diamondCommissionCount = {
-                increment: minDiamondBalance,
-              };
-              // matchingMentorIncomeL1 = minBalance;
+              updates.diamondCommissionCount = minDiamondBalance;
+            } else {
+              matchingIncomeWalletBalance +=
+                MAX_COMMISSIONS_PER_DAY * DIAMOND_COMMISSION;
+              updates.diamondCommissionCount = MAX_COMMISSIONS_PER_DAY;
             }
-          }
-        } else {
-          updates.diamondCommissionDate = today;
-          if (minDiamondBalance < MAX_COMMISSIONS_PER_DAY) {
-            matchingIncomeWalletBalance +=
-              minDiamondBalance * DIAMOND_COMMISSION;
-
-            updates.diamondCommissionCount = minDiamondBalance;
-            // matchingMentorIncomeL1 = minBalance;
-          } else {
-            matchingIncomeWalletBalance +=
-              MAX_COMMISSIONS_PER_DAY * DIAMOND_COMMISSION;
-            updates.diamondCommissionCount = MAX_COMMISSIONS_PER_DAY;
-            // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
           }
         }
       }
@@ -495,9 +463,11 @@ const check2_1Pass = async (member) => {
         where: { id: parent.id },
         data: {
           ...updates,
-          matchingIncomeWalletBalance: {
-            increment: matchingIncomeWalletBalance,
-          },
+          ...(matchingIncomeWalletBalance > 0 && {
+            matchingIncomeWalletBalance: {
+              increment: matchingIncomeWalletBalance,
+            },
+          }),
         },
         include: {
           sponsor: true,
@@ -508,14 +478,14 @@ const check2_1Pass = async (member) => {
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
       await checkMatchingMentorIncomeL2(parent, matchingIncomeWalletBalance);
     } else {
-      // 2:1 no true
+      // 2:1 not true
       let matchingIncomeWalletBalance = 0;
       const leftTotal = parent.leftCount + parent.leftDirectCount;
       const rightTotal = parent.rightCount + parent.rightDirectCount;
 
-      let minSilverBalance,
-        minGoldBalance,
-        minDiamondBalance = 0;
+      let minSilverBalance = 0;
+      let minGoldBalance = 0;
+      let minDiamondBalance = 0;
       const updates = {
         is2_1Pass: true,
       };
@@ -567,7 +537,7 @@ const check2_1Pass = async (member) => {
         updates.associateCommissionDate = today;
         updates.silverCommissionDate = today;
         updates.goldCommissionDate = today;
-        updates.diamondCommissionDate = today;
+        updates.diamondCommissionDate = today; // this is imp. if brinda is by default 1:1 and 2:1 true then will get commission date error
         if (parent.status === ASSOCIATE) {
           updates.associateCommissionCount = 1;
           updates.matchingIncomeWalletBalance = {
@@ -630,7 +600,9 @@ const check2_1Pass = async (member) => {
           parent: true,
         },
       });
+
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
+
       await checkMatchingMentorIncomeL2(parent, matchingIncomeWalletBalance);
     }
 
