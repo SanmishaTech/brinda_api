@@ -54,6 +54,20 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     return;
   }
 
+  if (L2Sponsor.isMatchingMentorL2) {
+    await prisma.member.update({
+      where: { id: L2Sponsor.id },
+      data: {
+        ...(value > 0 && {
+          matchingMentorIncomeL2: { increment: value * 0.4 },
+        }),
+      },
+    });
+    console.log("Error4");
+
+    return;
+  }
+
   // Now fetch only LEFT and RIGHT sponsor children
   const [leftCandidates, rightCandidates] = await Promise.all([
     prisma.member.findMany({
@@ -91,19 +105,7 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
 
   // end
 
-  if (L2Sponsor.isMatchingMentorL2) {
-    await prisma.member.update({
-      where: { id: L2Sponsor.id },
-      data: {
-        ...(value > 0 && {
-          matchingMentorIncomeL2: { increment: value * 0.4 },
-        }),
-      },
-    });
-    console.log("Error4");
 
-    return;
-  }
 
   // working
   let LEFT_SIDE = false;

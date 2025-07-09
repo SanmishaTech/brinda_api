@@ -11,8 +11,9 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
       },
     });
   } else if (
-    parent.sponsor?.status === GOLD ||
-    parent.sponsor?.status === DIAMOND
+    (parent.sponsor?.status === GOLD || parent.sponsor?.status === DIAMOND) &&
+    parent.sponsor?.isDirectMatch === true &&
+    parent.sponsor?.is2_1Pass === true
   ) {
     const sponsor = await prisma.member.update({
       where: { id: parent.sponsor.id },
