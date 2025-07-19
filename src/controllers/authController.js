@@ -152,7 +152,7 @@ const register = async (req, res, next) => {
                   memberMobile: mobile,
                   memberState: state,
                   positionToParent: position,
-                  walletBalance: 99999999,
+                  // walletBalance: 99999999,
                 },
               },
             },
