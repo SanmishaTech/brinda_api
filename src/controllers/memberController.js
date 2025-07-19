@@ -459,7 +459,7 @@ const myGenealogy = async (req, res, next) => {
 
 const myDirectReferralList = async (req, res, next) => {
   try {
-    const memberId = req.user.member.id;
+    const memberId = req.query.currentMemberId || req.user.member.id; // 👈 Use query param if available
 
     // Pagination inputs
     const page = parseInt(req.query.page) || 1;
@@ -487,6 +487,11 @@ const myDirectReferralList = async (req, res, next) => {
                 contains: search,
               },
             },
+            {
+              positionToParent: {
+                contains: search,
+              },
+            },
           ],
         }
       : {};
@@ -511,6 +516,7 @@ const myDirectReferralList = async (req, res, next) => {
         memberUsername: true,
         positionToParent: true,
         status: true,
+        pvBalance: true,
       },
     });
 
@@ -527,11 +533,19 @@ const myDirectReferralList = async (req, res, next) => {
 
     const totalPages = Math.ceil(totalReferrals / limit);
 
+    const currentMember = await prisma.member.findUnique({
+      where: { id: parseInt(memberId) },
+      select: {
+        memberName: true,
+      },
+    });
+
     res.json({
       referrals,
       page,
       totalPages,
       totalReferrals,
+      currentMemberName: currentMember.memberName,
     });
   } catch (error) {
     return res.status(500).json({

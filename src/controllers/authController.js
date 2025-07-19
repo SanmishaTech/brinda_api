@@ -242,6 +242,7 @@ const login = async (req, res, next) => {
         email: user.email,
         role: user.role,
         lastLogin: user.lastLogin,
+        username: username,
       },
     });
   } catch (error) {
