@@ -523,7 +523,7 @@ const myDirectReferralList = async (req, res, next) => {
     // Count total referrals
     const totalReferrals = await prisma.member.count({
       where: {
-        parentId: parseInt(memberId),
+        sponsorId: parseInt(memberId),
         positionToParent: {
           in: [LEFT, RIGHT],
         },
