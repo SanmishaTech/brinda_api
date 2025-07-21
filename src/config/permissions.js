@@ -24,6 +24,10 @@ module.exports = {
   "purchases.read": ["admin", "member"],
   "purchases.write": ["admin", "member"],
   "purchases.delete": ["admin", "member"],
+  //repurchases
+  "repurchases.read": ["admin", "member"],
+  "repurchases.write": ["admin", "member"],
+  "repurchases.delete": ["admin", "member"],
 
   //dashboards
   "dashboards.read": ["admin", "member"],

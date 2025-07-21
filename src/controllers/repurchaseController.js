@@ -2,21 +2,17 @@ const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { z } = require("zod");
 const validateRequest = require("../utils/validateRequest");
-const createError = require("http-errors");
-const dayjs = require("dayjs"); // Import dayjs
 const { numberToWords } = require("../utils/numberToWords");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs").promises; // Use promises API
 const path = require("path");
 const { CREDIT, APPROVED, INCREMENT, INACTIVE } = require("../config/data");
-const { updatePVBalance } = require("../utils/updatePVBalance");
-const { updateCount } = require("../utils/updateCount");
 const {
-  generateProductPurchaseInvoice,
-} = require("../utils/invoice/user/generateProductPurchaseInvoice");
+  generateProductRepurchaseInvoice,
+} = require("../utils/invoice/user/generateProductRepurchaseInvoice");
 const {
-  generateProductPurchaseInvoiceNumber,
-} = require("../utils/invoice/user/generateProductPurchaseInvoiceNumber");
+  generateProductRepurchaseInvoiceNumber,
+} = require("../utils/invoice/user/generateProductRepurchaseInvoiceNumber");
 
 const decimalString = (fieldName, maxDigits, decimalPlaces) =>
   z
@@ -33,8 +29,8 @@ const decimalString = (fieldName, maxDigits, decimalPlaces) =>
         message: `${fieldName} must be a valid number with up to ${decimalPlaces} decimal places.`,
       }
     );
-// Get all purchases with pagination, sorting, and search
-const getPurchases = async (req, res) => {
+// Get all repurchases with pagination, sorting, and search
+const getRepurchases = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
@@ -51,32 +47,32 @@ const getPurchases = async (req, res) => {
       ],
     };
 
-    const purchases = await prisma.purchase.findMany({
+    const repurchases = await prisma.repurchase.findMany({
       where: whereClause,
       skip,
       take: limit,
       orderBy: { [sortBy]: sortOrder },
       include: {
         member: true, // Include member details
-        purchaseDetails: true, // Include purchase details
+        repurchaseDetails: true, // Include purchase details
       },
     });
 
-    const totalPurchases = await prisma.purchase.count({
+    const totalRepurchases = await prisma.repurchase.count({
       where: whereClause,
     });
-    const totalPages = Math.ceil(totalPurchases / limit);
+    const totalPages = Math.ceil(totalRepurchases / limit);
 
     res.json({
-      purchases,
+      repurchases,
       page,
       totalPages,
-      totalPurchases,
+      totalRepurchases,
     });
   } catch (error) {
     return res.status(500).json({
       errors: {
-        message: "Failed to fetch purchases",
+        message: "Failed to fetch repurchases",
         details: error.message,
       },
     });
@@ -84,12 +80,12 @@ const getPurchases = async (req, res) => {
 };
 
 // Create a new purchase
-const createPurchase = async (req, res) => {
+const createRepurchase = async (req, res) => {
   const schema = z.object({
     totalAmountWithoutGst: decimalString("Total Amount Without GST", 10, 2),
     totalAmountWithGst: decimalString("Total Amount With GST", 10, 2),
     totalGstAmount: decimalString("Total GST Amount", 10, 2),
-    totalProductPV: decimalString("Total PV", 10, 2),
+    totalProductBV: decimalString("Total BV", 10, 2),
   });
 
   const validationErrors = await validateRequest(schema, req.body, res);
@@ -98,8 +94,8 @@ const createPurchase = async (req, res) => {
       totalAmountWithoutGst,
       totalAmountWithGst,
       totalGstAmount,
-      totalProductPV,
-      purchaseDetails,
+      totalProductBV,
+      repurchaseDetails,
     } = req.body;
 
     if (
@@ -118,17 +114,17 @@ const createPurchase = async (req, res) => {
       });
     }
 
-    const newPurchase = await prisma.purchase.create({
+    const newRepurchase = await prisma.repurchase.create({
       data: {
         memberId: req.user.member.id,
-        purchaseDate: new Date(),
+        repurchaseDate: new Date(),
         totalAmountWithoutGst: new Prisma.Decimal(totalAmountWithoutGst),
         totalAmountWithGst: new Prisma.Decimal(totalAmountWithGst),
         totalGstAmount: new Prisma.Decimal(totalGstAmount),
-        totalProductPV: new Prisma.Decimal(totalProductPV),
+        totalProductBV: new Prisma.Decimal(totalProductBV),
         state: req.user.member.memberState,
-        purchaseDetails: {
-          create: purchaseDetails.map((detail) => ({
+        repurchaseDetails: {
+          create: repurchaseDetails.map((detail) => ({
             productId: parseInt(detail.productId),
             quantity: detail.quantity,
             rate: new Prisma.Decimal(detail.rate),
@@ -140,8 +136,8 @@ const createPurchase = async (req, res) => {
             igstAmount: new Prisma.Decimal(detail.igstAmount),
             amountWithoutGst: new Prisma.Decimal(detail.amountWithoutGst),
             amountWithGst: new Prisma.Decimal(detail.amountWithGst),
-            pvPerUnit: new Prisma.Decimal(detail.pvPerUnit),
-            totalPV: new Prisma.Decimal(detail.totalPV),
+            bvPerUnit: new Prisma.Decimal(detail.bvPerUnit),
+            totalBV: new Prisma.Decimal(detail.totalBV),
           })),
         },
       },
@@ -156,8 +152,8 @@ const createPurchase = async (req, res) => {
       },
     });
 
-    const invoiceNumber = await generateUserProductPurchaseInvoice(
-      newPurchase.id,
+    const invoiceNumber = await generateUserProductRepurchaseInvoice(
+      newRepurchase.id,
       res,
       req
     );
@@ -165,17 +161,11 @@ const createPurchase = async (req, res) => {
     const memberLog = await prisma.memberLog.create({
       data: {
         memberId: req.user.member.id,
-        message: `Products  Purchased (${invoiceNumber})`,
-        pv: new Prisma.Decimal(totalProductPV),
-        bv: "0.00",
+        message: `Products  Repurchased (${invoiceNumber})`,
+        bv: new Prisma.Decimal(totalProductBV),
+        pv: "0.00",
       },
     });
-
-    member = await updatePVBalance(
-      INCREMENT,
-      totalProductPV,
-      req.user.member.id
-    );
 
     const transaction = await prisma.walletTransaction.create({
       data: {
@@ -183,16 +173,16 @@ const createPurchase = async (req, res) => {
         amount: new Prisma.Decimal(totalAmountWithGst),
         type: CREDIT,
         status: APPROVED,
-        notes: `Products Purchased (${invoiceNumber})`,
+        notes: `Products Repurchased (${invoiceNumber})`,
         transactionDate: new Date(),
       },
     });
 
-    return res.status(201).json(newPurchase);
+    return res.status(201).json(newRepurchase);
   } catch (error) {
     return res.status(500).json({
       errors: {
-        message: "Failed to create purchase",
+        message: "Failed to create repurchase",
         details: error.message,
       },
     });
@@ -200,54 +190,54 @@ const createPurchase = async (req, res) => {
 };
 
 // Get a purchase by ID
-const getPurchaseById = async (req, res) => {
+const getRepurchaseById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const purchase = await prisma.purchase.findUnique({
+    const repurchase = await prisma.repurchase.findUnique({
       where: { id: parseInt(id, 10) },
       include: {
         member: true, // Include member details
-        purchaseDetails: true, // Include purchase details
+        repurchaseDetails: true, // Include purchase details
       },
     });
 
-    if (!purchase) {
+    if (!repurchase) {
       return res
         .status(404)
-        .json({ errors: { message: "Purchase not found" } });
+        .json({ errors: { message: "Repurchase not found" } });
     }
 
-    res.status(200).json(purchase);
+    res.status(200).json(repurchase);
   } catch (error) {
     res.status(500).json({
       errors: {
-        message: "Failed to fetch purchase",
+        message: "Failed to fetch repurchase",
         details: error.message,
       },
     });
   }
 };
 
-const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
+const generateUserProductRepurchaseInvoice = async (repurchaseId, res, req) => {
   try {
-    let purchase = null;
+    let repurchase = null;
     // Step 2: Check if invoice number already exists
 
-    const invoiceNumber = await generateProductPurchaseInvoiceNumber();
+    const invoiceNumber = await generateProductRepurchaseInvoiceNumber();
 
-    purchase = await prisma.purchase.update({
-      where: { id: parseInt(purchaseId, 10) },
+    repurchase = await prisma.repurchase.update({
+      where: { id: parseInt(repurchaseId, 10) },
       data: {
         invoiceDate: new Date(),
         invoiceNumber: invoiceNumber,
       },
     });
 
-    const purchaseData = await prisma.purchase.findUnique({
-      where: { id: parseInt(purchaseId, 10) },
+    const repurchaseData = await prisma.repurchase.findUnique({
+      where: { id: parseInt(repurchaseId, 10) },
       include: {
-        purchaseDetails: {
+        repurchaseDetails: {
           include: {
             product: true, // Include product details
           },
@@ -256,21 +246,21 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
       },
     });
 
-    if (!purchaseData) {
-      return res.status(404).json({ error: "Purchase details not found" });
+    if (!repurchaseData) {
+      return res.status(404).json({ error: "Repurchase details not found" });
     }
 
     // ✅ Step 2: Format data for generateInvoicePdf
     const invoiceData = {
-      invoiceNumber: purchaseData.invoiceNumber,
-      invoiceDate: purchaseData.invoiceDate,
+      invoiceNumber: repurchaseData.invoiceNumber,
+      invoiceDate: repurchaseData.invoiceDate,
       member: {
-        memberName: purchaseData.member?.memberName,
-        addressLines: [purchaseData.member?.memberAddress || "", ""].filter(
+        memberName: repurchaseData.member?.memberName,
+        addressLines: [repurchaseData.member?.memberAddress || "", ""].filter(
           Boolean
         ),
-        pincode: purchaseData.member?.memberPincode || "",
-        state: purchaseData?.state,
+        pincode: repurchaseData.member?.memberPincode || "",
+        state: repurchaseData?.state,
       },
       memberDetails: {
         name: "Brinda Health Care",
@@ -284,7 +274,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
         email: "brinda@gmail.com",
         logoPath: "",
       },
-      items: purchaseData.purchaseDetails.map((detail, index) => ({
+      items: repurchaseData.repurchaseDetails.map((detail, index) => ({
         srNo: index + 1,
         description: detail.product.productName || "N/A",
         hsnSac: detail.product.hsnCode || "998551", // or from your DB
@@ -300,25 +290,25 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
         amountWithGst: parseFloat(detail.amountWithGst),
       })),
       totals: {
-        totalAmountWithoutGst: parseFloat(purchaseData.totalAmountWithoutGst),
-        cgstAmount: parseFloat(purchaseData.cgstAmount || 0),
-        cgstPercent: purchaseData.cgstPercent || 0,
-        sgstAmount: parseFloat(purchaseData.sgstAmount || 0),
-        sgstPercent: purchaseData.sgstPercent || 0,
-        igstAmount: parseFloat(purchaseData.igstAmount || 0),
-        igstPercent: purchaseData.igstPercent || 0,
-        totalGstAmount: parseFloat(purchaseData.totalGstAmount),
-        totalAmountWithGst: parseFloat(purchaseData.totalAmountWithGst),
+        totalAmountWithoutGst: parseFloat(repurchaseData.totalAmountWithoutGst),
+        cgstAmount: parseFloat(repurchaseData.cgstAmount || 0),
+        cgstPercent: repurchaseData.cgstPercent || 0,
+        sgstAmount: parseFloat(repurchaseData.sgstAmount || 0),
+        sgstPercent: repurchaseData.sgstPercent || 0,
+        igstAmount: parseFloat(repurchaseData.igstAmount || 0),
+        igstPercent: repurchaseData.igstPercent || 0,
+        totalGstAmount: parseFloat(repurchaseData.totalGstAmount),
+        totalAmountWithGst: parseFloat(repurchaseData.totalAmountWithGst),
         amountInWords: numberToWords(
-          parseFloat(purchaseData.totalAmountWithGst)
+          parseFloat(repurchaseData.totalAmountWithGst)
         ),
       },
     };
 
     // ✅ Step 3: Define file path
 
-    const oldPath = purchaseData.invoicePath;
-    const sanitizedInvoiceNumber = purchaseData.invoiceNumber.replace(
+    const oldPath = repurchaseData.invoicePath;
+    const sanitizedInvoiceNumber = repurchaseData.invoiceNumber.replace(
       /[\/\\]/g,
       "-"
     );
@@ -330,7 +320,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
       "..",
       "uploads",
       "invoices",
-      "userPurchase",
+      "userRepurchase",
       uuidFolder
     );
     const filePath = path.join(invoiceDir, `${sanitizedInvoiceNumber}.pdf`);
@@ -354,9 +344,9 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
     // console.log("Writing PDF to:", filePath);
 
     // ✅ Step 4: Generate the PDF
-    await generateProductPurchaseInvoice(invoiceData, filePath);
-    await prisma.purchase.update({
-      where: { id: parseInt(purchaseId, 10) },
+    await generateProductRepurchaseInvoice(invoiceData, filePath);
+    await prisma.repurchase.update({
+      where: { id: parseInt(repurchaseId, 10) },
       data: {
         invoicePath: filePath, // Save relative or absolute path based on your use-case
       },
@@ -385,8 +375,8 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
   }
 };
 
-const DownloadPurchaseInvoice = async (req, res, next) => {
-  const { uuid, filename, purchaseId } = req.params;
+const DownloadRepurchaseInvoice = async (req, res, next) => {
+  const { uuid, filename, repurchaseId } = req.params;
   // console.log("working");
   try {
     // Construct the file path
@@ -396,13 +386,13 @@ const DownloadPurchaseInvoice = async (req, res, next) => {
       "..",
       "uploads",
       "invoices",
-      "userPurchase",
+      "userRepurchase",
       uuid,
       filename
     );
 
-    const purchase = await prisma.purchase.findUnique({
-      where: { id: parseInt(purchaseId, 10) },
+    const repurchase = await prisma.repurchase.findUnique({
+      where: { id: parseInt(repurchaseId, 10) },
       select: {
         member: {
           select: {
@@ -412,7 +402,7 @@ const DownloadPurchaseInvoice = async (req, res, next) => {
       },
     });
 
-    if (!purchase || req.user.member.id !== purchase.member.id) {
+    if (!repurchase || req.user.member.id !== repurchase.member.id) {
       return res.status(403).json({
         errors: {
           message: "You do not have permission to access this invoice",
@@ -444,9 +434,9 @@ const DownloadPurchaseInvoice = async (req, res, next) => {
 };
 
 module.exports = {
-  getPurchases,
-  createPurchase,
-  getPurchaseById,
-  generateUserProductPurchaseInvoice,
-  DownloadPurchaseInvoice,
+  getRepurchases,
+  createRepurchase,
+  getRepurchaseById,
+  generateUserProductRepurchaseInvoice,
+  DownloadRepurchaseInvoice,
 };

@@ -98,6 +98,7 @@ model Member {
   pvBalance       Decimal?   @db.Decimal(10, 2)   @default(0.00)
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] // Relation to Purchase
+  repurchases        Repurchase[] // Relation to Purchase
   memberLogs        memberLog[] // Relation to memberLog
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -117,6 +118,7 @@ model Product {
   bv          Decimal?   @db.Decimal(10, 2)
   bvPrice     Decimal?   @db.Decimal(10, 2)
   purchaseDetails PurchaseDetail[] // Relation to PurchaseDetail
+  repurchaseDetails RepurchaseDetail[] 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -132,8 +134,6 @@ model WalletTransaction {
   amount             Decimal   @db.Decimal(10, 2)
   status             String     //pending, approved ,transferred, rejected,Paid
   type               String     // e.g., CREDIT for top-up, DEBIT for withdrawal
-
-  // Optional details from original model, can be kept
   paymentMethod      String?           // e.g., "Cash", "Bank Transfer", "UPI"
   referenceNumber    String?           // e.g., Cheque number, UPI transaction ID
   notes              String?           @db.Text
@@ -196,12 +196,58 @@ model PurchaseDetail {
 }
 
 
+model Repurchase {
+  id                   Int       @id @default(autoincrement())
+  memberId             Int
+  member               Member    @relation(fields: [memberId], references: [id]) // Relation to Member
+  invoiceNumber        String?   
+  invoiceDate           DateTime?
+  invoicePath           String?           @db.Text
+  repurchaseDate         DateTime  @default(now())
+  totalAmountWithoutGst Decimal   @db.Decimal(10, 2)
+  totalAmountWithGst   Decimal   @db.Decimal(10, 2)
+  totalGstAmount       Decimal   @db.Decimal(10, 2)
+  totalProductBV              Decimal   @db.Decimal(10, 2)
+  state                 String   // e.g., "Pending", "Completed", "Cancelled"
+  repurchaseDetails      RepurchaseDetail[] // Relation to PurchaseDetail
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("repurchases")
+}
+
+model RepurchaseDetail {
+  id                   Int       @id @default(autoincrement())
+  repurchaseId           Int
+  repurchase             Repurchase  @relation(fields: [repurchaseId], references: [id]) // Relation to Purchase
+  productId            Int
+  product              Product   @relation(fields: [productId], references: [id]) // Relation to Product
+  quantity             Int
+  rate                 Decimal   @db.Decimal(10, 2)
+  cgstPercent         Decimal   @db.Decimal(5, 2)
+  sgstPercent         Decimal   @db.Decimal(5, 2)
+  igstPercent         Decimal   @db.Decimal(5, 2)
+  cgstAmount            Decimal   @db.Decimal(10, 2)
+  sgstAmount            Decimal   @db.Decimal(10, 2)
+  igstAmount            Decimal   @db.Decimal(10, 2)
+  amountWithoutGst     Decimal   @db.Decimal(10, 2)
+  amountWithGst        Decimal   @db.Decimal(10, 2)
+  bvPerUnit            Decimal   @db.Decimal(10, 2)
+  totalBV              Decimal   @db.Decimal(10, 2)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("repurchase_details")
+}
+
+
 model memberLog {
   id          Int      @id @default(autoincrement())
   memberId    Int
   member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
   message     String?
   pv          Decimal   @db.Decimal(10, 2)
+  bv          Decimal   @db.Decimal(10, 2)
   createdAt   DateTime @default(now())
   updatedAt            DateTime  @updatedAt
 

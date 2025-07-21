@@ -47,6 +47,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
         data: {
           memberId: member.id,
           pv: -1,
+          bv: 0,
           message: "Member status updated to ASSOCIATE",
         },
       });
@@ -72,6 +73,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
         data: {
           memberId: member.id,
           pv: -2,
+          bv: 0,
           message: "Member status updated to SILVER",
         },
       });
@@ -98,6 +100,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
         data: {
           memberId: member.id,
           pv: -7,
+          bv: 0,
           message: "Member status updated to GOLD",
         },
       });
@@ -124,6 +127,7 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
         data: {
           memberId: member.id,
           pv: -10,
+          bv: 0,
           message: "Member status updated to DIAMOND",
         },
       });
