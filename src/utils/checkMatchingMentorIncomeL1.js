@@ -4,10 +4,22 @@ const { LEFT, RIGHT, TOP, GOLD, SILVER, DIAMOND } = require("../config/data");
 
 const checkMatchingMentorIncomeL1 = async (parent, value) => {
   if (parent?.sponsor?.isMatchingMentorL1 === true && value > 0) {
+    // start
+    console.log("L1 Value", value);
+    var commissionToGive = value * 0.1;
+    const percentage = parseFloat(parent?.sponsor?.percentage);
+    if (!isNaN(percentage) && percentage > 0 && percentage < 100) {
+      commissionToGive = parseFloat(
+        ((commissionToGive * percentage) / 100).toFixed(2)
+      );
+    } else if (percentage === 0) {
+      commissionToGive = 0;
+    }
+    // end
     const sponsor = await prisma.member.update({
       where: { id: parent.sponsor.id },
       data: {
-        matchingMentorIncomeL1: { increment: value * 0.1 },
+        matchingMentorIncomeL1: { increment: commissionToGive },
       },
     });
   } else if (
@@ -15,12 +27,25 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
     parent.sponsor?.isDirectMatch === true &&
     parent.sponsor?.is2_1Pass === true
   ) {
+    // start
+    console.log("L1 Value", value);
+
+    var commissionToGive = value * 0.1;
+    const percentage = parseFloat(parent?.sponsor?.percentage);
+    if (!isNaN(percentage) && percentage > 0 && percentage < 100) {
+      commissionToGive = parseFloat(
+        ((commissionToGive * percentage) / 100).toFixed(2)
+      );
+    } else if (percentage === 0) {
+      commissionToGive = 0;
+    }
+    // end
     const sponsor = await prisma.member.update({
       where: { id: parent.sponsor.id },
       data: {
         isMatchingMentorL1: true,
-        ...(value > 0 && {
-          matchingMentorIncomeL1: { increment: value * 0.1 },
+        ...(commissionToGive > 0 && {
+          matchingMentorIncomeL1: { increment: commissionToGive },
         }),
       },
     });

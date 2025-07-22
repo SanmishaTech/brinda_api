@@ -41,6 +41,7 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
       positionToParent: true,
       isDirectMatch: true,
       is2_1Pass: true,
+      percentage: true,
     },
   });
 
@@ -55,11 +56,22 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   }
 
   if (L2Sponsor.isMatchingMentorL2) {
+    // start
+    var commissionToGive = value * 0.4;
+    const percentage = parseFloat(L2Sponsor.percentage);
+    if (!isNaN(percentage) && percentage > 0 && percentage < 100) {
+      commissionToGive = parseFloat(
+        ((commissionToGive * percentage) / 100).toFixed(2)
+      );
+    } else if (percentage === 0) {
+      commissionToGive = 0;
+    }
+    // end
     await prisma.member.update({
       where: { id: L2Sponsor.id },
       data: {
-        ...(value > 0 && {
-          matchingMentorIncomeL2: { increment: value * 0.4 },
+        ...(commissionToGive > 0 && {
+          matchingMentorIncomeL2: { increment: commissionToGive },
         }),
       },
     });
@@ -104,8 +116,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   }
 
   // end
-
-
 
   // working
   let LEFT_SIDE = false;
@@ -194,12 +204,23 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
 
   if (LEFT_SIDE && RIGHT_SIDE) {
     // ✅ Update L2Sponsor
+    // start
+    var commissionToGive = value * 0.4;
+    const percentage = parseFloat(L2Sponsor.percentage);
+    if (!isNaN(percentage) && percentage > 0 && percentage < 100) {
+      commissionToGive = parseFloat(
+        ((commissionToGive * percentage) / 100).toFixed(2)
+      );
+    } else if (percentage === 0) {
+      commissionToGive = 0;
+    }
+    // end
     await prisma.member.update({
       where: { id: L2Sponsor.id },
       data: {
         isMatchingMentorL2: true,
-        ...(value > 0 && {
-          matchingMentorIncomeL2: { increment: value * 0.4 },
+        ...(commissionToGive > 0 && {
+          matchingMentorIncomeL2: { increment: commissionToGive },
         }),
       },
     });

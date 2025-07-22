@@ -21,6 +21,7 @@ const {
 const {
   checkMatchingMentorIncomeL2,
 } = require("./checkMatchingMentorIncomeL2");
+const { calculateCommission } = require("./calculateCommission");
 
 const check2_1Pass = async (member) => {
   let currentMember = member;
@@ -56,7 +57,7 @@ const check2_1Pass = async (member) => {
       dayjs(parent.diamondCommissionDate).utc().isSame(today, "day");
 
     if (parent.is2_1Pass) {
-      const updates = {};
+      let updates = {};
       let matchingIncomeWalletBalance = 0;
       const minAssociateBalance = Math.min(
         parent.leftAssociateBalance,
@@ -459,27 +460,17 @@ const check2_1Pass = async (member) => {
         }
       }
 
-      parent = await prisma.member.update({
-        where: { id: parent.id },
-        data: {
-          ...updates,
-          ...(matchingIncomeWalletBalance > 0 && {
-            matchingIncomeWalletBalance: {
-              increment: matchingIncomeWalletBalance,
-            },
-          }),
-        },
-        include: {
-          sponsor: true,
-          parent: true,
-        },
-      });
+      updates.matchingIncomeWalletBalance = {
+        increment: matchingIncomeWalletBalance,
+      };
+
+      parent = await calculateCommission(parent, updates);
 
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
+
       await checkMatchingMentorIncomeL2(parent, matchingIncomeWalletBalance);
     } else {
       // 2:1 not true
-      let matchingIncomeWalletBalance = 0;
       const leftTotal = parent.leftCount + parent.leftDirectCount;
       const rightTotal = parent.rightCount + parent.rightDirectCount;
 
@@ -543,7 +534,6 @@ const check2_1Pass = async (member) => {
           updates.matchingIncomeWalletBalance = {
             increment: ASSOCIATE_COMMISSION,
           };
-          matchingIncomeWalletBalance += ASSOCIATE_COMMISSION;
         } else if (parent.status === SILVER) {
           updates.associateCommissionCount = 1; //since 2:1 is not true that means silverCommissionCount must be 0
           updates.silverCommissionCount = minSilverBalance;
@@ -551,8 +541,6 @@ const check2_1Pass = async (member) => {
           updates.matchingIncomeWalletBalance = {
             increment: totalSilverCommission + ASSOCIATE_COMMISSION,
           };
-          matchingIncomeWalletBalance +=
-            totalSilverCommission + ASSOCIATE_COMMISSION;
         } else if (parent.status === GOLD) {
           updates.associateCommissionCount = 1;
           updates.silverCommissionCount = minSilverBalance;
@@ -565,8 +553,6 @@ const check2_1Pass = async (member) => {
               totalSilverCommission +
               ASSOCIATE_COMMISSION,
           };
-          matchingIncomeWalletBalance +=
-            totalGoldCommission + totalSilverCommission + ASSOCIATE_COMMISSION;
         } else if (parent.status === DIAMOND) {
           updates.associateCommissionCount = 1;
           updates.silverCommissionCount = minSilverBalance;
@@ -582,24 +568,13 @@ const check2_1Pass = async (member) => {
               totalSilverCommission +
               ASSOCIATE_COMMISSION,
           };
-          matchingIncomeWalletBalance +=
-            totalDiamondCommission +
-            totalGoldCommission +
-            totalSilverCommission +
-            ASSOCIATE_COMMISSION;
         }
       }
 
-      parent = await prisma.member.update({
-        where: { id: parent.id },
-        data: {
-          ...updates,
-        },
-        include: {
-          sponsor: true,
-          parent: true,
-        },
-      });
+      const matchingIncomeWalletBalance =
+        updates.matchingIncomeWalletBalance.increment;
+
+      parent = await calculateCommission(parent, updates);
 
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
 

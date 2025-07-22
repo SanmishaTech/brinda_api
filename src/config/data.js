@@ -62,6 +62,7 @@ const ASSOCIATE_COMMISSION = 100;
 const SILVER_COMMISSION = 200;
 const GOLD_COMMISSION = 700;
 const DIAMOND_COMMISSION = 1000;
+
 module.exports = {
   stateOptions,
   GENDER_MALE,
