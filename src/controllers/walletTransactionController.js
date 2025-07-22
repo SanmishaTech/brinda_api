@@ -244,21 +244,13 @@ const getWalletTransactionsByMemberId = async (req, res) => {
  * Get wallet amount for a member
  */
 const getWalletAmount = async (req, res) => {
-  const walletBalance = req.user.member.walletBalance; // Extract memberId from authenticated user
-  // console.log(req.user);
   try {
-    // const walletAmount = await prisma.member.findUnique({
-    //   where: { id: parseInt(memberId) },
-    //   select: { walletBalance: true }, // Select only the wallet balance field
-    // });
-
-    // if (!walletAmount) {
-    //   return res.status(404).json({
-    //     message: "Member not found",
-    //   });
-    // }
+    const walletBalance = req.user.member.walletBalance;
+    const matchingIncomeWalletBalance =
+      req.user.member.matchingIncomeWalletBalance;
 
     res.status(200).json({
+      matchingIncomeWalletBalance: Number(matchingIncomeWalletBalance),
       walletBalance: Number(walletBalance),
     });
   } catch (error) {
@@ -563,18 +555,15 @@ const getMemberByUsername = async (req, res) => {
   }
 };
 
-
-
-
 module.exports = {
   getMemberTransactions, //transaction history
-  addWalletAmountRequest, // member amount add
+  addWalletAmountRequest, // member wallet top-up
   updateWalletAmountRequest, //admin approval
   getWalletTransactionById, // get transaction by id
   getWalletTransactionsByMemberId, //admin list
   getWalletAmount, // get wallet amount
   transferAmount, // transfer amount between members
-  depositAmount,
-  withdrawAmount,
+  depositAmount, //admin deposit amount
+  withdrawAmount, //admin withdraw amount
   getMemberByUsername,
 };

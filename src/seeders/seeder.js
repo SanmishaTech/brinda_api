@@ -42,6 +42,7 @@ async function seed() {
             isDirectMatch: false,
             is2_1Pass: false,
             walletBalance: 99999999,
+            percentage: 100,
           },
         },
       },

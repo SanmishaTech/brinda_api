@@ -114,6 +114,22 @@ const getMemberById = async (req, res) => {
  * Update member by ID
  */
 const updateMember = async (req, res) => {
+  const decimalString = (fieldName, maxDigits, decimalPlaces) =>
+    z
+      .string()
+      .nonempty(`${fieldName} is required.`)
+      .refine(
+        (val) => {
+          const regex = new RegExp(
+            `^\\d{1,${maxDigits - decimalPlaces}}(\\.\\d{1,${decimalPlaces}})?$`
+          );
+          return regex.test(val);
+        },
+        {
+          message: `${fieldName} must be a valid number with up to ${decimalPlaces} decimal places.`,
+        }
+      );
+
   const schema = z
     .object({
       name: z
@@ -145,6 +161,7 @@ const updateMember = async (req, res) => {
         .string()
         .min(6, "Password must be at least 6 characters.")
         .max(100, "Password must not exceed 100 characters."),
+      percentage: decimalString("Percentage", 5, 2),
     })
     .superRefine(async (data, ctx) => {
       const { id } = req.params;
@@ -185,7 +202,7 @@ const updateMember = async (req, res) => {
   const validationErrors = await validateRequest(schema, req.body, res);
 
   const { id } = req.params;
-  const { name, email, mobile, password } = req.body;
+  const { name, email, mobile, password, percentage } = req.body;
 
   try {
     const updatedMember = await prisma.member.update({
@@ -194,6 +211,7 @@ const updateMember = async (req, res) => {
         memberName: name,
         memberEmail: email || null,
         memberMobile: mobile || null,
+        percentage: new Prisma.Decimal(percentage),
         user: {
           update: {
             name,
