@@ -101,6 +101,7 @@ model Member {
   purchases        Purchase[] // Relation to Purchase
   repurchases        Repurchase[] // Relation to Purchase
   memberLogs        memberLog[] // Relation to memberLog
+  matching_income_commissions        MatchingIncomeCommission[] // Relation to memberLog
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -130,8 +131,7 @@ model Product {
 model WalletTransaction {
   id                 Int               @id @default(autoincrement())
   memberId           Int
-  member              Member         @relation(fields: [memberId], references: [id]) // Relation to User is now optional
-
+  member              Member         @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to User is now optional
   amount             Decimal   @db.Decimal(10, 2)
   status             String     //pending, approved ,transferred, rejected,Paid
   type               String     // e.g., CREDIT for top-up, DEBIT for withdrawal
@@ -155,7 +155,7 @@ model WalletTransaction {
 model Purchase {
   id                   Int       @id @default(autoincrement())
   memberId             Int
-  member               Member    @relation(fields: [memberId], references: [id]) // Relation to Member
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
   invoiceNumber        String?   
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
@@ -175,9 +175,9 @@ model Purchase {
 model PurchaseDetail {
   id                   Int       @id @default(autoincrement())
   purchaseId           Int
-  purchase             Purchase  @relation(fields: [purchaseId], references: [id]) // Relation to Purchase
+  purchase             Purchase  @relation(fields: [purchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
   productId            Int
-  product              Product   @relation(fields: [productId], references: [id]) // Relation to Product
+  product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
   quantity             Int
   rate                 Decimal   @db.Decimal(10, 2)
   cgstPercent         Decimal   @db.Decimal(5, 2)
@@ -200,7 +200,7 @@ model PurchaseDetail {
 model Repurchase {
   id                   Int       @id @default(autoincrement())
   memberId             Int
-  member               Member    @relation(fields: [memberId], references: [id]) // Relation to Member
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
   invoiceNumber        String?   
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
@@ -220,9 +220,9 @@ model Repurchase {
 model RepurchaseDetail {
   id                   Int       @id @default(autoincrement())
   repurchaseId           Int
-  repurchase             Repurchase  @relation(fields: [repurchaseId], references: [id]) // Relation to Purchase
+  repurchase             Repurchase  @relation(fields: [repurchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
   productId            Int
-  product              Product   @relation(fields: [productId], references: [id]) // Relation to Product
+  product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
   quantity             Int
   rate                 Decimal   @db.Decimal(10, 2)
   cgstPercent         Decimal   @db.Decimal(5, 2)
@@ -253,5 +253,15 @@ model memberLog {
   updatedAt            DateTime  @updatedAt
 
     @@map("member_logs")
+}
 
+model MatchingIncomeCommission {
+  id                         Int      @id @default(autoincrement())
+  memberId                   Int
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  matchingIncomeCommission   Decimal  @db.Decimal(10, 2)
+  isPaid                     Boolean  @default(false)
+  paidAt                     DateTime?
+  createdAt                  DateTime @default(now())
+  @@map("matching_income_commissions")
 }
