@@ -1,4 +1,4 @@
-const permissions = require('../config/permissions');
+const permissions = require("../config/permissions");
 
 const aclService = {
   hasPermission: (user, permission) => {

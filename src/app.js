@@ -16,6 +16,7 @@ const walletTransactionRoutes = require("./routes/walletTransaction");
 const purchaseRoutes = require("./routes/purchase");
 const repurchaseRoutes = require("./routes/repurchase");
 const dashboardRoutes = require("./routes/dashboard");
+const commissionRoutes = require("./routes/commission");
 const swaggerRouter = require("./swagger");
 const path = require("path");
 const config = require("./config/config");
@@ -50,6 +51,7 @@ app.use("/api/wallet-transactions", walletTransactionRoutes); // Ensure this rou
 app.use("/api/purchases", purchaseRoutes);
 app.use("/api/repurchases", repurchaseRoutes);
 app.use("/api/dashboards", dashboardRoutes);
+app.use("/api/commissions", commissionRoutes);
 
 app.use(swaggerRouter); // Add this line to include Swagger documentation
 

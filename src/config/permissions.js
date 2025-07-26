@@ -33,4 +33,8 @@ module.exports = {
   "dashboards.read": ["admin", "member"],
   "dashboards.write": ["admin", "member"],
   "dashboards.delete": ["admin", "member"],
+
+  //commissions
+  "commissions.read": ["admin"],
+  "commissions.write": ["admin"],
 };
