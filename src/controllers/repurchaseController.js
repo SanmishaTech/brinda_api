@@ -128,6 +128,7 @@ const createRepurchase = async (req, res) => {
             productId: parseInt(detail.productId),
             quantity: detail.quantity,
             rate: new Prisma.Decimal(detail.rate),
+            netUnitRate: new Prisma.Decimal(detail.netUnitRate),
             cgstPercent: new Prisma.Decimal(detail.cgstPercent),
             sgstPercent: new Prisma.Decimal(detail.sgstPercent),
             igstPercent: new Prisma.Decimal(detail.igstPercent),

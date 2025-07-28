@@ -4,3 +4,5 @@ prisma/migrations
 /uploads
 /bun.lockb
 bun.lockb
+# ignore npm audit file
+.*-audit.json

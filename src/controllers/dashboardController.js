@@ -36,6 +36,7 @@ const dashboardInformation = async (req, res) => {
       pvBalance: member.pvBalance,
       status: member.status,
       totalPurchase: totalPurchase,
+      matchingIncomeEarned: member.matchingIncomeEarned,
     });
   } catch (error) {
     res.status(500).json({

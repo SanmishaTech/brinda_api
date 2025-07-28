@@ -5,7 +5,15 @@ const calculateCommission = async (parent, updates) => {
   const percentage = parseFloat(parent.percentage);
 
   // Default increment to 0 if undefined or null to avoid NaN issues
-  const incrementValue = updates.matchingIncomeWalletBalance?.increment ?? 0;
+  // const incrementValue = updates.matchingIncomeWalletBalance?.increment ?? 0;
+  let incrementValue = parseFloat(
+    updates.matchingIncomeWalletBalance?.increment
+  );
+  if (isNaN(incrementValue)) incrementValue = 0;
+
+  updates.matchingIncomeWalletBalance = {
+    increment: incrementValue,
+  };
 
   console.log(`Before: ${incrementValue}`);
 

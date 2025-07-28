@@ -17,6 +17,7 @@ const {
 const {
   generateProductPurchaseInvoiceNumber,
 } = require("../utils/invoice/user/generateProductPurchaseInvoiceNumber");
+const logger = require("../utils/logger");
 
 const decimalString = (fieldName, maxDigits, decimalPlaces) =>
   z
@@ -132,6 +133,7 @@ const createPurchase = async (req, res) => {
             productId: parseInt(detail.productId),
             quantity: detail.quantity,
             rate: new Prisma.Decimal(detail.rate),
+            netUnitRate: new Prisma.Decimal(detail.netUnitRate),
             cgstPercent: new Prisma.Decimal(detail.cgstPercent),
             sgstPercent: new Prisma.Decimal(detail.sgstPercent),
             igstPercent: new Prisma.Decimal(detail.igstPercent),
@@ -161,7 +163,6 @@ const createPurchase = async (req, res) => {
       res,
       req
     );
-
     const memberLog = await prisma.memberLog.create({
       data: {
         memberId: req.user.member.id,
@@ -289,7 +290,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
         description: detail.product.productName || "N/A",
         hsnSac: detail.product.hsnCode || "998551", // or from your DB
         quantity: detail.quantity,
-        rate: parseFloat(detail.rate),
+        netUnitRate: parseFloat(detail.netUnitRate),
         amountWithoutGst: parseFloat(detail.amountWithoutGst),
         cgstPercent: parseFloat(detail.cgstPercent || 0),
         sgstPercent: parseFloat(detail.sgstPercent || 0),
@@ -376,6 +377,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
     // });
     return invoiceNumber;
   } catch (error) {
+    logger.info(error);
     res.status(500).json({
       errors: {
         message: "Failed to generate invoice",

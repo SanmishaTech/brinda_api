@@ -313,6 +313,14 @@ const myGenealogy = async (req, res, next) => {
         memberUsername: true,
         positionToParent: true,
         status: true,
+        leftAssociateBalance: true,
+        leftSilverBalance: true,
+        leftGoldBalance: true,
+        leftDiamondBalance: true,
+        rightAssociateBalance: true,
+        rightSilverBalance: true,
+        rightGoldBalance: true,
+        rightDiamondBalance: true,
       },
     });
 
