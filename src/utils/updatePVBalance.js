@@ -43,7 +43,6 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
       member = await updateCount(member);
 
       member = await incrementMemberStatusCount(member);
-      console.log("increment member tatus done");
 
       await prisma.memberLog.create({
         data: {
@@ -70,7 +69,6 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
         },
       });
       member = await incrementMemberStatusCount(member);
-      console.log("increment member tatus done");
 
       await prisma.memberLog.create({
         data: {
@@ -98,7 +96,6 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
       });
 
       member = await incrementMemberStatusCount(member);
-      console.log("increment member tatus done");
 
       await prisma.memberLog.create({
         data: {
@@ -126,7 +123,6 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
       });
 
       member = await incrementMemberStatusCount(member);
-      console.log("increment member tatus done");
 
       await prisma.memberLog.create({
         data: {
@@ -140,10 +136,8 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
   }
 
   await checkDirectMatch(member);
-  console.log("Direact match  done");
 
   await check2_1Pass(member);
-  console.log("2:1  done");
 
   return member;
   /*

@@ -459,22 +459,16 @@ const check2_1Pass = async (member) => {
           }
         }
       }
-      console.log("before change");
-
 
       updates.matchingIncomeWalletBalance = {
         increment: matchingIncomeWalletBalance,
       };
 
-      console.log("before calculate");
       parent = await calculateCommission(parent, updates);
-      console.log("calculate commission done  done");
 
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
-      console.log("L1  done");
 
       await checkMatchingMentorIncomeL2(parent, matchingIncomeWalletBalance);
-      console.log("L2  done");
     } else {
       // 2:1 not true
       const leftTotal = parent.leftCount + parent.leftDirectCount;
@@ -577,21 +571,14 @@ const check2_1Pass = async (member) => {
         }
       }
 
-      console.log("before change");
-
       const matchingIncomeWalletBalance =
         updates.matchingIncomeWalletBalance?.increment;
 
-      console.log("before calculate");
-
       parent = await calculateCommission(parent, updates);
-      console.log("calculate commission done  done");
 
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
-      console.log("l1  done");
 
       await checkMatchingMentorIncomeL2(parent, matchingIncomeWalletBalance);
-      console.log("L2  done");
     }
 
     currentMember = parent;
