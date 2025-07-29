@@ -18,6 +18,7 @@ const {
   generateProductPurchaseInvoiceNumber,
 } = require("../utils/invoice/user/generateProductPurchaseInvoiceNumber");
 const logger = require("../utils/logger");
+const enqueueTask = require("../../taskQueue");
 
 const decimalString = (fieldName, maxDigits, decimalPlaces) =>
   z
@@ -106,12 +107,6 @@ const createPurchase = async (req, res) => {
     if (
       parseFloat(req.user.member.walletBalance) < parseFloat(totalAmountWithGst)
     ) {
-      // console.log(
-      //   "Wallet Balance = ",
-      //   parseFloat(req.user.member.walletBalance).toFixed(2),
-      //   "Total Amount With GST =",
-      //   parseFloat(totalAmountWithGst).toFixed(2)
-      // );
       return res.status(400).json({
         errors: {
           message: "Insufficient wallet balance",
@@ -119,78 +114,19 @@ const createPurchase = async (req, res) => {
       });
     }
 
-    const newPurchase = await prisma.purchase.create({
-      data: {
-        memberId: req.user.member.id,
-        purchaseDate: new Date(),
-        totalAmountWithoutGst: new Prisma.Decimal(totalAmountWithoutGst),
-        totalAmountWithGst: new Prisma.Decimal(totalAmountWithGst),
-        totalGstAmount: new Prisma.Decimal(totalGstAmount),
-        totalProductPV: new Prisma.Decimal(totalProductPV),
-        state: req.user.member.memberState,
-        purchaseDetails: {
-          create: purchaseDetails.map((detail) => ({
-            productId: parseInt(detail.productId),
-            quantity: detail.quantity,
-            rate: new Prisma.Decimal(detail.rate),
-            netUnitRate: new Prisma.Decimal(detail.netUnitRate),
-            cgstPercent: new Prisma.Decimal(detail.cgstPercent),
-            sgstPercent: new Prisma.Decimal(detail.sgstPercent),
-            igstPercent: new Prisma.Decimal(detail.igstPercent),
-            cgstAmount: new Prisma.Decimal(detail.cgstAmount),
-            sgstAmount: new Prisma.Decimal(detail.sgstAmount),
-            igstAmount: new Prisma.Decimal(detail.igstAmount),
-            amountWithoutGst: new Prisma.Decimal(detail.amountWithoutGst),
-            amountWithGst: new Prisma.Decimal(detail.amountWithGst),
-            pvPerUnit: new Prisma.Decimal(detail.pvPerUnit),
-            totalPV: new Prisma.Decimal(detail.totalPV),
-          })),
-        },
-      },
-    });
-
-    let member = await prisma.member.update({
-      where: { id: req.user.member.id },
-      data: {
-        walletBalance: {
-          decrement: new Prisma.Decimal(totalAmountWithGst),
-        },
-      },
-    });
-
-    const invoiceNumber = await generateUserProductPurchaseInvoice(
-      newPurchase.id,
-      res,
-      req
-    );
-    const memberLog = await prisma.memberLog.create({
-      data: {
-        memberId: req.user.member.id,
-        message: `Products  Purchased (${invoiceNumber})`,
-        pv: new Prisma.Decimal(totalProductPV),
-        bv: "0.00",
-      },
-    });
-
-    member = await updatePVBalance(
-      INCREMENT,
+    enqueueTask({
+      user: req.user,
+      totalAmountWithoutGst,
+      totalAmountWithGst,
+      totalGstAmount,
       totalProductPV,
-      req.user.member.id
-    );
-
-    const transaction = await prisma.walletTransaction.create({
-      data: {
-        memberId: req.user.member.id,
-        amount: new Prisma.Decimal(totalAmountWithGst),
-        type: CREDIT,
-        status: APPROVED,
-        notes: `Products Purchased (${invoiceNumber})`,
-        transactionDate: new Date(),
-      },
+      purchaseDetails,
     });
 
-    return res.status(201).json(newPurchase);
+    return res.status(202).json({ message: "Purchase request is queued." });
+    
   } catch (error) {
+    logger.info(error);
     return res.status(500).json({
       errors: {
         message: "Failed to create purchase",
@@ -230,7 +166,7 @@ const getPurchaseById = async (req, res) => {
   }
 };
 
-const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
+const generateUserProductPurchaseInvoice = async (purchaseId) => {
   try {
     let purchase = null;
     // Step 2: Check if invoice number already exists
@@ -258,7 +194,8 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
     });
 
     if (!purchaseData) {
-      return res.status(404).json({ error: "Purchase details not found" });
+      logger.info(`Purchase not found for ID: ${purchaseId}`);
+      return { success: false, error: "Purchase details not found" };
     }
 
     // ✅ Step 2: Format data for generateInvoicePdf
@@ -349,7 +286,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
         }
       }
     } catch (err) {
-      console.error("Error deleting invoice or folder:", err);
+      logger.info("Error deleting invoice or folder:", err);
     }
     // end
     // console.log("Writing PDF to:", filePath);
@@ -363,7 +300,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
       },
     });
 
-    res.setHeader("Content-Type", "application/pdf");
+    // res.setHeader("Content-Type", "application/pdf");
 
     // ✅ Step 5: Send file to client
     // res.download(filePath, (err) => {
@@ -378,12 +315,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId, res, req) => {
     return invoiceNumber;
   } catch (error) {
     logger.info(error);
-    res.status(500).json({
-      errors: {
-        message: "Failed to generate invoice",
-        details: error.message,
-      },
-    });
+    return { success: false, error: error };
   }
 };
 

@@ -58,13 +58,10 @@ process.on("message", async (data) => {
         },
       },
     });
-    logger.info("working1");
 
     const invoiceNumber = await generateUserProductPurchaseInvoice(
       newPurchase.id
     );
-
-    logger.info("working2");
 
     const memberLog = await prisma.memberLog.create({
       data: {
@@ -87,6 +84,7 @@ process.on("message", async (data) => {
         transactionDate: new Date(),
       },
     });
+    logger.info(`Purchase Done MemberId: ${user.member.id}`);
   } catch (error) {
     logger.info("Error in background PV update:", error);
   } finally {
