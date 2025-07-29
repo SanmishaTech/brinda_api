@@ -1,14 +1,14 @@
 // background/updatePVWorker.js
-// const { updatePVBalance } = require("../utils/updatePVBalance"); // adjust path
 const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
-const {
-  generateUserProductPurchaseInvoice,
-} = require("../src/controllers/purchaseController");
+
 const { updatePVBalance } = require("../src/utils/updatePVBalance");
 const { CREDIT, APPROVED, INCREMENT, INACTIVE } = require("../src/config/data");
 
 const logger = require("../src/utils/logger");
+const {
+  generateUserProductPurchaseInvoice,
+} = require("../src/controllers/purchaseController");
 process.on("message", async (data) => {
   try {
     const {
@@ -57,7 +57,6 @@ process.on("message", async (data) => {
     const invoiceNumber = await generateUserProductPurchaseInvoice(
       newPurchase.id
     );
-
     const memberLog = await prisma.memberLog.create({
       data: {
         memberId: user.member.id,

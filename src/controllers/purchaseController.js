@@ -94,7 +94,7 @@ const getPurchases = async (req, res) => {
 // Create a new purchase
 const createPurchase = async (req, res) => {
   if (req.user.member.status === DIAMOND) {
-    return res.status(400).json({
+    return res.status(500).json({
       errors: {
         message: "Purchase Not Allowed For Member With Diamond Status",
       },
@@ -188,156 +188,144 @@ const getPurchaseById = async (req, res) => {
 };
 
 const generateUserProductPurchaseInvoice = async (purchaseId) => {
-  try {
-    let purchase = null;
-    // Step 2: Check if invoice number already exists
+  let purchase = null;
+  // Step 2: Check if invoice number already exists
 
-    const invoiceNumber = await generateProductPurchaseInvoiceNumber();
+  const invoiceNumber = await generateProductPurchaseInvoiceNumber();
 
-    purchase = await prisma.purchase.update({
-      where: { id: parseInt(purchaseId, 10) },
-      data: {
-        invoiceDate: new Date(),
-        invoiceNumber: invoiceNumber,
-      },
-    });
+  purchase = await prisma.purchase.update({
+    where: { id: parseInt(purchaseId, 10) },
+    data: {
+      invoiceDate: new Date(),
+      invoiceNumber: invoiceNumber,
+    },
+  });
 
-    const purchaseData = await prisma.purchase.findUnique({
-      where: { id: parseInt(purchaseId, 10) },
-      include: {
-        purchaseDetails: {
-          include: {
-            product: true, // Include product details
-          },
+  const purchaseData = await prisma.purchase.findUnique({
+    where: { id: parseInt(purchaseId, 10) },
+    include: {
+      purchaseDetails: {
+        include: {
+          product: true, // Include product details
         },
-        member: true,
       },
-    });
+      member: true,
+    },
+  });
 
-    if (!purchaseData) {
-      logger.info(`Purchase not found for ID: ${purchaseId}`);
-      return { success: false, error: "Purchase details not found" };
-    }
+  // ✅ Step 2: Format data for generateInvoicePdf
+  const invoiceData = {
+    invoiceNumber: purchaseData.invoiceNumber,
+    invoiceDate: purchaseData.invoiceDate,
+    member: {
+      memberName: purchaseData.member?.memberName,
+      addressLines: [purchaseData.member?.memberAddress || "", ""].filter(
+        Boolean
+      ),
+      pincode: purchaseData.member?.memberPincode || "",
+      state: purchaseData?.state,
+    },
+    memberDetails: {
+      name: "Brinda Health Care",
+      addressLines: [
+        "B/03, Pinak CHS, Kelkar Rd, Near Vrindavan Hotel, Opp. Gurudev Hotel Aai Bunglow, Ram Nagar.",
+        "Thane, Dombivli East - 421201, IN",
+      ],
+      city: "Dombivli",
+      pincode: "421201",
+      gstin: "27AACHL3089A2ZF",
+      email: "brinda@gmail.com",
+      logoPath: "",
+    },
+    items: purchaseData.purchaseDetails.map((detail, index) => ({
+      srNo: index + 1,
+      description: detail.product.productName || "N/A",
+      hsnSac: detail.product.hsnCode || "998551", // or from your DB
+      quantity: detail.quantity,
+      netUnitRate: parseFloat(detail.netUnitRate),
+      amountWithoutGst: parseFloat(detail.amountWithoutGst),
+      cgstPercent: parseFloat(detail.cgstPercent || 0),
+      sgstPercent: parseFloat(detail.sgstPercent || 0),
+      igstPercent: parseFloat(detail.igstPercent || 0),
+      cgstAmount: parseFloat(detail.cgstAmount || 0),
+      sgstAmount: parseFloat(detail.sgstAmount || 0),
+      igstAmount: parseFloat(detail.igstAmount || 0),
+      amountWithGst: parseFloat(detail.amountWithGst),
+    })),
+    totals: {
+      totalAmountWithoutGst: parseFloat(purchaseData.totalAmountWithoutGst),
+      cgstAmount: parseFloat(purchaseData.cgstAmount || 0),
+      cgstPercent: purchaseData.cgstPercent || 0,
+      sgstAmount: parseFloat(purchaseData.sgstAmount || 0),
+      sgstPercent: purchaseData.sgstPercent || 0,
+      igstAmount: parseFloat(purchaseData.igstAmount || 0),
+      igstPercent: purchaseData.igstPercent || 0,
+      totalGstAmount: parseFloat(purchaseData.totalGstAmount),
+      totalAmountWithGst: parseFloat(purchaseData.totalAmountWithGst),
+      amountInWords: numberToWords(parseFloat(purchaseData.totalAmountWithGst)),
+    },
+  };
 
-    // ✅ Step 2: Format data for generateInvoicePdf
-    const invoceData = {
-      invoiceNumber: purchaseData.invoiceNumber,
-      invoiceDate: purchaseData.invoiceDate,
-      member: {
-        memberName: purchaseData.member?.memberName,
-        addressLines: [purchaseData.member?.memberAddress || "", ""].filter(
-          Boolean
-        ),
-        pincode: purchaseData.member?.memberPincode || "",
-        state: purchaseData?.state,
-      },
-      memberDetails: {
-        name: "Brinda Health Care",
-        addressLines: [
-          "B/03, Pinak CHS, Kelkar Rd, Near Vrindavan Hotel, Opp. Gurudev Hotel Aai Bunglow, Ram Nagar.",
-          "Thane, Dombivli East - 421201, IN",
-        ],
-        city: "Dombivli",
-        pincode: "421201",
-        gstin: "27AACHL3089A2ZF",
-        email: "brinda@gmail.com",
-        logoPath: "",
-      },
-      items: purchaseData.purchaseDetails.map((detail, index) => ({
-        srNo: index + 1,
-        description: detail.product.productName || "N/A",
-        hsnSac: detail.product.hsnCode || "998551", // or from your DB
-        quantity: detail.quantity,
-        netUnitRate: parseFloat(detail.netUnitRate),
-        amountWithoutGst: parseFloat(detail.amountWithoutGst),
-        cgstPercent: parseFloat(detail.cgstPercent || 0),
-        sgstPercent: parseFloat(detail.sgstPercent || 0),
-        igstPercent: parseFloat(detail.igstPercent || 0),
-        cgstAmount: parseFloat(detail.cgstAmount || 0),
-        sgstAmount: parseFloat(detail.sgstAmount || 0),
-        igstAmount: parseFloat(detail.igstAmount || 0),
-        amountWithGst: parseFloat(detail.amountWithGst),
-      })),
-      totals: {
-        totalAmountWithoutGst: parseFloat(purchaseData.totalAmountWithoutGst),
-        cgstAmount: parseFloat(purchaseData.cgstAmount || 0),
-        cgstPercent: purchaseData.cgstPercent || 0,
-        sgstAmount: parseFloat(purchaseData.sgstAmount || 0),
-        sgstPercent: purchaseData.sgstPercent || 0,
-        igstAmount: parseFloat(purchaseData.igstAmount || 0),
-        igstPercent: purchaseData.igstPercent || 0,
-        totalGstAmount: parseFloat(purchaseData.totalGstAmount),
-        totalAmountWithGst: parseFloat(purchaseData.totalAmountWithGst),
-        amountInWords: numberToWords(
-          parseFloat(purchaseData.totalAmountWithGst)
-        ),
-      },
-    };
+  // ✅ Step 3: Define file path
 
-    // ✅ Step 3: Define file path
+  const oldPath = purchaseData.invoicePath;
+  const sanitizedInvoiceNumber = purchaseData.invoiceNumber.replace(
+    /[\/\\]/g,
+    "-"
+  );
 
-    const oldPath = purchaseData.invoicePath;
-    const sanitizedInvoiceNumber = purchaseData.invoiceNumber.replace(
-      /[\/\\]/g,
-      "-"
-    );
+  const uuidFolder = uuidv4();
+  const invoiceDir = path.join(
+    __dirname,
+    "..",
+    "..",
+    "uploads",
+    "invoices",
+    "userPurchase",
+    uuidFolder
+  );
+  const filePath = path.join(invoiceDir, `${sanitizedInvoiceNumber}.pdf`);
+  try {
+    if (oldPath) {
+      await fs.unlink(oldPath);
+      // console.log("Old invoice deleted:", oldPath);
 
-    const uuidFolder = uuidv4();
-    const invoiceDir = path.join(
-      __dirname,
-      "..",
-      "..",
-      "uploads",
-      "invoices",
-      "userPurchase",
-      uuidFolder
-    );
-    const filePath = path.join(invoiceDir, `${sanitizedInvoiceNumber}.pdf`);
-    try {
-      if (oldPath) {
-        await fs.unlink(oldPath);
-        // console.log("Old invoice deleted:", oldPath);
+      const folderToDelete = path.dirname(oldPath);
+      const files = await fs.readdir(folderToDelete);
 
-        const folderToDelete = path.dirname(oldPath);
-        const files = await fs.readdir(folderToDelete);
-
-        if (files.length === 0) {
-          await fs.rmdir(folderToDelete);
-          // console.log("Empty folder deleted:", folderToDelete);
-        }
+      if (files.length === 0) {
+        await fs.rmdir(folderToDelete);
+        // console.log("Empty folder deleted:", folderToDelete);
       }
-    } catch (err) {
-      logger.info("Error deleting invoice or folder:", err);
     }
-    // end
-    // console.log("Writing PDF to:", filePath);
-
-    // ✅ Step 4: Generate the PDF
-    await generateProductPurchaseInvoice(invoiceData, filePath);
-    await prisma.purchase.update({
-      where: { id: parseInt(purchaseId, 10) },
-      data: {
-        invoicePath: filePath, // Save relative or absolute path based on your use-case
-      },
-    });
-
-    // res.setHeader("Content-Type", "application/pdf");
-
-    // ✅ Step 5: Send file to client
-    // res.download(filePath, (err) => {
-    //   if (err) {
-    //     console.error("Download error:", err);
-    //     res.status(500).send("Failed to download invoice");
-    //   } else {
-    //     // Optionally delete file after download
-    //     // fs.unlink(filePath, () => {});
-    //   }
-    // });
-    return invoiceNumber;
-  } catch (error) {
-    logger.info(error);
-    return { success: false, error: error };
+  } catch (err) {
+    logger.info("Error deleting invoice or folder:", err);
   }
+  // end
+  // console.log("Writing PDF to:", filePath);
+
+  // ✅ Step 4: Generate the PDF
+  await generateProductPurchaseInvoice(invoiceData, filePath);
+  await prisma.purchase.update({
+    where: { id: parseInt(purchaseId, 10) },
+    data: {
+      invoicePath: filePath, // Save relative or absolute path based on your use-case
+    },
+  });
+
+  // res.setHeader("Content-Type", "application/pdf");
+
+  // ✅ Step 5: Send file to client
+  // res.download(filePath, (err) => {
+  //   if (err) {
+  //     console.error("Download error:", err);
+  //     res.status(500).send("Failed to download invoice");
+  //   } else {
+  //     // Optionally delete file after download
+  //     // fs.unlink(filePath, () => {});
+  //   }
+  // });
+  return invoiceNumber;
 };
 
 const DownloadPurchaseInvoice = async (req, res, next) => {

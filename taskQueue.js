@@ -33,6 +33,19 @@ function runNextTask() {
       logger.info(`Subprocess exited with code ${code}`);
       runNextTask(); // Process next task
     });
+    // start
+
+    subprocess.on("error", (err) => {
+      logger.info(`Subprocess error: ${err}`);
+      isRunning = false;
+      runNextTask(); // move to next even if there's an error
+    });
+
+    subprocess.on("close", (code, signal) => {
+      logger.info(`Subprocess closed. Code: ${code}, Signal: ${signal}`);
+    });
+
+    // end
   } catch (err) {
     logger.info(`Error in taskQueue: ${err}`);
     isRunning = false; // Allow queue to resume

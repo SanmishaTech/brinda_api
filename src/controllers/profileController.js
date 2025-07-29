@@ -339,9 +339,21 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+const getProfileStatus = async (req, res, next) => {
+  try {
+    res.json({
+      status: req.user.member?.status,
+      memberUsername: req.user.member?.memberUsername,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
   changePassword,
   updateUserProfile,
+  getProfileStatus,
 };

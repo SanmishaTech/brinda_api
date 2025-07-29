@@ -24,6 +24,24 @@ router.get("/", auth, profileController.getProfile);
 
 /**
  * @swagger
+ * /status:
+ *   get:
+ *     summary: Get logged-in user's profile
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ */
+router.get("/status", auth, profileController.getProfileStatus);
+
+/**
+ * @swagger
  * /profile:
  *   post:
  *     summary: Update logged-in user's profile
