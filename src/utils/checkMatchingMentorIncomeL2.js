@@ -4,9 +4,7 @@ const { GOLD, DIAMOND, LEFT, RIGHT } = require("../config/data");
 
 const checkMatchingMentorIncomeL2 = async (parent, value) => {
   const L1SponsorId = parent?.sponsor?.id;
-  console.log("inside l2 function");
   if (!L1SponsorId) {
-    console.log("Error1");
     return;
   }
 
@@ -25,7 +23,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   const L2SponsorId = L1Sponsor?.sponsor?.id;
 
   if (!L2SponsorId) {
-    console.log("Error2");
 
     return;
   }
@@ -51,7 +48,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     !L2Sponsor.is2_1Pass ||
     !L2Sponsor.isDirectMatch
   ) {
-    console.log("Error11");
     return;
   }
 
@@ -75,7 +71,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
         }),
       },
     });
-    console.log("Error4");
 
     return;
   }
@@ -111,7 +106,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   ]);
 
   if (leftCandidates.length === 0 || rightCandidates.length === 0) {
-    console.log("Error5");
     return;
   }
 
@@ -125,12 +119,10 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   for (const leftChild of leftCandidates) {
     const isLeftQualified = validStatuses.includes(leftChild.status);
     if (!isLeftQualified) {
-      console.log("Error6");
 
       continue;
     }
     if (leftChild.leftDirectCount < 1 || leftChild.rightDirectCount < 1) {
-      console.log("Error7");
 
       continue;
     }
@@ -154,7 +146,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     );
 
     if (!leftHasGoldOrDiamondLeft || !leftHasGoldOrDiamondRight) {
-      console.log("Error8");
 
       continue;
     }
@@ -166,12 +157,10 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   for (const rightChild of rightCandidates) {
     const isRightQualified = validStatuses.includes(rightChild.status);
     if (!isRightQualified) {
-      console.log("Error6");
 
       continue;
     }
     if (rightChild.leftDirectCount < 1 || rightChild.rightDirectCount < 1) {
-      console.log("Error7");
 
       continue;
     }
@@ -195,7 +184,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     );
 
     if (!rightHasGoldOrDiamondLeft || !rightHasGoldOrDiamondRight) {
-      console.log("Error8");
 
       continue;
     }
@@ -224,7 +212,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
         }),
       },
     });
-    console.log("✅ L2Sponsor updated with matchingMentorIncomeL2");
     return;
   }
 
