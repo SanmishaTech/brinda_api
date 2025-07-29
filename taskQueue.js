@@ -1,6 +1,7 @@
 // taskQueue.js
 const { fork } = require("child_process");
 const path = require("path");
+const logger = require("./src/utils/logger");
 
 const taskQueue = [];
 let isRunning = false;
@@ -24,16 +25,16 @@ function runNextTask() {
     subprocess.send(nextTask);
 
     subprocess.on("message", (msg) => {
-      console.log("Message from subprocess:", msg);
+      logger.info(`Message from subprocess: ${msg}`);
     });
 
     subprocess.on("exit", (code) => {
       isRunning = false;
-      console.log(`Subprocess exited with code ${code}`);
+      logger.info(`Subprocess exited with code ${code}`);
       runNextTask(); // Process next task
     });
   } catch (err) {
-    console.error("Error in taskQueue:", err);
+    logger.info(`Error in taskQueue: ${err}`);
     isRunning = false; // Allow queue to resume
     runNextTask(); // Try next task if this one fails
   }

@@ -50,13 +50,8 @@ process.on("message", async (data) => {
       },
     });
 
-    let member = await prisma.member.update({
+    let member = await prisma.member.findUnique({
       where: { id: user.member.id },
-      data: {
-        walletBalance: {
-          decrement: new Prisma.Decimal(totalAmountWithGst),
-        },
-      },
     });
 
     const invoiceNumber = await generateUserProductPurchaseInvoice(

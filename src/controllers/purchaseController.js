@@ -8,7 +8,13 @@ const { numberToWords } = require("../utils/numberToWords");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs").promises; // Use promises API
 const path = require("path");
-const { CREDIT, APPROVED, INCREMENT, INACTIVE } = require("../config/data");
+const {
+  CREDIT,
+  APPROVED,
+  INCREMENT,
+  INACTIVE,
+  DIAMOND,
+} = require("../config/data");
 const { updatePVBalance } = require("../utils/updatePVBalance");
 const { updateCount } = require("../utils/updateCount");
 const {
@@ -87,6 +93,13 @@ const getPurchases = async (req, res) => {
 
 // Create a new purchase
 const createPurchase = async (req, res) => {
+  if (req.user.member.status === DIAMOND) {
+    return res.status(400).json({
+      errors: {
+        message: "Purchase Not Allowed For Member With Diamond Status",
+      },
+    });
+  }
   const schema = z.object({
     totalAmountWithoutGst: decimalString("Total Amount Without GST", 10, 2),
     totalAmountWithGst: decimalString("Total Amount With GST", 10, 2),
@@ -114,6 +127,15 @@ const createPurchase = async (req, res) => {
       });
     }
 
+    const member = await prisma.member.update({
+      where: { id: req.user.member.id },
+      data: {
+        walletBalance: {
+          decrement: new Prisma.Decimal(totalAmountWithGst),
+        },
+      },
+    });
+
     enqueueTask({
       user: req.user,
       totalAmountWithoutGst,
@@ -124,7 +146,6 @@ const createPurchase = async (req, res) => {
     });
 
     return res.status(202).json({ message: "Purchase request is queued." });
-    
   } catch (error) {
     logger.info(error);
     return res.status(500).json({
@@ -199,7 +220,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId) => {
     }
 
     // ✅ Step 2: Format data for generateInvoicePdf
-    const invoiceData = {
+    const invoceData = {
       invoiceNumber: purchaseData.invoiceNumber,
       invoiceDate: purchaseData.invoiceDate,
       member: {
