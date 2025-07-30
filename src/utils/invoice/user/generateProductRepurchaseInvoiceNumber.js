@@ -4,7 +4,7 @@ const dayjs = require("dayjs");
 
 async function generateProductRepurchaseInvoiceNumber() {
   const now = dayjs();
-  const prefix = `I-${now.format("MMYY")}`; // e.g., I-0625
+  const prefix = `R-${now.format("MMYY")}`; // e.g., I-0625
 
   // Find the latest username that starts with this prefix
   const latest = await prisma.repurchase.findFirst({

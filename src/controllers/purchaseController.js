@@ -94,7 +94,7 @@ const getPurchases = async (req, res) => {
 // Create a new purchase
 const createPurchase = async (req, res) => {
   if (req.user.member.status === DIAMOND) {
-    return res.status(500).json({
+    return res.status(403).json({
       errors: {
         message: "Purchase Not Allowed For Member With Diamond Status",
       },

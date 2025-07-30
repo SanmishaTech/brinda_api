@@ -77,7 +77,7 @@ const generateProductRepurchaseInvoice = async (invoiceData, filePath) => {
       { text: item.srNo, style: "tableCell" },
       { text: item.description, style: "tableCell" },
       { text: item.quantity?.toString() || "N/A", style: "tableCell" },
-      { text: safeFixed(item.rate), style: "tableCell" },
+      { text: safeFixed(item.netUnitRate), style: "tableCell" },
       { text: safeFixed(item.amountWithoutGst), style: "tableCell" },
       ...(isMaharashtra
         ? [

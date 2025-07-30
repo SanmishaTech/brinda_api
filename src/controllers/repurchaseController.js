@@ -6,7 +6,13 @@ const { numberToWords } = require("../utils/numberToWords");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs").promises; // Use promises API
 const path = require("path");
-const { CREDIT, APPROVED, INCREMENT, INACTIVE } = require("../config/data");
+const {
+  CREDIT,
+  APPROVED,
+  INCREMENT,
+  INACTIVE,
+  ASSOCIATE,
+} = require("../config/data");
 const {
   generateProductRepurchaseInvoice,
 } = require("../utils/invoice/user/generateProductRepurchaseInvoice");
@@ -81,6 +87,16 @@ const getRepurchases = async (req, res) => {
 
 // Create a new purchase
 const createRepurchase = async (req, res) => {
+  if (
+    req.user.member.status === INACTIVE ||
+    req.user.member.status === ASSOCIATE
+  ) {
+    return res.status(403).json({
+      errors: {
+        message: "You’ll be able to repurchase once you reach Silver status",
+      },
+    });
+  }
   const schema = z.object({
     totalAmountWithoutGst: decimalString("Total Amount Without GST", 10, 2),
     totalAmountWithGst: decimalString("Total Amount With GST", 10, 2),
@@ -280,7 +296,7 @@ const generateUserProductRepurchaseInvoice = async (repurchaseId, res, req) => {
         description: detail.product.productName || "N/A",
         hsnSac: detail.product.hsnCode || "998551", // or from your DB
         quantity: detail.quantity,
-        rate: parseFloat(detail.rate),
+        netUnitRate: parseFloat(detail.netUnitRate),
         amountWithoutGst: parseFloat(detail.amountWithoutGst),
         cgstPercent: parseFloat(detail.cgstPercent || 0),
         sgstPercent: parseFloat(detail.sgstPercent || 0),
