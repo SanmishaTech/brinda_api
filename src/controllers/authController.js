@@ -139,7 +139,7 @@ const register = async (req, res, next) => {
               username,
               email,
               mobile,
-              password: "abcd123",
+              password: password,
               role: config.defaultUserRole,
               member: {
                 create: {
