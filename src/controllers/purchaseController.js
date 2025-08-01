@@ -24,7 +24,7 @@ const {
   generateProductPurchaseInvoiceNumber,
 } = require("../utils/invoice/user/generateProductPurchaseInvoiceNumber");
 const logger = require("../utils/logger");
-const enqueueTask = require("../../taskQueue");
+const purchaseTask = require("../../taskQueue/purchaseTask");
 
 const decimalString = (fieldName, maxDigits, decimalPlaces) =>
   z
@@ -136,7 +136,7 @@ const createPurchase = async (req, res) => {
       },
     });
 
-    enqueueTask({
+    purchaseTask({
       user: req.user,
       totalAmountWithoutGst,
       totalAmountWithGst,
@@ -188,25 +188,18 @@ const getPurchaseById = async (req, res) => {
 };
 
 const generateUserProductPurchaseInvoice = async (purchaseId) => {
-  let purchase = null;
-  // Step 2: Check if invoice number already exists
-
   const invoiceNumber = await generateProductPurchaseInvoiceNumber();
 
-  purchase = await prisma.purchase.update({
+  const purchaseData = await prisma.purchase.update({
     where: { id: parseInt(purchaseId, 10) },
     data: {
       invoiceDate: new Date(),
       invoiceNumber: invoiceNumber,
     },
-  });
-
-  const purchaseData = await prisma.purchase.findUnique({
-    where: { id: parseInt(purchaseId, 10) },
     include: {
       purchaseDetails: {
         include: {
-          product: true, // Include product details
+          product: true,
         },
       },
       member: true,

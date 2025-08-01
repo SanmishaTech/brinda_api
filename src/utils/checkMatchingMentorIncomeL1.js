@@ -5,7 +5,6 @@ const { LEFT, RIGHT, TOP, GOLD, SILVER, DIAMOND } = require("../config/data");
 const checkMatchingMentorIncomeL1 = async (parent, value) => {
   if (parent?.sponsor?.isMatchingMentorL1 === true && value > 0) {
     // start
-    console.log("L1 Value", value);
     var commissionToGive = value * 0.1;
     const percentage = parseFloat(parent?.sponsor?.percentage);
     if (!isNaN(percentage) && percentage > 0 && percentage < 100) {
@@ -28,7 +27,6 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
     parent.sponsor?.is2_1Pass === true
   ) {
     // start
-    console.log("L1 Value", value);
 
     var commissionToGive = value * 0.1;
     const percentage = parseFloat(parent?.sponsor?.percentage);

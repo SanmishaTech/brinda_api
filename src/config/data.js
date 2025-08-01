@@ -63,6 +63,30 @@ const SILVER_COMMISSION = 200;
 const GOLD_COMMISSION = 700;
 const DIAMOND_COMMISSION = 1000;
 const MINIMUM_MATCHING_COMMISSION_LIMIT = 100;
+
+// only for reference not using it
+const MENTOR_COMMISSION_GROUPS = {
+  1: "NoCondition",
+  2: "Requires3Directs",
+  3: "Requires3DirectsWith3Each",
+};
+
+const REPURCHASE_COMMISSIONS = [
+  { level: 1, repurchasePercentage: 10, mentorPercentage: 5, group: 1 },
+  { level: 2, repurchasePercentage: 5, mentorPercentage: 5, group: 1 },
+  { level: 3, repurchasePercentage: 10, mentorPercentage: 10, group: 1 },
+  { level: 4, repurchasePercentage: 5, mentorPercentage: 0, group: 2 },
+  { level: 5, repurchasePercentage: 10, mentorPercentage: 0, group: 2 },
+  { level: 6, repurchasePercentage: 5, mentorPercentage: 0, group: 2 },
+  { level: 7, repurchasePercentage: 10, mentorPercentage: 0, group: 2 },
+  { level: 8, repurchasePercentage: 15, mentorPercentage: 0, group: 3 },
+  { level: 9, repurchasePercentage: 15, mentorPercentage: 0, group: 3 },
+  { level: 10, repurchasePercentage: 15, mentorPercentage: 0, group: 3 },
+];
+
+// Repurchase
+const CASHBACK_PERCENT = 5;
+
 module.exports = {
   stateOptions,
   GENDER_MALE,
@@ -91,4 +115,6 @@ module.exports = {
   GOLD_COMMISSION,
   DIAMOND_COMMISSION,
   MINIMUM_MATCHING_COMMISSION_LIMIT,
+  CASHBACK_PERCENT,
+  REPURCHASE_COMMISSIONS,
 };

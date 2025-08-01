@@ -65,10 +65,12 @@ model Member {
   isDirectMatch Boolean  @default(false)
   isMatchingMentorL1 Boolean  @default(false)
   isMatchingMentorL2 Boolean  @default(false)
-  matchingMentorIncomeL1   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
-  matchingMentorIncomeL2   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
-  walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
-  matchingIncomeWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
+  matchingMentorIncomeL1   Decimal   @db.Decimal(10, 2)   @default(0.00) 
+  matchingMentorIncomeL2   Decimal   @db.Decimal(10, 2)   @default(0.00) 
+  walletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  matchingIncomeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  repurchaseWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  upgradeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
   percentage                  Decimal    @db.Decimal(5, 2)    @default(100)
   associateCommissionDate        DateTime?            // the date the counter applies to
   silverCommissionDate        DateTime?
@@ -98,6 +100,7 @@ model Member {
   bankAccountType String?
   pvBalance       Decimal?   @db.Decimal(10, 2)   @default(0.00)
   matchingIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
+  repurchaseIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] // Relation to Purchase
   repurchases        Repurchase[] // Relation to Purchase

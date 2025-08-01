@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { DEBIT, APPROVED } = require("../config/data");
 const prisma = new PrismaClient();
 
 const calculateCommission = async (parent, updates) => {
@@ -15,8 +16,6 @@ const calculateCommission = async (parent, updates) => {
     increment: incrementValue,
   };
 
-  console.log(`Before: ${incrementValue}`);
-
   if (!isNaN(percentage) && percentage > 0 && percentage < 100) {
     const commissionToGive = parseFloat(
       ((incrementValue * percentage) / 100).toFixed(2)
@@ -24,6 +23,18 @@ const calculateCommission = async (parent, updates) => {
 
     updates.matchingIncomeWalletBalance = {
       increment: commissionToGive,
+    };
+
+    updates.walletTransactions = {
+      create: {
+        amount: commissionToGive,
+        status: APPROVED,
+        type: DEBIT,
+        transactionDate: new Date(),
+        notes: `Matching Commission (${commissionToGive})`,
+        // Optional:
+        // paymentMethod: "System Auto",
+      },
     };
   } else if (percentage === 0) {
     updates.matchingIncomeWalletBalance = {
@@ -35,11 +46,16 @@ const calculateCommission = async (parent, updates) => {
     updates.matchingIncomeWalletBalance = {
       increment: incrementValue,
     };
+    updates.walletTransactions = {
+      create: {
+        amount: incrementValue,
+        status: APPROVED,
+        type: DEBIT,
+        transactionDate: new Date(),
+        notes: `Matching Commission (${commissionToGive})`,
+      },
+    };
   }
-
-  console.log(
-    `[Commission] Percentage: ${percentage}, Final: ${updates.matchingIncomeWalletBalance.increment}`
-  );
 
   parent = await prisma.member.update({
     where: { id: parent.id },

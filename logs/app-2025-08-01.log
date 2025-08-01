@@ -1,0 +1,27 @@
+2025-08-01T06:07:34.560Z [INFO]: Purchase Done MemberId: 2
+2025-08-01T06:07:34.578Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-01T06:07:34.580Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-01T06:07:48.323Z [INFO]: Purchase Done MemberId: 2
+2025-08-01T06:07:48.354Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-01T06:07:48.354Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-01T07:20:49.397Z [INFO]: Starting cashback calculation for member ID: 2
+2025-08-01T07:20:49.398Z [INFO]: Calculated updatedAmount: 17.5
+2025-08-01T07:20:49.399Z [INFO]: Calculated cashbackAmount: 17.5
+2025-08-01T07:20:49.399Z [INFO]: Member is DIAMOND, incrementing repurchaseWalletBalance
+2025-08-01T07:20:49.407Z [INFO]: Successfully updated member wallet balance for member ID: 2
+2025-08-01T07:20:49.408Z [INFO]: Starting repurchase income distribution for member 2 with BV 1000.00
+2025-08-01T07:20:49.411Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-01T07:20:49.412Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-01T07:20:49.412Z [INFO]: Group 1 members are always eligible
+2025-08-01T07:20:49.412Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-01T07:20:49.413Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-01T07:20:49.420Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-01T07:20:49.420Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-01T07:20:49.421Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-01T07:20:49.421Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-01T07:20:49.421Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-01T07:20:49.421Z [INFO]: Level 1 mentor always eligible.
+2025-08-01T07:20:49.421Z [INFO]: Paying mentor commission of 5.00 to sponsor 1 at level 1
+2025-08-01T07:20:49.432Z [INFO]: Repurchase Done MemberId: 2
+2025-08-01T07:20:49.447Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-01T07:20:49.448Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null

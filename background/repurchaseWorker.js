@@ -1,13 +1,21 @@
 // background/updatePVWorker.js
 const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { updatePVBalance } = require("../src/utils/updatePVBalance");
 const { CREDIT, APPROVED, INCREMENT, INACTIVE } = require("../src/config/data");
-
 const logger = require("../src/utils/logger");
 const {
-  generateUserProductPurchaseInvoice,
-} = require("../src/controllers/purchaseController");
+  generateUserProductRepurchaseInvoice,
+} = require("../src/controllers/repurchaseController");
+const {
+  applyRepurchaseCashback,
+} = require("../src/utils/applyRepurchaseCashback");
+const {
+  distributeRepurchaseIncome,
+} = require("../src/utils/distributeRepurchaseIncome");
+const {
+  distributeRepurchaseMentorIncome,
+} = require("../src/utils/distributeRepurchaseMentorIncome");
+
 process.on("message", async (data) => {
   try {
     const {
@@ -15,21 +23,21 @@ process.on("message", async (data) => {
       totalAmountWithoutGst,
       totalAmountWithGst,
       totalGstAmount,
-      totalProductPV,
-      purchaseDetails,
+      totalProductBV,
+      repurchaseDetails,
     } = data;
 
-    const newPurchase = await prisma.purchase.create({
+    const newRepurchase = await prisma.repurchase.create({
       data: {
         memberId: user.member.id,
-        purchaseDate: new Date(),
+        repurchaseDate: new Date(),
         totalAmountWithoutGst: new Prisma.Decimal(totalAmountWithoutGst),
         totalAmountWithGst: new Prisma.Decimal(totalAmountWithGst),
         totalGstAmount: new Prisma.Decimal(totalGstAmount),
-        totalProductPV: new Prisma.Decimal(totalProductPV),
+        totalProductBV: new Prisma.Decimal(totalProductBV),
         state: user.member.memberState,
-        purchaseDetails: {
-          create: purchaseDetails.map((detail) => ({
+        repurchaseDetails: {
+          create: repurchaseDetails.map((detail) => ({
             productId: parseInt(detail.productId),
             quantity: detail.quantity,
             rate: new Prisma.Decimal(detail.rate),
@@ -42,27 +50,25 @@ process.on("message", async (data) => {
             igstAmount: new Prisma.Decimal(detail.igstAmount),
             amountWithoutGst: new Prisma.Decimal(detail.amountWithoutGst),
             amountWithGst: new Prisma.Decimal(detail.amountWithGst),
-            pvPerUnit: new Prisma.Decimal(detail.pvPerUnit),
-            totalPV: new Prisma.Decimal(detail.totalPV),
+            bvPerUnit: new Prisma.Decimal(detail.bvPerUnit),
+            totalBV: new Prisma.Decimal(detail.totalBV),
           })),
         },
       },
     });
 
-
-    const invoiceNumber = await generateUserProductPurchaseInvoice(
-      newPurchase.id
+    const invoiceNumber = await generateUserProductRepurchaseInvoice(
+      newRepurchase.id
     );
+
     const memberLog = await prisma.memberLog.create({
       data: {
         memberId: user.member.id,
-        message: `Products  Purchased (${invoiceNumber})`,
-        pv: new Prisma.Decimal(totalProductPV),
-        bv: "0.00",
+        message: `Products  Repurchased (${invoiceNumber})`,
+        bv: new Prisma.Decimal(totalProductBV),
+        pv: "0.00",
       },
     });
-
-    member = await updatePVBalance(INCREMENT, totalProductPV, user.member.id);
 
     const transaction = await prisma.walletTransaction.create({
       data: {
@@ -70,13 +76,28 @@ process.on("message", async (data) => {
         amount: new Prisma.Decimal(totalAmountWithGst),
         type: CREDIT,
         status: APPROVED,
-        notes: `Products Purchased (${invoiceNumber})`,
+        notes: `Products Repurchased (${invoiceNumber})`,
         transactionDate: new Date(),
       },
     });
-    logger.info(`Purchase Done MemberId: ${user.member.id}`);
+
+    let member = await prisma.member.findUnique({
+      where: { id: user.member.id },
+      select: { id: true, percentage: true, status: true, sponsorId: true },
+    });
+
+    // repurchase logic start
+    member = await applyRepurchaseCashback(member, totalAmountWithGst);
+    const mentorCandidates = await distributeRepurchaseIncome(
+      member,
+      totalProductBV
+    );
+    await distributeRepurchaseMentorIncome(mentorCandidates);
+    // repurchase logic end
+
+    logger.info(`Repurchase Done MemberId: ${user.member.id}`);
   } catch (error) {
-    logger.info("Error in background PV update:", error);
+    logger.info("Error in background Repurchase:", error);
   } finally {
     await prisma.$disconnect();
     process.exit(0);
