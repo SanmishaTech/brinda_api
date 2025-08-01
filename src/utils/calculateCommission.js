@@ -52,7 +52,7 @@ const calculateCommission = async (parent, updates) => {
         status: APPROVED,
         type: DEBIT,
         transactionDate: new Date(),
-        notes: `Matching Commission (${commissionToGive})`,
+        notes: `Matching Commission (${incrementValue})`,
       },
     };
   }

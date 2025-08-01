@@ -23,7 +23,7 @@ async function seed() {
     const member = await prisma.user.create({
       data: {
         name: "Brinda",
-        username: "0725000001",
+        username: "0825000001",
         email: "brinda@gmail.com",
         mobile: "2222222222",
         password: "abcd123",
@@ -32,7 +32,7 @@ async function seed() {
         member: {
           create: {
             memberName: "Brinda",
-            memberUsername: "0725000001",
+            memberUsername: "0825000001",
             memberEmail: "brinda@gmail.com",
             memberMobile: "2222222222",
             positionToParent: TOP,
@@ -58,8 +58,8 @@ async function seed() {
           gst: 12.0,
           dspRate: 400.0,
           pv: 1.0,
-          bv: 3.0,
-          bvPrice: 350.0,
+          bv: 1000.0,
+          bvPrice: 500,
         },
         {
           productName: "Protein Powder",
@@ -69,8 +69,8 @@ async function seed() {
           gst: 18.0,
           dspRate: 880.0,
           pv: 0.5,
-          bv: 6.0,
-          bvPrice: 780.0,
+          bv: 2000,
+          bvPrice: 600,
         },
       ],
     });
