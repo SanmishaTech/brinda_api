@@ -98,7 +98,7 @@ model Member {
   bankAccountNumber String?
   bankIfscCode    String?
   bankAccountType String?
-  pvBalance       Decimal?   @db.Decimal(10, 2)   @default(0.00)
+  pvBalance       Decimal   @db.Decimal(10, 2)   @default(0.00)
   matchingIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
   repurchaseIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
