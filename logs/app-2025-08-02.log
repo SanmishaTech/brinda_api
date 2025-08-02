@@ -1,0 +1,14 @@
+2025-08-02T06:08:35.732Z [INFO]: User: root
+2025-08-02T06:08:35.733Z [INFO]: Password: your_password
+2025-08-02T06:08:35.733Z [INFO]: Host: localhost
+2025-08-02T06:08:35.734Z [INFO]: Port: 3306
+2025-08-02T06:08:35.734Z [INFO]: Database: brinda
+2025-08-02T06:09:00.149Z [WARN]: ⚠️ Stderr: mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+2025-08-02T06:09:00.149Z [INFO]: ✅ Backup completed: /home/sanmisha/work/brinda/brinda/backend/backups/brinda-backup-02_08_2025_11_39.sql
+2025-08-02T06:15:35.524Z [INFO]: User: root
+2025-08-02T06:15:35.526Z [INFO]: Password: your_password
+2025-08-02T06:15:35.526Z [INFO]: Host: localhost
+2025-08-02T06:15:35.527Z [INFO]: Port: 3306
+2025-08-02T06:15:35.527Z [INFO]: Database: brinda
+2025-08-02T06:16:00.027Z [ERROR]: ❌ Error in Getting Backup: ReferenceError: backupDtabase is not defined
