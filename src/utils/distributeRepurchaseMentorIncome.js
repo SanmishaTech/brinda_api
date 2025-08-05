@@ -79,14 +79,30 @@ const distributeRepurchaseMentorIncome = async (mentorCandidates = []) => {
       )} to sponsor ${sponsorId} at level ${level}`
     );
 
-    await prisma.member.update({
-      where: { id: sponsorId },
-      data: {
-        repurchaseWalletBalance: {
-          increment: new Prisma.Decimal(actualMentorCommission),
-        },
-      },
-    });
+    const updateData = {};
+
+    if (level === 1) {
+      updateData.repurchaseMentorIncomeL1 = {
+        increment: new Prisma.Decimal(actualMentorCommission),
+      };
+    } else if (level === 2) {
+      updateData.repurchaseMentorIncomeL2 = {
+        increment: new Prisma.Decimal(actualMentorCommission),
+      };
+    } else if (level === 3) {
+      updateData.repurchaseMentorIncomeL3 = {
+        increment: new Prisma.Decimal(actualMentorCommission),
+      };
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await prisma.member.update({
+        where: { id: sponsorId },
+        data: updateData,
+      });
+    } else {
+      logger.info(`No valid fields to update for sponsor ${sponsorId}`);
+    }
   }
 };
 

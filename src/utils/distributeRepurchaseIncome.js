@@ -115,7 +115,7 @@ const distributeRepurchaseIncome = async (startingMember, totalProductBV) => {
       await prisma.member.update({
         where: { id: sponsor.id },
         data: {
-          repurchaseWalletBalance: {
+          repurchaseIncome: {
             increment: new Prisma.Decimal(actualCommission),
           },
         },

@@ -50,6 +50,8 @@ const PENDING = "Pending";
 const INCREMENT = "Increment";
 const DECREMENT = "Decrement";
 const MAHARASHTRA = "Maharashtra";
+const FUND_WALLET = "FUND_WALLET";
+const MATCHING_INCOME_WALLET = "MATCHING_INCOME_WALLET";
 
 //Member Status
 const INACTIVE = "Inactive";
@@ -117,4 +119,6 @@ module.exports = {
   MINIMUM_MATCHING_COMMISSION_LIMIT,
   CASHBACK_PERCENT,
   REPURCHASE_COMMISSIONS,
+  MATCHING_INCOME_WALLET,
+  FUND_WALLET,
 };

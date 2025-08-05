@@ -8,6 +8,7 @@ const {
   PENDING,
   APPROVED,
   TRANSFERRED,
+  MATCHING_INCOME_WALLET,
 } = require("../config/data");
 /**
  * Get all wallet transactions for a member with pagination, sorting, and search
@@ -265,7 +266,7 @@ const getWalletAmount = async (req, res) => {
  * Transfer amount from one member to another
  */
 const transferAmount = async (req, res) => {
-  const { amount, memberId, tPin } = req.body; // Extract amount and memberId from the request body
+  const { amount, walletType, memberId, tPin } = req.body; // Extract amount and memberId from the request body
   const senderId = req.user.member.id; // Get the sender's member ID from the authenticated user
 
   try {
@@ -275,6 +276,7 @@ const transferAmount = async (req, res) => {
       where: { id: senderId },
       select: {
         walletBalance: true,
+        matchingIncomeWalletBalance: true,
         memberName: true,
         memberUsername: true,
         tPin: true, // Assuming the TPIN is stored in this field
@@ -300,11 +302,20 @@ const transferAmount = async (req, res) => {
     }
 
     // Check sufficient balance
-    if (sender.walletBalance < amount) {
-      return res.status(400).json({
-        message: "Insufficient wallet balance",
-      });
+    if (walletType === MATCHING_INCOME_WALLET) {
+      if (parseFloat(sender.matchingIncomeWalletBalance) < parseFloat(amount)) {
+        return res.status(400).json({
+          message: "Insufficient Matching Income wallet balance",
+        });
+      }
+    } else {
+      if (parseFloat(sender.walletBalance) < parseFloat(amount)) {
+        return res.status(400).json({
+          message: "Insufficient Fund Wallet balance",
+        });
+      }
     }
+
     // Validate the recipient member
     const recipient = await prisma.member.findUnique({
       where: { id: memberId },
@@ -320,13 +331,21 @@ const transferAmount = async (req, res) => {
     // Perform the transfer within a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Deduct the amount from the sender's wallet
+      const data = {};
+
+      if (walletType === MATCHING_INCOME_WALLET) {
+        data.matchingIncomeWalletBalance = {
+          decrement: amount,
+        };
+      } else {
+        data.walletBalance = {
+          decrement: amount,
+        };
+      }
+
       await tx.member.update({
         where: { id: senderId },
-        data: {
-          walletBalance: {
-            decrement: amount,
-          },
-        },
+        data,
       });
 
       // Add the amount to the recipient's wallet
@@ -346,7 +365,6 @@ const transferAmount = async (req, res) => {
           amount: new Prisma.Decimal(amount),
           type: CREDIT,
           transactionDate: new Date(),
-
           status: TRANSFERRED,
           notes: `Transferred ₹${amount} to ${recipient.memberName}(${recipient.memberUsername})`,
         },
