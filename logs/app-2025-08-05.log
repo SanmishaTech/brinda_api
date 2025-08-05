@@ -1,0 +1,14 @@
+2025-08-05T12:44:49.389Z [INFO]: MATCHING_INCOME_WALLET is not defined
+2025-08-05T12:44:55.493Z [INFO]: MATCHING_INCOME_WALLET is not defined
+2025-08-05T12:49:09.412Z [INFO]: Purchase Done MemberId: 4585
+2025-08-05T12:49:09.450Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-05T12:49:09.453Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-05T12:54:02.791Z [INFO]: Purchase Done MemberId: 1
+2025-08-05T12:54:02.810Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-05T12:54:02.810Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-05T12:54:45.667Z [INFO]: Purchase Done MemberId: 1
+2025-08-05T12:54:45.693Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-05T12:54:45.694Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-05T12:55:41.535Z [INFO]: Purchase Done MemberId: 2
+2025-08-05T12:55:41.563Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-05T12:55:41.564Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
