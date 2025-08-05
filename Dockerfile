@@ -22,6 +22,7 @@ RUN apt-get update -y && apt-get install -y openssl
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.env ./
+COPY --from=builder /app/taskQueue.js ./    
 COPY --from=builder /app/background ./background
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/prisma ./prisma

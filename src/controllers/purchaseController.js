@@ -115,43 +115,16 @@ const createPurchase = async (req, res) => {
       totalGstAmount,
       totalProductPV,
       purchaseDetails,
-      walletType,
     } = req.body;
 
-    if (walletType === MATCHING_INCOME_WALLET) {
-      if (
-        parseFloat(req.user.member.matchingIncomeWalletBalance) <
-        parseFloat(totalAmountWithGst)
-      ) {
-        return res.status(400).json({
-          errors: {
-            message: "Insufficient Matching Income Wallet Balance",
-          },
-        });
-      }
-    } else {
-      if (
-        parseFloat(req.user.member.walletBalance) <
-        parseFloat(totalAmountWithGst)
-      ) {
-        return res.status(400).json({
-          errors: {
-            message: "Insufficient wallet balance",
-          },
-        });
-      }
-    }
-
-    const data = {};
-
-    if (walletType === MATCHING_INCOME_WALLET) {
-      data.matchingIncomeWalletBalance = {
-        decrement: amount,
-      };
-    } else {
-      data.walletBalance = {
-        decrement: amount,
-      };
+    if (
+      parseFloat(req.user.member.walletBalance) < parseFloat(totalAmountWithGst)
+    ) {
+      return res.status(400).json({
+        errors: {
+          message: "Insufficient wallet balance",
+        },
+      });
     }
 
     const member = await prisma.member.update({
