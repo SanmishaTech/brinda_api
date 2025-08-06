@@ -13,6 +13,7 @@ const {
   INACTIVE,
   ASSOCIATE,
   DIAMOND,
+  MATCHING_INCOME_WALLET,
 } = require("../config/data");
 const {
   generateProductRepurchaseInvoice,
@@ -115,25 +116,48 @@ const createRepurchase = async (req, res) => {
       totalGstAmount,
       totalProductBV,
       repurchaseDetails,
+      walletType,
     } = req.body;
 
-    if (
-      parseFloat(req.user.member.walletBalance) < parseFloat(totalAmountWithGst)
-    ) {
-      return res.status(400).json({
-        errors: {
-          message: "Insufficient wallet balance",
-        },
-      });
+    if (walletType === MATCHING_INCOME_WALLET) {
+      if (
+        parseFloat(req.user.member.matchingIncomeWalletBalance) <
+        parseFloat(totalAmountWithGst)
+      ) {
+        return res.status(400).json({
+          errors: {
+            message: "Insufficient Matching Income Wallet Balance",
+          },
+        });
+      }
+    } else {
+      if (
+        parseFloat(req.user.member.walletBalance) <
+        parseFloat(totalAmountWithGst)
+      ) {
+        return res.status(400).json({
+          errors: {
+            message: "Insufficient fund wallet balance",
+          },
+        });
+      }
+    }
+
+    const data = {};
+
+    if (walletType === MATCHING_INCOME_WALLET) {
+      data.matchingIncomeWalletBalance = {
+        decrement: new Prisma.Decimal(totalAmountWithGst),
+      };
+    } else {
+      data.walletBalance = {
+        decrement: new Prisma.Decimal(totalAmountWithGst),
+      };
     }
 
     let member = await prisma.member.update({
       where: { id: req.user.member.id },
-      data: {
-        walletBalance: {
-          decrement: new Prisma.Decimal(totalAmountWithGst),
-        },
-      },
+      data,
     });
 
     repurchaseTask({

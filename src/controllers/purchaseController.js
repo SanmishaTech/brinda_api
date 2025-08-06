@@ -14,6 +14,9 @@ const {
   INCREMENT,
   INACTIVE,
   DIAMOND,
+  UPGRADE_WALLET,
+  MATCHING_INCOME_WALLET,
+  FUND_WALLET,
 } = require("../config/data");
 const { updatePVBalance } = require("../utils/updatePVBalance");
 const { updateCount } = require("../utils/updateCount");
@@ -115,25 +118,63 @@ const createPurchase = async (req, res) => {
       totalGstAmount,
       totalProductPV,
       purchaseDetails,
+      walletType,
     } = req.body;
 
-    if (
-      parseFloat(req.user.member.walletBalance) < parseFloat(totalAmountWithGst)
-    ) {
-      return res.status(400).json({
-        errors: {
-          message: "Insufficient wallet balance",
-        },
-      });
+    if (walletType === MATCHING_INCOME_WALLET) {
+      if (
+        parseFloat(req.user.member.matchingIncomeWalletBalance) <
+        parseFloat(totalAmountWithGst)
+      ) {
+        return res.status(400).json({
+          errors: {
+            message: "Insufficient Matching Income Wallet Balance",
+          },
+        });
+      }
+    } else if (walletType === UPGRADE_WALLET) {
+      if (
+        parseFloat(req.user.member.upgradeWalletBalance) <
+        parseFloat(totalAmountWithGst)
+      ) {
+        return res.status(400).json({
+          errors: {
+            message: "Insufficient upgrade wallet balance",
+          },
+        });
+      }
+    } else {
+      if (
+        parseFloat(req.user.member.walletBalance) <
+        parseFloat(totalAmountWithGst)
+      ) {
+        return res.status(400).json({
+          errors: {
+            message: "Insufficient fund wallet balance",
+          },
+        });
+      }
+    }
+
+    const data = {};
+
+    if (walletType === MATCHING_INCOME_WALLET) {
+      data.matchingIncomeWalletBalance = {
+        decrement: new Prisma.Decimal(totalAmountWithGst),
+      };
+    } else if (walletType === UPGRADE_WALLET) {
+      data.upgradeWalletBalance = {
+        decrement: new Prisma.Decimal(totalAmountWithGst),
+      };
+    } else {
+      data.walletBalance = {
+        decrement: new Prisma.Decimal(totalAmountWithGst),
+      };
     }
 
     const member = await prisma.member.update({
       where: { id: req.user.member.id },
-      data: {
-        walletBalance: {
-          decrement: new Prisma.Decimal(totalAmountWithGst),
-        },
-      },
+      data,
     });
 
     purchaseTask({

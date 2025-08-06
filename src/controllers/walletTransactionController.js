@@ -249,10 +249,12 @@ const getWalletAmount = async (req, res) => {
     const walletBalance = req.user.member.walletBalance;
     const matchingIncomeWalletBalance =
       req.user.member.matchingIncomeWalletBalance;
+    const upgradeWalletBalance = req.user.member.upgradeWalletBalance;
 
     res.status(200).json({
       matchingIncomeWalletBalance: Number(matchingIncomeWalletBalance),
       walletBalance: Number(walletBalance),
+      upgradeWalletBalance: Number(upgradeWalletBalance),
     });
   } catch (error) {
     return res.status(500).json({
@@ -294,7 +296,7 @@ const transferAmount = async (req, res) => {
     // Check TPIN
     const isPinValid = Number(sender.tPin) === Number(tPin);
     if (!isPinValid) {
-      return res.status(401).json({
+      return res.status(500).json({
         errors: {
           message: "Invalid Transaction PIN",
         },

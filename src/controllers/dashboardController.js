@@ -37,6 +37,16 @@ const dashboardInformation = async (req, res) => {
       status: member.status,
       totalPurchase: totalPurchase,
       matchingIncomeEarned: member.matchingIncomeEarned,
+      repurchaseIncome: member.repurchaseIncome,
+      repurchaseCashbackIncome: member.repurchaseCashbackIncome,
+      repurchaseMentorIncomeL1: member.repurchaseMentorIncomeL1,
+      repurchaseMentorIncomeL2: member.repurchaseMentorIncomeL2,
+      repurchaseMentorIncomeL3: member.repurchaseMentorIncomeL3,
+      matchingMentorIncomeL1: member.matchingMentorIncomeL1,
+      matchingMentorIncomeL2: member.matchingMentorIncomeL2,
+      matchingIncomeWalletBalance: member.matchingIncomeWalletBalance,
+      upgradeWalletBalance: member.upgradeWalletBalance,
+      repurchaseIncomeEarned: member.repurchaseIncomeEarned,
     });
   } catch (error) {
     res.status(500).json({

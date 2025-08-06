@@ -1,0 +1,57 @@
+2025-08-06T09:01:41.365Z [INFO]: MATCHING_INCOME_WALLET is not defined
+2025-08-06T09:01:46.644Z [INFO]: MATCHING_INCOME_WALLET is not defined
+2025-08-06T09:02:23.727Z [INFO]: Purchase Done MemberId: 3
+2025-08-06T09:02:23.745Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-06T09:02:23.747Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-06T09:04:56.161Z [INFO]: Purchase Done MemberId: 3
+2025-08-06T09:04:56.176Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-06T09:04:56.177Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-06T09:06:07.601Z [INFO]: Purchase Done MemberId: 3
+2025-08-06T09:06:07.617Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-06T09:06:07.618Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-06T09:07:58.145Z [INFO]: Purchase Done MemberId: 3
+2025-08-06T09:07:58.170Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-06T09:07:58.172Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-06T09:09:00.426Z [INFO]: Purchase Done MemberId: 3
+2025-08-06T09:09:00.442Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-06T09:09:00.443Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-06T09:38:32.751Z [INFO]: Starting cashback calculation for member ID: 3
+2025-08-06T09:38:32.753Z [INFO]: Calculated updatedAmount: 25
+2025-08-06T09:38:32.753Z [INFO]: Calculated cashbackAmount: 25
+2025-08-06T09:38:32.762Z [INFO]: Successfully updated member wallet balance for member ID: 3
+2025-08-06T09:38:32.763Z [INFO]: Starting repurchase income distribution for member 3 with BV 160.00
+2025-08-06T09:38:32.767Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-06T09:38:32.767Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-06T09:38:32.768Z [INFO]: Group 1 members are always eligible
+2025-08-06T09:38:32.768Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-06T09:38:32.768Z [INFO]: Paying commission: base 16.00, actual 16.00 to sponsor 1
+2025-08-06T09:38:32.775Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-06T09:38:32.775Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-06T09:38:32.776Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-06T09:38:32.776Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-06T09:38:32.776Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-06T09:38:32.776Z [INFO]: Level 1 mentor always eligible.
+2025-08-06T09:38:32.777Z [INFO]: Paying mentor commission of 0.80 to sponsor 1 at level 1
+2025-08-06T09:38:32.786Z [INFO]: Repurchase Done MemberId: 3
+2025-08-06T09:38:32.805Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-06T09:38:32.807Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-06T09:41:54.693Z [INFO]: Starting cashback calculation for member ID: 3
+2025-08-06T09:41:54.695Z [INFO]: Calculated updatedAmount: 43.75
+2025-08-06T09:41:54.695Z [INFO]: Calculated cashbackAmount: 43.75
+2025-08-06T09:41:54.703Z [INFO]: Successfully updated member wallet balance for member ID: 3
+2025-08-06T09:41:54.704Z [INFO]: Starting repurchase income distribution for member 3 with BV 280.00
+2025-08-06T09:41:54.708Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-06T09:41:54.708Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-06T09:41:54.708Z [INFO]: Group 1 members are always eligible
+2025-08-06T09:41:54.708Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-06T09:41:54.709Z [INFO]: Paying commission: base 28.00, actual 28.00 to sponsor 1
+2025-08-06T09:41:54.715Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-06T09:41:54.715Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-06T09:41:54.716Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-06T09:41:54.716Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-06T09:41:54.716Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-06T09:41:54.716Z [INFO]: Level 1 mentor always eligible.
+2025-08-06T09:41:54.717Z [INFO]: Paying mentor commission of 1.40 to sponsor 1 at level 1
+2025-08-06T09:41:54.726Z [INFO]: Repurchase Done MemberId: 3
+2025-08-06T09:41:54.740Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-06T09:41:54.741Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
