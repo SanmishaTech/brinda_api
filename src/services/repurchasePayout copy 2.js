@@ -81,22 +81,55 @@ const repurchasePayout = async () => {
       const nonDiamondData = [];
 
       for (const member of filteredMembers) {
-        const MMI1 = new Prisma.Decimal(member.matchingMentorIncomeL1 ?? 0);
-        const MMI2 = new Prisma.Decimal(member.matchingMentorIncomeL2 ?? 0);
-        const RCashback = new Prisma.Decimal(
-          member.repurchaseCashbackIncome ?? 0
-        );
-        const RIncome = new Prisma.Decimal(member.repurchaseIncome ?? 0);
-        const RMI1 = new Prisma.Decimal(member.repurchaseMentorIncomeL1 ?? 0);
-        const RMI2 = new Prisma.Decimal(member.repurchaseMentorIncomeL2 ?? 0);
-        const RMI3 = new Prisma.Decimal(member.repurchaseMentorIncomeL3 ?? 0);
+        const MMI1 = new Prisma.Decimal(member.matchingMentorIncomeL1);
+        const MMI2 = new Prisma.Decimal(member.matchingMentorIncomeL2);
+        const RIncome = new Prisma.Decimal(member.repurchaseIncome);
+        const RCashback = new Prisma.Decimal(member.repurchaseCashbackIncome);
+        const RMI1 = new Prisma.Decimal(member.repurchaseMentorIncomeL1);
+        const RMI2 = new Prisma.Decimal(member.repurchaseMentorIncomeL2);
+        const RMI3 = new Prisma.Decimal(member.repurchaseMentorIncomeL3);
         const totalCommissionAmount = new Prisma.Decimal(
-          member.totalCommissionAmount ?? 0
+          member.totalCommissionAmount
         );
         const isDiamond = member.status === DIAMOND;
 
         const TDS_PERCENT_USED = calculateTDS ? TDS_PERCENT : 0;
 
+        //   const TDSAmount = totalCommissionAmount
+        //     .mul(TDS_PERCENT_USED)
+        //     .div(100)
+        //     .toFixed(2);
+
+        //   const platformChargeAmount = totalCommissionAmount
+        //     .mul(PLATFORM_CHARGE_PERCENT)
+        //     .div(100)
+        //     .toFixed(2);
+
+        //   const totalAmountToGive = totalCommissionAmount
+        //     .sub(TDSAmount)
+        //     .sub(platformChargeAmount)
+        //     .toFixed(2);
+
+        //   commissionData.push({
+        //     memberId: member.id,
+        //     MMI1,
+        //     MMI2,
+        //     repurchaseIncome: RIncome,
+        //     repurchaseCashbackIncome: RCashback,
+        //     RMI1,
+        //     RMI2,
+        //     RMI3,
+        //     TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
+        //     TDSAmount: new Prisma.Decimal(TDSAmount),
+        //     platformChargePercent: new Prisma.Decimal(PLATFORM_CHARGE_PERCENT),
+        //     platformChargeAmount: new Prisma.Decimal(platformChargeAmount),
+        //     totalAmountBeforeDeduction: totalCommissionAmount,
+        //     totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
+        //     isPaid: false,
+        //     createdAt: new Date(),
+        //     isDiamond, // custom flag you can use later
+        //   });
+        // }
         if (isDiamond) {
           const TDSAmount = totalCommissionAmount
             .mul(TDS_PERCENT_USED)
@@ -128,6 +161,7 @@ const repurchasePayout = async () => {
             totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
             isPaid: false,
             createdAt: new Date(),
+            isDiamond,
           });
         } else {
           // Only include RIncome, RMI1, RMI2, RMI3
@@ -143,7 +177,7 @@ const repurchasePayout = async () => {
             .sub(platformChargeAmount)
             .toFixed(2);
 
-          const tempMemberData = {
+          nonDiamondData.push({
             memberId: member.id,
             repurchaseIncome: RIncome,
             RMI1,
@@ -157,23 +191,7 @@ const repurchasePayout = async () => {
             totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
             isPaid: false,
             createdAt: new Date(),
-          };
-
-          // Add extra fields without including them in DB insert
-          Object.defineProperty(tempMemberData, "MMI1", {
-            value: MMI1,
-            enumerable: false, // 👈 prevents Prisma from seeing it
           });
-          Object.defineProperty(tempMemberData, "MMI2", {
-            value: MMI2,
-            enumerable: false,
-          });
-          Object.defineProperty(tempMemberData, "repurchaseCashbackIncome", {
-            value: RCashback,
-            enumerable: false,
-          });
-
-          nonDiamondData.push(tempMemberData);
         }
       }
 
@@ -181,10 +199,13 @@ const repurchasePayout = async () => {
         const batch = commissionData.slice(i, i + BATCH_SIZE);
 
         // 1️⃣ Insert commissions for DIAMOND members only
+        const diamondData = batch
+          .filter((item) => item.isDiamond)
+          .map(({ isDiamond, ...rest }) => rest);
 
-        if (batch.length > 0) {
+        if (diamondData.length > 0) {
           await prisma.repurchaseIncomeCommission.createMany({
-            data: batch,
+            data: diamondData,
             skipDuplicates: true,
           });
         }
@@ -203,15 +224,15 @@ const repurchasePayout = async () => {
           });
         }
         // 2️⃣ Update upgradeWalletBalance for non-DIAMOND members sequentially
-        for (const member of batch) {
-          const amountToAdd = member.MMI1.add(member.MMI2).add(
-            member.repurchaseCashbackIncome
-          );
+        const nonDiamondMembers = batch.filter((item) => !item.isDiamond);
+        for (const member of nonDiamondMembers) {
           await prisma.member.update({
             where: { id: member.memberId },
             data: {
               upgradeWalletBalance: {
-                increment: amountToAdd,
+                increment: member.MMI1.add(member.MMI2).add(
+                  member.repurchaseCashbackIncome
+                ),
               },
             },
           });

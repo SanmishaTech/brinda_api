@@ -65,12 +65,16 @@ model Member {
   isDirectMatch Boolean  @default(false)
   isMatchingMentorL1 Boolean  @default(false)
   isMatchingMentorL2 Boolean  @default(false)
-  matchingMentorIncomeL1   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
-  matchingMentorIncomeL2   Decimal?   @db.Decimal(10, 2)   @default(0.00) 
-  walletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
-  matchingIncomeWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
-  upgradeWalletBalance   Decimal?   @db.Decimal(10, 2)   @default(0.00)
+  matchingMentorIncomeL1   Decimal   @db.Decimal(10, 2)   @default(0.00) 
+  matchingMentorIncomeL2   Decimal   @db.Decimal(10, 2)   @default(0.00) 
+  walletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  matchingIncomeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  upgradeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  repurchaseIncome   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  repurchaseCashbackIncome   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  repurchaseMentorIncomeL1   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  repurchaseMentorIncomeL2   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  repurchaseMentorIncomeL3   Decimal   @db.Decimal(10, 2)   @default(0.00)
   percentage                  Decimal    @db.Decimal(5, 2)    @default(100)
   associateCommissionDate        DateTime?            // the date the counter applies to
   silverCommissionDate        DateTime?
@@ -98,7 +102,7 @@ model Member {
   bankAccountNumber String?
   bankIfscCode    String?
   bankAccountType String?
-  pvBalance       Decimal?   @db.Decimal(10, 2)   @default(0.00)
+  pvBalance       Decimal   @db.Decimal(10, 2)   @default(0.00)
   matchingIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
   repurchaseIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
@@ -106,6 +110,7 @@ model Member {
   repurchases        Repurchase[] // Relation to Purchase
   memberLogs        memberLog[] // Relation to memberLog
   matching_income_commissions        MatchingIncomeCommission[] // Relation to memberLog
+  repurchase_income_commissions      RepurchaseIncomeCommission[] // Relation to memberLog
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -257,7 +262,6 @@ model memberLog {
   bv          Decimal   @db.Decimal(10, 2)
   createdAt   DateTime @default(now())
   updatedAt            DateTime  @updatedAt
-
     @@map("member_logs")
 }
 
@@ -270,4 +274,27 @@ model MatchingIncomeCommission {
   paidAt                     DateTime?
   createdAt                  DateTime @default(now())
   @@map("matching_income_commissions")
+}
+
+model RepurchaseIncomeCommission {
+  id                         Int      @id @default(autoincrement())
+  memberId                   Int
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  MMI1   Decimal  @db.Decimal(10, 2)  @default(0.00)
+  MMI2   Decimal  @db.Decimal(10, 2)  @default(0.00)
+  repurchaseIncome   Decimal  @db.Decimal(10, 2) @default(0.00)
+  repurchaseCashbackIncome   Decimal  @db.Decimal(10, 2) @default(0.00)
+  RMI1 Decimal  @db.Decimal(10, 2) @default(0.00)
+  RMI2 Decimal  @db.Decimal(10, 2) @default(0.00)
+  RMI3 Decimal  @db.Decimal(10, 2) @default(0.00)
+  TDSPercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  TDSAmount   Decimal  @db.Decimal(10, 2) @default(0.00)
+  platformChargePercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  platformChargeAmount   Decimal  @db.Decimal(10, 2) @default(0.00)
+  totalAmountBeforeDeduction  Decimal  @db.Decimal(10, 2) @default(0.00)
+  totalAmountToGive  Decimal  @db.Decimal(10, 2) @default(0.00)
+  isPaid                     Boolean  @default(false)
+  paidAt                     DateTime?
+  createdAt                  DateTime @default(now())
+  @@map("repurchase_income_commissions")
 }

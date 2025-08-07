@@ -1,0 +1,131 @@
+2025-08-07T09:51:00.064Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T09:51:00.068Z [INFO]: No members With Cashback found with insufficient repurchase amount.
+2025-08-07T09:51:00.076Z [ERROR]: ❌ Error in RepurchasePayout: commissionData is not defined
+2025-08-07T09:51:00.077Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T09:54:00.063Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T09:54:00.066Z [INFO]: No members With Cashback found with insufficient repurchase amount.
+2025-08-07T09:54:00.075Z [INFO]: Total updated records: 0
+2025-08-07T09:54:00.076Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T09:56:00.053Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T09:56:00.057Z [INFO]: No members With Cashback found with insufficient repurchase amount.
+2025-08-07T09:56:00.064Z [INFO]: Total updated records: 0
+2025-08-07T09:56:00.065Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T09:59:00.060Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T09:59:00.066Z [INFO]: No members With Cashback found with insufficient repurchase amount.
+2025-08-07T09:59:00.082Z [INFO]: Total updated records: 0
+2025-08-07T09:59:00.083Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T10:00:41.485Z [INFO]: Starting cashback calculation for member ID: 1
+2025-08-07T10:00:41.487Z [INFO]: Calculated updatedAmount: 25
+2025-08-07T10:00:41.487Z [INFO]: Calculated cashbackAmount: 25
+2025-08-07T10:00:41.496Z [INFO]: Successfully updated member wallet balance for member ID: 1
+2025-08-07T10:00:41.497Z [INFO]: Starting repurchase income distribution for member 1 with BV 1000.00
+2025-08-07T10:00:41.497Z [INFO]: No sponsor found at level 1, stopping distribution.
+2025-08-07T10:00:41.497Z [INFO]: Completed distribution. Mentor candidates: 0
+2025-08-07T10:00:41.497Z [INFO]: Distributing mentor income for 0 candidates
+2025-08-07T10:00:41.498Z [INFO]: Repurchase Done MemberId: 1
+2025-08-07T10:00:41.519Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-07T10:00:41.520Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-07T10:03:00.067Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T10:03:00.069Z [INFO]: No members With Cashback found with insufficient repurchase amount.
+2025-08-07T10:03:00.078Z [INFO]: Total updated records: 0
+2025-08-07T10:03:00.078Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T10:09:00.053Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T10:09:00.068Z [INFO]: Inserted batch 1
+2025-08-07T10:09:00.077Z [INFO]: Total updated records: 1
+2025-08-07T10:09:00.077Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T10:20:00.089Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T10:20:00.100Z [INFO]: Inserted batch 1
+2025-08-07T10:20:00.108Z [INFO]: Total updated records: 1
+2025-08-07T10:20:00.108Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T10:26:38.069Z [INFO]: Starting cashback calculation for member ID: 2
+2025-08-07T10:26:38.071Z [INFO]: Calculated updatedAmount: 25
+2025-08-07T10:26:38.071Z [INFO]: Calculated cashbackAmount: 25
+2025-08-07T10:26:38.083Z [INFO]: Successfully updated member wallet balance for member ID: 2
+2025-08-07T10:26:38.084Z [INFO]: Starting repurchase income distribution for member 2 with BV 1000.00
+2025-08-07T10:26:38.151Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-07T10:26:38.152Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-07T10:26:38.152Z [INFO]: Group 1 members are always eligible
+2025-08-07T10:26:38.152Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-07T10:26:38.152Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-07T10:26:38.161Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-07T10:26:38.161Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-07T10:26:38.162Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-07T10:26:38.162Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-07T10:26:38.162Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-07T10:26:38.163Z [INFO]: Level 1 mentor always eligible.
+2025-08-07T10:26:38.163Z [INFO]: Paying mentor commission of 5.00 to sponsor 1 at level 1
+2025-08-07T10:26:38.175Z [INFO]: Repurchase Done MemberId: 2
+2025-08-07T10:26:38.198Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-07T10:26:38.200Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-07T10:28:00.055Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T10:28:00.073Z [INFO]: Inserted batch 1
+2025-08-07T10:28:00.080Z [INFO]: Total updated records: 1
+2025-08-07T10:28:00.081Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T10:34:00.049Z [INFO]: No members found with sufficient repurchase amount.
+2025-08-07T10:34:00.071Z [INFO]: Inserted batch 1
+2025-08-07T10:34:00.076Z [INFO]: Total updated records: 2
+2025-08-07T10:34:00.076Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T10:42:18.221Z [INFO]: Starting cashback calculation for member ID: 3
+2025-08-07T10:42:18.222Z [INFO]: Calculated updatedAmount: 75
+2025-08-07T10:42:18.223Z [INFO]: Calculated cashbackAmount: 75
+2025-08-07T10:42:18.231Z [INFO]: Successfully updated member wallet balance for member ID: 3
+2025-08-07T10:42:18.232Z [INFO]: Starting repurchase income distribution for member 3 with BV 3000.00
+2025-08-07T10:42:18.237Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-07T10:42:18.237Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-07T10:42:18.238Z [INFO]: Group 1 members are always eligible
+2025-08-07T10:42:18.238Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-07T10:42:18.238Z [INFO]: Paying commission: base 300.00, actual 300.00 to sponsor 1
+2025-08-07T10:42:18.245Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-07T10:42:18.245Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-07T10:42:18.246Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-07T10:42:18.246Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-07T10:42:18.246Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-07T10:42:18.246Z [INFO]: Level 1 mentor always eligible.
+2025-08-07T10:42:18.247Z [INFO]: Paying mentor commission of 15.00 to sponsor 1 at level 1
+2025-08-07T10:42:18.258Z [INFO]: Repurchase Done MemberId: 3
+2025-08-07T10:42:18.276Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-07T10:42:18.279Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-07T10:42:56.259Z [INFO]: Starting cashback calculation for member ID: 4
+2025-08-07T10:42:56.260Z [INFO]: Calculated updatedAmount: 175
+2025-08-07T10:42:56.260Z [INFO]: Calculated cashbackAmount: 175
+2025-08-07T10:42:56.299Z [INFO]: Successfully updated member wallet balance for member ID: 4
+2025-08-07T10:42:56.300Z [INFO]: Starting repurchase income distribution for member 4 with BV 7000.00
+2025-08-07T10:42:56.305Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-07T10:42:56.305Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-07T10:42:56.305Z [INFO]: Group 1 members are always eligible
+2025-08-07T10:42:56.306Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-07T10:42:56.306Z [INFO]: Paying commission: base 700.00, actual 700.00 to sponsor 1
+2025-08-07T10:42:56.316Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-07T10:42:56.316Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-07T10:42:56.316Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-07T10:42:56.317Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-07T10:42:56.317Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-07T10:42:56.318Z [INFO]: Level 1 mentor always eligible.
+2025-08-07T10:42:56.318Z [INFO]: Paying mentor commission of 35.00 to sponsor 1 at level 1
+2025-08-07T10:42:56.328Z [INFO]: Repurchase Done MemberId: 4
+2025-08-07T10:42:56.344Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-07T10:42:56.345Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-07T10:46:00.086Z [INFO]: Inserted batch 1
+2025-08-07T10:46:00.107Z [INFO]: Inserted batch 1
+2025-08-07T10:46:00.117Z [INFO]: Total updated records: 4
+2025-08-07T10:46:00.118Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T11:04:00.152Z [INFO]: Inserted batch 1
+2025-08-07T11:04:00.177Z [INFO]: Inserted batch 1
+2025-08-07T11:04:00.184Z [INFO]: Total updated records: 4
+2025-08-07T11:04:00.184Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T11:44:00.105Z [INFO]: Inserted Diamond batch 1
+2025-08-07T11:44:00.117Z [ERROR]: ❌ Error in RepurchasePayout: Cannot read properties of undefined (reading 'add')
+2025-08-07T11:44:00.117Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T11:54:00.089Z [INFO]: Inserted Diamond batch 1
+2025-08-07T11:54:00.098Z [ERROR]: ❌ Error in RepurchasePayout: Cannot read properties of undefined (reading 'add')
+2025-08-07T11:54:00.098Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T12:18:00.101Z [INFO]: Inserted Diamond batch 1
+2025-08-07T12:18:00.126Z [INFO]: Inserted non-diamond batch 1
+2025-08-07T12:18:00.137Z [INFO]: Inserted Cashback batch 1
+2025-08-07T12:18:00.142Z [INFO]: Total updated records: 4
+2025-08-07T12:18:00.142Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
+2025-08-07T12:43:00.081Z [INFO]: Inserted Diamond batch 1
+2025-08-07T12:43:00.107Z [INFO]: Inserted non-diamond batch 1
+2025-08-07T12:43:00.120Z [INFO]: Inserted Cashback batch 1
+2025-08-07T12:43:00.131Z [INFO]: Total updated records: 4
+2025-08-07T12:43:00.131Z [INFO]: ✅ Repurchase Payout Completed successfully at 1:00 AM on the 1st.
