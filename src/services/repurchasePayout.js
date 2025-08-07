@@ -227,11 +227,11 @@ const repurchasePayout = async () => {
     // start
     if (lowRepurchaseMembers.length !== 0) {
       const commissionData = [];
+      const nonDiamondData = [];
 
       for (const member of lowRepurchaseMembers) {
-        const RCashback = new Prisma.Decimal(member.repurchaseCashbackIncome);
-
         const isDiamond = member.status === DIAMOND;
+        const RCashback = new Prisma.Decimal(member.repurchaseCashbackIncome);
 
         const TDS_PERCENT_USED = calculateTDS ? TDS_PERCENT : 0;
 
@@ -244,38 +244,38 @@ const repurchasePayout = async () => {
         const totalAmountToGive = RCashback.sub(TDSAmount)
           .sub(platformChargeAmount)
           .toFixed(2);
-
-        commissionData.push({
-          memberId: member.id,
-          repurchaseCashbackIncome: RCashback,
-          TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
-          TDSAmount: new Prisma.Decimal(TDSAmount),
-          platformChargePercent: new Prisma.Decimal(PLATFORM_CHARGE_PERCENT),
-          platformChargeAmount: new Prisma.Decimal(platformChargeAmount),
-          totalAmountBeforeDeduction: RCashback,
-          totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
-          isPaid: false,
-          createdAt: new Date(),
-          isDiamond, // custom flag you can use later
-        });
+        if (isDiamond) {
+          commissionData.push({
+            memberId: member.id,
+            repurchaseCashbackIncome: RCashback,
+            TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
+            TDSAmount: new Prisma.Decimal(TDSAmount),
+            platformChargePercent: new Prisma.Decimal(PLATFORM_CHARGE_PERCENT),
+            platformChargeAmount: new Prisma.Decimal(platformChargeAmount),
+            totalAmountBeforeDeduction: RCashback,
+            totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
+            isPaid: false,
+            createdAt: new Date(),
+          });
+        } else {
+          nonDiamondData.push({
+            memberId: member.id,
+            repurchaseCashbackIncome: RCashback,
+          });
+        }
       }
 
       for (let i = 0; i < commissionData.length; i += BATCH_SIZE) {
         const batch = commissionData.slice(i, i + BATCH_SIZE);
 
         // ✅ Insert commissions for DIAMOND members only
-        //chcked
         await prisma.repurchaseIncomeCommission.createMany({
-          data: batch
-            .filter((item) => item.isDiamond)
-            .map(({ isDiamond, ...rest }) => rest),
+          data: batch,
           skipDuplicates: true,
         });
 
         // ✅ Update upgradeWalletBalance for non-DIAMOND members
-        const nonDiamondMembers = batch.filter((item) => !item.isDiamond);
-        //checked
-        for (const member of nonDiamondMembers) {
+        for (const member of nonDiamondData) {
           await prisma.member.update({
             where: { id: member.memberId },
             data: {
