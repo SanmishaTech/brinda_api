@@ -17,6 +17,7 @@ const purchaseRoutes = require("./routes/purchase");
 const repurchaseRoutes = require("./routes/repurchase");
 const dashboardRoutes = require("./routes/dashboard");
 const commissionRoutes = require("./routes/commission");
+const repurchasePayoutRoutes = require("./routes/repurchasePayout");
 const swaggerRouter = require("./swagger");
 const path = require("path");
 const config = require("./config/config");
@@ -52,7 +53,7 @@ app.use("/api/purchases", purchaseRoutes);
 app.use("/api/repurchases", repurchaseRoutes);
 app.use("/api/dashboards", dashboardRoutes);
 app.use("/api/commissions", commissionRoutes);
-
+app.use("/api/repurchase-payouts", repurchasePayoutRoutes);
 app.use(swaggerRouter); // Add this line to include Swagger documentation
 
 app.use((req, res, next) => {

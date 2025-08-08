@@ -109,8 +109,8 @@ model Member {
   purchases        Purchase[] // Relation to Purchase
   repurchases        Repurchase[] // Relation to Purchase
   memberLogs        memberLog[] // Relation to memberLog
-  matching_income_commissions        MatchingIncomeCommission[] // Relation to memberLog
-  repurchase_income_commissions      RepurchaseIncomeCommission[] // Relation to memberLog
+  matchingIncomeCommissions        MatchingIncomeCommission[] // Relation to memberLog
+  repurchaseIncomeCommissions      RepurchaseIncomeCommission[] // Relation to memberLog
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
