@@ -9,6 +9,11 @@ const {
   PLATFORM_CHARGE_PERCENT,
   ASSOCIATE,
   DIAMOND,
+  CREDIT,
+  CASHBACK_PERCENT,
+  DEBIT,
+  UPGRADE_WALLET,
+  REJECTED,
 } = require("../config/data");
 
 const BATCH_SIZE = 150;
@@ -66,6 +71,12 @@ const repurchasePayout = async () => {
             m.id,
             m.repurchaseCashbackIncome,
             m.status,
+            m.matchingMentorIncomeL1,
+            m.matchingMentorIncomeL2,
+            m.repurchaseIncome,
+            m.repurchaseMentorIncomeL1,
+            m.repurchaseMentorIncomeL2,
+            m.repurchaseMentorIncomeL3,
             SUM(r.totalAmountWithGst) AS totalRepurchaseAmount
           FROM members m
           JOIN repurchases r ON r.memberId = m.id
@@ -173,6 +184,9 @@ const repurchasePayout = async () => {
             walletUpdateData.push({
               memberId: member.id,
               amountToAddInWallet,
+              MMI1: MMI1,
+              MMI2: MMI2,
+              RCashback: RCashback,
             });
           }
         }
@@ -216,16 +230,78 @@ const repurchasePayout = async () => {
         const batch = walletUpdateData.slice(i, i + BATCH_SIZE);
 
         const results = await Promise.allSettled(
-          batch.map((member) =>
+          batch.map((member) => {
+            const rawWalletTransactions = [
+              {
+                amount: new Prisma.Decimal(member.MMI1),
+                status: APPROVED,
+                type: CREDIT,
+                transactionDate: new Date(),
+                walletType: HOLD_WALLET,
+                notes: `Matching Mentor Income L1 Transferred To Upgrade Wallet (₹${member.MMI1})`,
+              },
+              {
+                amount: new Prisma.Decimal(member.MMI2),
+                status: APPROVED,
+                type: CREDIT,
+                transactionDate: new Date(),
+                walletType: HOLD_WALLET,
+                notes: `Matching Mentor Income L2 Transferred To Upgrade Wallet (₹${member.MMI2})`,
+              },
+              {
+                amount: new Prisma.Decimal(member.RCashback),
+                status: APPROVED,
+                type: CREDIT,
+                transactionDate: new Date(),
+                walletType: HOLD_WALLET,
+                notes: `${CASHBACK_PERCENT}% Cashback Income Transferred To Upgrade Wallet (₹${member.RCashback})`,
+              },
+              {
+                amount: new Prisma.Decimal(member.MMI1),
+                status: APPROVED,
+                type: DEBIT,
+                transactionDate: new Date(),
+                walletType: UPGRADE_WALLET,
+                notes: `Matching Mentor Income L1 Received from Member's Hold Wallet (₹${member.MMI1})`,
+              },
+              {
+                amount: new Prisma.Decimal(member.MMI2),
+                status: APPROVED,
+                type: DEBIT,
+                transactionDate: new Date(),
+                walletType: UPGRADE_WALLET,
+                notes: `Matching Mentor Income L2 Received from Member's Hold Wallet (₹${member.MMI2})`,
+              },
+              {
+                amount: new Prisma.Decimal(member.RCashback),
+                status: APPROVED,
+                type: DEBIT,
+                transactionDate: new Date(),
+                walletType: UPGRADE_WALLET,
+                notes: `${CASHBACK_PERCENT}% Cashback Income Received from Member's Hold Wallet (₹${member.RCashback})`,
+              },
+            ];
+
+            // ✅ Filter out entries with amount <= 0
+            const walletTransactions = rawWalletTransactions.filter((txn) =>
+              txn.amount.gt(0)
+            );
+
             prisma.member.update({
               where: { id: member.memberId },
               data: {
                 upgradeWalletBalance: {
                   increment: member.amountToAddInWallet,
                 },
+                holdWalletBalance: {
+                  decrement: member.amountToAddInWallet,
+                },
+                walletTransactions: {
+                  create: walletTransactions,
+                },
               },
-            })
-          )
+            });
+          })
         );
         // Optional: log failures
         results.forEach((result, idx) => {
@@ -252,11 +328,17 @@ const repurchasePayout = async () => {
     if (lowRepurchaseMembers.length !== 0) {
       const commissionData = []; // Array to hold commission data for DIAMOND members with insufficient repurchase
       const nonDiamondData = []; // Array to hold commission data for non-DIAMOND members with insufficient repurchase
-
+      const diamondWalletOperations = []; // Array to hold wallet operations for DIAMOND members
       for (const member of lowRepurchaseMembers) {
         const isDiamond = member.status === DIAMOND;
         const RCashback = new Prisma.Decimal(member.repurchaseCashbackIncome);
-
+        //was here. still not completed.
+        const MMI1 = new Prisma.Decimal(member.matchingMentorIncomeL1);
+        const MMI2 = new Prisma.Decimal(member.matchingMentorIncomeL2);
+        const RIncome = new Prisma.Decimal(member.repurchaseIncome);
+        const RMI1 = new Prisma.Decimal(member.repurchaseMentorIncomeL1);
+        const RMI2 = new Prisma.Decimal(member.repurchaseMentorIncomeL2);
+        const RMI3 = new Prisma.Decimal(member.repurchaseMentorIncomeL3);
         const TDS_PERCENT_USED = calculateTDS ? TDS_PERCENT : 0;
 
         const TDSAmount = RCashback.mul(TDS_PERCENT_USED).div(100);
@@ -268,8 +350,88 @@ const repurchasePayout = async () => {
         const totalAmountToGive =
           RCashback.sub(TDSAmount).sub(platformChargeAmount);
 
+        // start
+        const walletTransactions = [];
+
+        // ✅ Conditionally add RMI3 if greater than 0
+        if (MMI1 > 0) {
+          walletTransactions.push({
+            amount: new Prisma.Decimal(MMI1),
+            status: REJECTED,
+            type: CREDIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Not eligible for MMI L1 claim (₹${MMI1})`,
+          });
+        }
+
+        if (MMI2 > 0) {
+          walletTransactions.push({
+            amount: new Prisma.Decimal(MMI2),
+            status: REJECTED,
+            type: CREDIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Not eligible for MMI L2 claim (₹${MMI2})`,
+          });
+        }
+        if (RIncome > 0) {
+          walletTransactions.push({
+            amount: new Prisma.Decimal(RIncome),
+            status: REJECTED,
+            type: CREDIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Not eligible for Repurchase Income claim (₹${RIncome})`,
+          });
+        }
+        if (RMI1 > 0) {
+          walletTransactions.push({
+            amount: new Prisma.Decimal(RMI1),
+            status: REJECTED,
+            type: CREDIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Not eligible for RMI L1 claim (₹${RMI1})`,
+          });
+        }
+        if (RMI2 > 0) {
+          walletTransactions.push({
+            amount: new Prisma.Decimal(RMI2),
+            status: REJECTED,
+            type: CREDIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Not eligible for RMI L2 claim (₹${RMI2})`,
+          });
+        }
+        if (RMI3 > 0) {
+          walletTransactions.push({
+            amount: new Prisma.Decimal(RMI3),
+            status: REJECTED,
+            type: CREDIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Not eligible for RMI L3 claim (₹${RMI3})`,
+          });
+        }
+
         if (isDiamond) {
+          diamondWalletOperations.push({
+            memberId: member.id,
+            data: {
+              holdWalletBalance: {
+                decrement: new Prisma.Decimal(
+                  MMI1 + MMI2 + RIncome + RMI1 + RMI2 + RMI3
+                ),
+              },
+              walletTransactions: {
+                create: walletTransactions,
+              },
+            },
+          });
           if (totalAmountToGive.gt(0)) {
+            // end
             commissionData.push({
               memberId: member.id,
               repurchaseCashbackIncome: RCashback,
@@ -283,6 +445,16 @@ const repurchasePayout = async () => {
               totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
               isPaid: false,
               createdAt: new Date(),
+              // member: {
+              //   holdWalletBalance: {
+              //     decrement: new Prisma.Decimal(
+              //       MMI1 + MMI2 + RIncome + RMI1 + RMI2 + RMI3
+              //     ),
+              //   },
+              //   walletTransactions: {
+              //     create: walletTransactions,
+              //   },
+              // },
             });
           }
         } else {
@@ -325,7 +497,13 @@ const repurchasePayout = async () => {
                     member.repurchaseCashbackIncome
                   ),
                 },
+                holdWalletBalance: {
+                  increment: new Prisma.Decimal(
+                    member.repurchaseCashbackIncome
+                  ),
+                }, //was here also.copy paste above
               },
+              // log of things are missiong.100%
             })
           )
         );

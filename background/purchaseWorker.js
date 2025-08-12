@@ -2,7 +2,13 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { updatePVBalance } = require("../src/utils/updatePVBalance");
-const { CREDIT, APPROVED, INCREMENT, INACTIVE } = require("../src/config/data");
+const {
+  CREDIT,
+  APPROVED,
+  INCREMENT,
+  INACTIVE,
+  FUND_WALLET,
+} = require("../src/config/data");
 
 const logger = require("../src/utils/logger");
 const {
@@ -17,6 +23,7 @@ process.on("message", async (data) => {
       totalGstAmount,
       totalProductPV,
       purchaseDetails,
+      walletType,
     } = data;
 
     const newPurchase = await prisma.purchase.create({
@@ -49,7 +56,6 @@ process.on("message", async (data) => {
       },
     });
 
-
     const invoiceNumber = await generateUserProductPurchaseInvoice(
       newPurchase.id
     );
@@ -70,6 +76,7 @@ process.on("message", async (data) => {
         amount: new Prisma.Decimal(totalAmountWithGst),
         type: CREDIT,
         status: APPROVED,
+        walletType: walletType,
         notes: `Products Purchased (${invoiceNumber})`,
         transactionDate: new Date(),
       },

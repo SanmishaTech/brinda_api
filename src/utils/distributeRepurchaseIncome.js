@@ -1,5 +1,11 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const { REPURCHASE_COMMISSIONS, INACTIVE } = require("../config/data");
+const {
+  REPURCHASE_COMMISSIONS,
+  INACTIVE,
+  APPROVED,
+  DEBIT,
+  HOLD_WALLET,
+} = require("../config/data");
 const logger = require("./logger");
 
 const prisma = new PrismaClient();
@@ -112,14 +118,29 @@ const distributeRepurchaseIncome = async (startingMember, totalProductBV) => {
         )}, actual ${actualCommission.toFixed(2)} to sponsor ${sponsor.id}`
       );
 
-      await prisma.member.update({
-        where: { id: sponsor.id },
-        data: {
-          repurchaseIncome: {
-            increment: new Prisma.Decimal(actualCommission),
+      if (actualCommission > 0) {
+        await prisma.member.update({
+          where: { id: sponsor.id },
+          data: {
+            repurchaseIncome: {
+              increment: new Prisma.Decimal(actualCommission),
+            },
+            holdWalletBalance: {
+              increment: new Prisma.Decimal(actualCommission),
+            },
+            walletTransactions: {
+              create: {
+                amount: new Prisma.Decimal(actualCommission),
+                status: APPROVED,
+                type: DEBIT,
+                transactionDate: new Date(),
+                walletType: HOLD_WALLET,
+                notes: `Repurchase Income (₹${actualCommission})`,
+              },
+            },
           },
-        },
-      });
+        });
+      }
 
       // Store for mentor commission if level is 1–3
       if (level <= 3 && mentorPercentage > 0 && sponsor.status !== INACTIVE) {

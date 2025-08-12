@@ -9,6 +9,7 @@ const {
   APPROVED,
   TRANSFERRED,
   MATCHING_INCOME_WALLET,
+  FUND_WALLET,
 } = require("../config/data");
 /**
  * Get all wallet transactions for a member with pagination, sorting, and search
@@ -30,6 +31,7 @@ const getMemberTransactions = async (req, res) => {
         { status: { contains: search } },
         { paymentMethod: { contains: search } },
         { referenceNumber: { contains: search } },
+        { walletType: { contains: search } },
       ],
     };
 
@@ -76,6 +78,7 @@ const addWalletAmountRequest = async (req, res) => {
         amount: new Prisma.Decimal(amount),
         transactionDate: new Date(),
         type: DEBIT,
+        walletType: FUND_WALLET,
         status: PENDING,
       },
     });
@@ -187,6 +190,7 @@ const getWalletTransactionsByMemberId = async (req, res) => {
         { status: { contains: trimmedSearch } },
         { paymentMethod: { contains: trimmedSearch } },
         { referenceNumber: { contains: trimmedSearch } },
+        { walletType: { contains: trimmedSearch } },
         {
           member: {
             is: {
@@ -310,12 +314,16 @@ const transferAmount = async (req, res) => {
           message: "Insufficient Matching Income wallet balance",
         });
       }
-    } else {
+    } else if (walletType === FUND_WALLET) {
       if (parseFloat(sender.walletBalance) < parseFloat(amount)) {
         return res.status(400).json({
-          message: "Insufficient Fund Wallet balance",
+          message: "Insufficient Fund wallet balance",
         });
       }
+    } else {
+      return res.status(400).json({
+        message: "Invalid wallet type",
+      });
     }
 
     // Validate the recipient member
@@ -339,10 +347,14 @@ const transferAmount = async (req, res) => {
         data.matchingIncomeWalletBalance = {
           decrement: amount,
         };
-      } else {
+      } else if (walletType === FUND_WALLET) {
         data.walletBalance = {
           decrement: amount,
         };
+      } else {
+        return res.status(404).json({
+          message: "Invalid wallet type",
+        });
       }
 
       await tx.member.update({
@@ -368,6 +380,7 @@ const transferAmount = async (req, res) => {
           type: CREDIT,
           transactionDate: new Date(),
           status: TRANSFERRED,
+          walletType: walletType,
           notes: `Transferred ₹${amount} to ${recipient.memberName}(${recipient.memberUsername})`,
         },
       });
@@ -380,6 +393,7 @@ const transferAmount = async (req, res) => {
           type: DEBIT,
           transactionDate: new Date(),
           status: TRANSFERRED,
+          walletType: FUND_WALLET,
           notes: `Received ₹${amount} from  ${sender.memberName}(${sender.memberUsername})`,
         },
       });
@@ -442,6 +456,7 @@ const depositAmount = async (req, res) => {
           paymentMethod: paymentMode,
           referenceNumber: referenceNumber || null,
           notes: notes || null,
+          walletType: FUND_WALLET,
           processedByAdminId: adminId,
         },
       });
@@ -516,6 +531,7 @@ const withdrawAmount = async (req, res) => {
           paymentMethod: paymentMode,
           referenceNumber: referenceNumber || null,
           notes: notes || null,
+          walletType: FUND_WALLET,
           processedByAdminId: adminId,
         },
       });

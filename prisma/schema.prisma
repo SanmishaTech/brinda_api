@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mysql" // or "mysql" if you prefer
   url      = env("DATABASE_URL")
 }
 
@@ -70,6 +70,7 @@ model Member {
   walletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
   matchingIncomeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
   upgradeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  holdWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
   repurchaseIncome   Decimal   @db.Decimal(10, 2)   @default(0.00)
   repurchaseCashbackIncome   Decimal   @db.Decimal(10, 2)   @default(0.00)
   repurchaseMentorIncomeL1   Decimal   @db.Decimal(10, 2)   @default(0.00)
@@ -141,6 +142,7 @@ model WalletTransaction {
   id                 Int               @id @default(autoincrement())
   memberId           Int
   member              Member         @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to User is now optional
+  walletType         String?
   amount             Decimal   @db.Decimal(10, 2)
   status             String     //pending, approved ,transferred, rejected,Paid
   type               String     // e.g., CREDIT for top-up, DEBIT for withdrawal
@@ -150,7 +152,6 @@ model WalletTransaction {
   transactionDate     DateTime         // Date of the transaction, can be null if not applicable
   processedByAdminId Int?              // Foreign key to User (admin who approved/processed the transaction). Renamed from adminId & made optional.
   processedByAdmin   User?             @relation( fields: [processedByAdminId], references: [id]) // Renamed relation
-
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 

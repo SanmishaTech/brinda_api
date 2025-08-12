@@ -4,6 +4,7 @@ const {
   hasQualifiedDownlines,
 } = require("./distributeRepurchaseIncome");
 const logger = require("./logger");
+const { APPROVED, DEBIT, HOLD_WALLET } = require("../config/data");
 
 const prisma = new PrismaClient();
 
@@ -82,17 +83,62 @@ const distributeRepurchaseMentorIncome = async (mentorCandidates = []) => {
     const updateData = {};
 
     if (level === 1) {
-      updateData.repurchaseMentorIncomeL1 = {
-        increment: new Prisma.Decimal(actualMentorCommission),
-      };
+      if (actualMentorCommission > 0) {
+        updateData.repurchaseMentorIncomeL1 = {
+          increment: new Prisma.Decimal(actualMentorCommission),
+        };
+        updateData.holdWalletBalance = {
+          increment: new Prisma.Decimal(actualMentorCommission),
+        };
+        updateData.walletTransactions = {
+          create: {
+            amount: new Prisma.Decimal(actualMentorCommission),
+            status: APPROVED,
+            type: DEBIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Repurchase Mentor Income L1 (₹${actualMentorCommission})`,
+          },
+        };
+      }
     } else if (level === 2) {
-      updateData.repurchaseMentorIncomeL2 = {
-        increment: new Prisma.Decimal(actualMentorCommission),
-      };
+      if (actualMentorCommission > 0) {
+        updateData.repurchaseMentorIncomeL2 = {
+          increment: new Prisma.Decimal(actualMentorCommission),
+        };
+        updateData.holdWalletBalance = {
+          increment: new Prisma.Decimal(actualMentorCommission),
+        };
+        updateData.walletTransactions = {
+          create: {
+            amount: new Prisma.Decimal(actualMentorCommission),
+            status: APPROVED,
+            type: DEBIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Repurchase Mentor Income L2 (₹${actualMentorCommission})`,
+          },
+        };
+      }
     } else if (level === 3) {
-      updateData.repurchaseMentorIncomeL3 = {
-        increment: new Prisma.Decimal(actualMentorCommission),
-      };
+      if (actualMentorCommission > 0) {
+        updateData.repurchaseMentorIncomeL3 = {
+          increment: new Prisma.Decimal(actualMentorCommission),
+        };
+        updateData.holdWalletBalance = {
+          increment: new Prisma.Decimal(actualMentorCommission),
+        };
+        updateData.walletTransactions = {
+          create: {
+            amount: new Prisma.Decimal(actualMentorCommission),
+            status: APPROVED,
+            type: DEBIT,
+            transactionDate: new Date(),
+            walletType: HOLD_WALLET,
+            notes: `Repurchase Mentor Income L3 (₹${actualMentorCommission})`,
+          },
+        };
+      }
     }
 
     if (Object.keys(updateData).length > 0) {

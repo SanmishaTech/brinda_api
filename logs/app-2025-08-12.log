@@ -1,0 +1,125 @@
+2025-08-12T06:27:34.439Z [INFO]: Purchase Done MemberId: 1
+2025-08-12T06:27:34.455Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T06:27:34.456Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:29:00.989Z [INFO]: Purchase Done MemberId: 1
+2025-08-12T06:29:01.009Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T06:29:01.009Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:29:22.207Z [INFO]: Starting cashback calculation for member ID: 1
+2025-08-12T06:29:22.209Z [INFO]: Calculated updatedAmount: 25
+2025-08-12T06:29:22.209Z [INFO]: Calculated cashbackAmount: 25
+2025-08-12T06:29:22.222Z [INFO]: Successfully updated member wallet balance for member ID: 1
+2025-08-12T06:29:22.222Z [INFO]: Starting repurchase income distribution for member 1 with BV 1000.00
+2025-08-12T06:29:22.222Z [INFO]: No sponsor found at level 1, stopping distribution.
+2025-08-12T06:29:22.223Z [INFO]: Completed distribution. Mentor candidates: 0
+2025-08-12T06:29:22.223Z [INFO]: Distributing mentor income for 0 candidates
+2025-08-12T06:29:22.223Z [INFO]: Repurchase Done MemberId: 1
+2025-08-12T06:29:22.239Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-12T06:29:22.240Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:32:17.426Z [INFO]: Starting cashback calculation for member ID: 1
+2025-08-12T06:32:17.428Z [INFO]: Calculated updatedAmount: 25
+2025-08-12T06:32:17.428Z [INFO]: Calculated cashbackAmount: 25
+2025-08-12T06:32:17.439Z [INFO]: Successfully updated member wallet balance for member ID: 1
+2025-08-12T06:32:17.440Z [INFO]: Starting repurchase income distribution for member 1 with BV 1000.00
+2025-08-12T06:32:17.440Z [INFO]: No sponsor found at level 1, stopping distribution.
+2025-08-12T06:32:17.440Z [INFO]: Completed distribution. Mentor candidates: 0
+2025-08-12T06:32:17.440Z [INFO]: Distributing mentor income for 0 candidates
+2025-08-12T06:32:17.441Z [INFO]: Repurchase Done MemberId: 1
+2025-08-12T06:32:17.459Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-12T06:32:17.460Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:34:52.814Z [INFO]: Purchase Done MemberId: 1
+2025-08-12T06:34:52.833Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T06:34:52.833Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:37:25.496Z [INFO]: Purchase Done MemberId: 2
+2025-08-12T06:37:25.527Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T06:37:25.527Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:37:48.205Z [INFO]: Starting cashback calculation for member ID: 2
+2025-08-12T06:37:48.206Z [INFO]: Calculated updatedAmount: 25
+2025-08-12T06:37:48.207Z [INFO]: Calculated cashbackAmount: 25
+2025-08-12T06:37:48.239Z [INFO]: Successfully updated member wallet balance for member ID: 2
+2025-08-12T06:37:48.239Z [INFO]: Starting repurchase income distribution for member 2 with BV 1000.00
+2025-08-12T06:37:48.243Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-12T06:37:48.243Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-12T06:37:48.243Z [INFO]: Group 1 members are always eligible
+2025-08-12T06:37:48.243Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-12T06:37:48.244Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-12T06:37:48.250Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-12T06:37:48.251Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-12T06:37:48.251Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-12T06:37:48.251Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-12T06:37:48.252Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-12T06:37:48.252Z [INFO]: Level 1 mentor always eligible.
+2025-08-12T06:37:48.252Z [INFO]: Paying mentor commission of 5.00 to sponsor 1 at level 1
+2025-08-12T06:37:48.262Z [INFO]: Repurchase Done MemberId: 2
+2025-08-12T06:37:48.279Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-12T06:37:48.279Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:43:43.139Z [INFO]: Purchase Done MemberId: 3
+2025-08-12T06:43:43.163Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T06:43:43.164Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:44:10.865Z [INFO]: Starting cashback calculation for member ID: 3
+2025-08-12T06:44:10.866Z [INFO]: Calculated updatedAmount: 25
+2025-08-12T06:44:10.867Z [INFO]: Calculated cashbackAmount: 25
+2025-08-12T06:44:10.879Z [INFO]: Successfully updated member wallet balance for member ID: 3
+2025-08-12T06:44:10.880Z [INFO]: Starting repurchase income distribution for member 3 with BV 1000.00
+2025-08-12T06:44:10.884Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-12T06:44:10.885Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-12T06:44:10.885Z [INFO]: Group 1 members are always eligible
+2025-08-12T06:44:10.885Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-12T06:44:10.885Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-12T06:44:10.893Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-12T06:44:10.893Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-12T06:44:10.894Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-12T06:44:10.894Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-12T06:44:10.894Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-12T06:44:10.894Z [INFO]: Level 1 mentor always eligible.
+2025-08-12T06:44:10.895Z [INFO]: Paying mentor commission of 5.00 to sponsor 1 at level 1
+2025-08-12T06:44:10.905Z [INFO]: Repurchase Done MemberId: 3
+2025-08-12T06:44:10.921Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-12T06:44:10.921Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T06:45:25.946Z [INFO]: Purchase Done MemberId: 4
+2025-08-12T06:45:25.969Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T06:45:25.969Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T07:33:14.933Z [INFO]: Purchase Done MemberId: 5
+2025-08-12T07:33:14.954Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T07:33:14.955Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T07:34:44.827Z [INFO]: Purchase Done MemberId: 6
+2025-08-12T07:34:44.844Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T07:34:44.844Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T07:51:36.208Z [INFO]: Purchase Done MemberId: 9
+2025-08-12T07:51:36.225Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T07:51:36.226Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T07:52:04.050Z [INFO]: Purchase Done MemberId: 10
+2025-08-12T07:52:04.069Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T07:52:04.069Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T07:53:33.664Z [INFO]: Purchase Done MemberId: 11
+2025-08-12T07:53:33.690Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T07:53:33.691Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T07:55:43.639Z [INFO]: Purchase Done MemberId: 7
+2025-08-12T07:55:43.674Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T07:55:43.674Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T07:55:57.350Z [INFO]: Purchase Done MemberId: 8
+2025-08-12T07:55:57.382Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T07:55:57.382Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T08:00:11.588Z [INFO]: Purchase Done MemberId: 12
+2025-08-12T08:00:11.610Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-12T08:00:11.611Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-12T11:14:47.500Z [INFO]: User: root
+2025-08-12T11:14:47.501Z [INFO]: Password: your_password
+2025-08-12T11:14:47.501Z [INFO]: Host: localhost
+2025-08-12T11:14:47.502Z [INFO]: Port: 3306
+2025-08-12T11:14:47.502Z [INFO]: Database: brinda
+2025-08-12T11:16:42.519Z [INFO]: User: root
+2025-08-12T11:16:42.521Z [INFO]: Password: your_password
+2025-08-12T11:16:42.521Z [INFO]: Host: localhost
+2025-08-12T11:16:42.521Z [INFO]: Port: 3306
+2025-08-12T11:16:42.521Z [INFO]: Database: brinda
+2025-08-12T11:17:00.152Z [WARN]: ⚠️ Stderr: mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+2025-08-12T11:17:00.153Z [INFO]: ✅ Backup completed.
+2025-08-12T11:34:43.746Z [INFO]: User: root
+2025-08-12T11:34:43.747Z [INFO]: Password: your_password
+2025-08-12T11:34:43.747Z [INFO]: Host: localhost
+2025-08-12T11:34:43.748Z [INFO]: Port: 3306
+2025-08-12T11:34:43.748Z [INFO]: Database: brinda
+2025-08-12T11:35:00.262Z [WARN]: ⚠️ Stderr: mysqldump: [Warning] Using a password on the command line interface can be insecure.
+
+2025-08-12T11:35:00.264Z [INFO]: ✅ Backup completed: brinda-backup-12_08_2025_17_05.sql

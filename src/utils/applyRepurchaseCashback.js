@@ -1,5 +1,11 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const { CASHBACK_PERCENT, DIAMOND } = require("../config/data");
+const {
+  CASHBACK_PERCENT,
+  DIAMOND,
+  APPROVED,
+  DEBIT,
+  HOLD_WALLET,
+} = require("../config/data");
 const logger = require("./logger");
 const prisma = new PrismaClient();
 
@@ -18,6 +24,17 @@ const applyRepurchaseCashback = async (member, totalAmountWithGst) => {
     data: {
       repurchaseCashbackIncome: {
         increment: new Prisma.Decimal(cashbackAmount),
+      },
+      holdWalletBalance: { increment: new Prisma.Decimal(cashbackAmount) },
+      walletTransactions: {
+        create: {
+          amount: new Prisma.Decimal(cashbackAmount),
+          status: APPROVED,
+          type: DEBIT,
+          transactionDate: new Date(),
+          walletType: HOLD_WALLET,
+          notes: `${CASHBACK_PERCENT}% Repurchase Cashback Income (₹${cashbackAmount})`,
+        },
       },
     },
   });

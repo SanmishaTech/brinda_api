@@ -121,6 +121,55 @@ const payRepurchaseAmount = async (req, res) => {
       });
     }
 
+    const walletTransactionsToCreate = [
+      {
+        amount: repurchaseIncomeCommission.platformChargeAmount,
+        status: APPROVED,
+        type: CREDIT,
+        transactionDate: new Date(),
+        walletType: HOLD_WALLET,
+        processedByAdminId: req.user.id,
+        notes: `Platform charge: ₹${repurchaseIncomeCommission.platformChargeAmount.toFixed(
+          2
+        )}. (${
+          repurchaseIncomeCommission.platformChargePercent
+        }%) of ₹${repurchaseIncomeCommission.totalAmountBeforeDeduction.toFixed(
+          2
+        )}`,
+      },
+    ];
+
+    // Only add TDS transaction if TDSAmount is greater than 0
+    if (repurchaseIncomeCommission.TDSAmount > 0) {
+      walletTransactionsToCreate.push({
+        amount: repurchaseIncomeCommission.TDSAmount,
+        status: APPROVED,
+        type: CREDIT,
+        transactionDate: new Date(),
+        walletType: HOLD_WALLET,
+        processedByAdminId: req.user.id,
+        notes: `TDS charge: ₹${repurchaseIncomeCommission.TDSAmount.toFixed(
+          2
+        )}. (${
+          repurchaseIncomeCommission.TDSPercent
+        }%) of ₹${repurchaseIncomeCommission.totalAmountBeforeDeduction.toFixed(
+          2
+        )}`,
+      });
+    }
+
+    walletTransactionsToCreate.push({
+      amount: repurchaseIncomeCommission.totalAmountToGive,
+      status: APPROVED,
+      type: CREDIT,
+      transactionDate: new Date(),
+      walletType: HOLD_WALLET,
+      processedByAdminId: req.user.id,
+      notes: `₹${repurchaseIncomeCommission.totalAmountToGive.toFixed(
+        2
+      )} Self Repurchase Income payout transferred to your bank.`,
+    });
+
     const updatedIncomeCommission =
       await prisma.repurchaseIncomeCommission.update({
         where: { id: parseInt(commissionId) },
@@ -131,6 +180,13 @@ const payRepurchaseAmount = async (req, res) => {
             update: {
               repurchaseIncomeEarned: {
                 increment: repurchaseIncomeCommission.totalAmountToGive,
+              },
+              holdWalletBalance: {
+                decrement:
+                  repurchaseIncomeCommission.totalAmountBeforeDeduction,
+              },
+              walletTransactions: {
+                create: walletTransactionsToCreate,
               },
             },
           },

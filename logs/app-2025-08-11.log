@@ -1,0 +1,911 @@
+2025-08-11T05:18:04.086Z [INFO]: Starting cashback calculation for member ID: 1
+2025-08-11T05:18:04.088Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:18:04.088Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:18:04.098Z [INFO]: Successfully updated member wallet balance for member ID: 1
+2025-08-11T05:18:04.098Z [INFO]: Starting repurchase income distribution for member 1 with BV 1000.00
+2025-08-11T05:18:04.099Z [INFO]: No sponsor found at level 1, stopping distribution.
+2025-08-11T05:18:04.099Z [INFO]: Completed distribution. Mentor candidates: 0
+2025-08-11T05:18:04.099Z [INFO]: Distributing mentor income for 0 candidates
+2025-08-11T05:18:04.099Z [INFO]: Repurchase Done MemberId: 1
+2025-08-11T05:18:04.116Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:18:04.117Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:20:48.574Z [INFO]: Starting cashback calculation for member ID: 2
+2025-08-11T05:20:48.575Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:20:48.576Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:20:48.585Z [INFO]: Successfully updated member wallet balance for member ID: 2
+2025-08-11T05:20:48.588Z [INFO]: Starting repurchase income distribution for member 2 with BV 1000.00
+2025-08-11T05:20:48.651Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-11T05:20:48.652Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-11T05:20:48.652Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:20:48.652Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-11T05:20:48.653Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-11T05:20:48.664Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-11T05:20:48.664Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-11T05:20:48.664Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-11T05:20:48.665Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-11T05:20:48.665Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-11T05:20:48.665Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:20:48.665Z [INFO]: Paying mentor commission of 5.00 to sponsor 1 at level 1
+2025-08-11T05:20:48.677Z [INFO]: Repurchase Done MemberId: 2
+2025-08-11T05:20:48.699Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:20:48.702Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:25:38.975Z [INFO]: Starting cashback calculation for member ID: 2
+2025-08-11T05:25:38.977Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:25:38.977Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:25:38.987Z [INFO]: Successfully updated member wallet balance for member ID: 2
+2025-08-11T05:25:38.988Z [INFO]: Starting repurchase income distribution for member 2 with BV 1000.00
+2025-08-11T05:25:38.991Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-11T05:25:38.991Z [INFO]: Completed distribution. Mentor candidates: 0
+2025-08-11T05:25:38.992Z [INFO]: Distributing mentor income for 0 candidates
+2025-08-11T05:25:38.992Z [INFO]: Repurchase Done MemberId: 2
+2025-08-11T05:25:39.007Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:25:39.007Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:26:32.108Z [INFO]: Starting cashback calculation for member ID: 2
+2025-08-11T05:26:32.111Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:26:32.111Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:26:32.119Z [INFO]: Successfully updated member wallet balance for member ID: 2
+2025-08-11T05:26:32.120Z [INFO]: Starting repurchase income distribution for member 2 with BV 1000.00
+2025-08-11T05:26:32.123Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-11T05:26:32.124Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-11T05:26:32.124Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:26:32.124Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-11T05:26:32.124Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-11T05:26:32.130Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-11T05:26:32.131Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-11T05:26:32.131Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-11T05:26:32.131Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-11T05:26:32.132Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-11T05:26:32.132Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:26:32.132Z [INFO]: Paying mentor commission of 5.00 to sponsor 1 at level 1
+2025-08-11T05:26:32.147Z [INFO]: Repurchase Done MemberId: 2
+2025-08-11T05:26:32.161Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:26:32.161Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:27:50.273Z [INFO]: Starting cashback calculation for member ID: 3
+2025-08-11T05:27:50.274Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:27:50.275Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:27:50.284Z [INFO]: Successfully updated member wallet balance for member ID: 3
+2025-08-11T05:27:50.284Z [INFO]: Starting repurchase income distribution for member 3 with BV 1000.00
+2025-08-11T05:27:50.288Z [INFO]: Level 1: Found sponsor 1 with percentage 100
+2025-08-11T05:27:50.289Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-11T05:27:50.289Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:27:50.289Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-11T05:27:50.289Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-11T05:27:50.296Z [INFO]: Added sponsor 1 as mentor candidate at level 1
+2025-08-11T05:27:50.296Z [INFO]: No sponsor found at level 2, stopping distribution.
+2025-08-11T05:27:50.297Z [INFO]: Completed distribution. Mentor candidates: 1
+2025-08-11T05:27:50.297Z [INFO]: Distributing mentor income for 1 candidates
+2025-08-11T05:27:50.297Z [INFO]: Checking mentor eligibility for member 1 at level 1
+2025-08-11T05:27:50.297Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:27:50.298Z [INFO]: Paying mentor commission of 5.00 to sponsor 1 at level 1
+2025-08-11T05:27:50.306Z [INFO]: Repurchase Done MemberId: 3
+2025-08-11T05:27:50.323Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:27:50.323Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:34:23.360Z [INFO]: Starting cashback calculation for member ID: 3
+2025-08-11T05:34:23.362Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:34:23.362Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:34:23.370Z [INFO]: Successfully updated member wallet balance for member ID: 3
+2025-08-11T05:34:23.371Z [INFO]: Starting repurchase income distribution for member 3 with BV 1000.00
+2025-08-11T05:34:23.375Z [INFO]: Level 1: Found sponsor 2 with percentage 100
+2025-08-11T05:34:23.375Z [INFO]: Checking eligibility for member 2 in group 1
+2025-08-11T05:34:23.376Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:34:23.376Z [INFO]: Sponsor 2 eligibility for group 1: true
+2025-08-11T05:34:23.376Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 2
+2025-08-11T05:34:23.383Z [INFO]: Added sponsor 2 as mentor candidate at level 1
+2025-08-11T05:34:23.385Z [INFO]: Level 2: Found sponsor 1 with percentage 100
+2025-08-11T05:34:23.385Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-11T05:34:23.386Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:34:23.386Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-11T05:34:23.386Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 1
+2025-08-11T05:34:23.392Z [INFO]: Added sponsor 1 as mentor candidate at level 2
+2025-08-11T05:34:23.392Z [INFO]: No sponsor found at level 3, stopping distribution.
+2025-08-11T05:34:23.393Z [INFO]: Completed distribution. Mentor candidates: 2
+2025-08-11T05:34:23.393Z [INFO]: Distributing mentor income for 2 candidates
+2025-08-11T05:34:23.393Z [INFO]: Checking mentor eligibility for member 2 at level 1
+2025-08-11T05:34:23.393Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:34:23.393Z [INFO]: Paying mentor commission of 5.00 to sponsor 2 at level 1
+2025-08-11T05:34:23.407Z [INFO]: Checking mentor eligibility for member 1 at level 2
+2025-08-11T05:34:23.410Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:34:23.411Z [INFO]: Level 2 mentor eligibility for member 1: false
+2025-08-11T05:34:23.411Z [INFO]: Sponsor 1 is not eligible at level 2, skipping commission
+2025-08-11T05:34:23.411Z [INFO]: Repurchase Done MemberId: 3
+2025-08-11T05:34:23.426Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:34:23.428Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:35:37.623Z [INFO]: Starting cashback calculation for member ID: 3
+2025-08-11T05:35:37.624Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:35:37.625Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:35:37.668Z [INFO]: Successfully updated member wallet balance for member ID: 3
+2025-08-11T05:35:37.669Z [INFO]: Starting repurchase income distribution for member 3 with BV 1000.00
+2025-08-11T05:35:37.684Z [INFO]: Level 1: Found sponsor 2 with percentage 100
+2025-08-11T05:35:37.685Z [INFO]: Checking eligibility for member 2 in group 1
+2025-08-11T05:35:37.686Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:35:37.686Z [INFO]: Sponsor 2 eligibility for group 1: true
+2025-08-11T05:35:37.687Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 2
+2025-08-11T05:35:37.707Z [INFO]: Added sponsor 2 as mentor candidate at level 1
+2025-08-11T05:35:37.712Z [INFO]: Level 2: Found sponsor 1 with percentage 100
+2025-08-11T05:35:37.713Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-11T05:35:37.714Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:35:37.716Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-11T05:35:37.716Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 1
+2025-08-11T05:35:37.731Z [INFO]: Added sponsor 1 as mentor candidate at level 2
+2025-08-11T05:35:37.731Z [INFO]: No sponsor found at level 3, stopping distribution.
+2025-08-11T05:35:37.732Z [INFO]: Completed distribution. Mentor candidates: 2
+2025-08-11T05:35:37.733Z [INFO]: Distributing mentor income for 2 candidates
+2025-08-11T05:35:37.734Z [INFO]: Checking mentor eligibility for member 2 at level 1
+2025-08-11T05:35:37.734Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:35:37.734Z [INFO]: Paying mentor commission of 5.00 to sponsor 2 at level 1
+2025-08-11T05:35:37.763Z [INFO]: Checking mentor eligibility for member 1 at level 2
+2025-08-11T05:35:37.769Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:35:37.769Z [INFO]: Level 2 mentor eligibility for member 1: false
+2025-08-11T05:35:37.770Z [INFO]: Sponsor 1 is not eligible at level 2, skipping commission
+2025-08-11T05:35:37.770Z [INFO]: Repurchase Done MemberId: 3
+2025-08-11T05:35:37.800Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:35:37.801Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:39:09.774Z [INFO]: Starting cashback calculation for member ID: 4
+2025-08-11T05:39:09.775Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:39:09.776Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:39:09.784Z [INFO]: Successfully updated member wallet balance for member ID: 4
+2025-08-11T05:39:09.784Z [INFO]: Starting repurchase income distribution for member 4 with BV 1000.00
+2025-08-11T05:39:09.788Z [INFO]: Level 1: Found sponsor 3 with percentage 100
+2025-08-11T05:39:09.789Z [INFO]: Checking eligibility for member 3 in group 1
+2025-08-11T05:39:09.789Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:39:09.789Z [INFO]: Sponsor 3 eligibility for group 1: true
+2025-08-11T05:39:09.789Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 3
+2025-08-11T05:39:09.796Z [INFO]: Added sponsor 3 as mentor candidate at level 1
+2025-08-11T05:39:09.797Z [INFO]: Level 2: Found sponsor 2 with percentage 100
+2025-08-11T05:39:09.798Z [INFO]: Checking eligibility for member 2 in group 1
+2025-08-11T05:39:09.798Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:39:09.798Z [INFO]: Sponsor 2 eligibility for group 1: true
+2025-08-11T05:39:09.798Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 2
+2025-08-11T05:39:09.806Z [INFO]: Added sponsor 2 as mentor candidate at level 2
+2025-08-11T05:39:09.807Z [INFO]: Level 3: Found sponsor 1 with percentage 100
+2025-08-11T05:39:09.808Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-11T05:39:09.808Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:39:09.808Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-11T05:39:09.808Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 1
+2025-08-11T05:39:09.815Z [INFO]: Added sponsor 1 as mentor candidate at level 3
+2025-08-11T05:39:09.815Z [INFO]: No sponsor found at level 4, stopping distribution.
+2025-08-11T05:39:09.815Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T05:39:09.816Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T05:39:09.816Z [INFO]: Checking mentor eligibility for member 3 at level 1
+2025-08-11T05:39:09.816Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:39:09.816Z [INFO]: Paying mentor commission of 5.00 to sponsor 3 at level 1
+2025-08-11T05:39:09.826Z [INFO]: Checking mentor eligibility for member 2 at level 2
+2025-08-11T05:39:09.829Z [INFO]: Member 2 has 1 direct referrals (min required: 3)
+2025-08-11T05:39:09.829Z [INFO]: Level 2 mentor eligibility for member 2: false
+2025-08-11T05:39:09.829Z [INFO]: Sponsor 2 is not eligible at level 2, skipping commission
+2025-08-11T05:39:09.829Z [INFO]: Checking mentor eligibility for member 1 at level 3
+2025-08-11T05:39:09.830Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:39:09.833Z [INFO]: Direct referral 2 has 1 referrals
+2025-08-11T05:39:09.834Z [INFO]: Member 1 does NOT have 3 qualified downlines
+2025-08-11T05:39:09.834Z [INFO]: Level 3 mentor eligibility for member 1: false
+2025-08-11T05:39:09.834Z [INFO]: Sponsor 1 is not eligible at level 3, skipping commission
+2025-08-11T05:39:09.834Z [INFO]: Repurchase Done MemberId: 4
+2025-08-11T05:39:09.849Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:39:09.849Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:40:33.212Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T05:40:33.213Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:40:33.213Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:40:33.222Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T05:40:33.222Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T05:40:33.227Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T05:40:33.227Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T05:40:33.227Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:40:33.228Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T05:40:33.228Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T05:40:33.235Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T05:40:33.237Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T05:40:33.237Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T05:40:33.237Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:40:33.237Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T05:40:33.238Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T05:40:33.244Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T05:40:33.247Z [INFO]: Level 3: Found sponsor 8 with percentage 100
+2025-08-11T05:40:33.247Z [INFO]: Checking eligibility for member 8 in group 1
+2025-08-11T05:40:33.247Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:40:33.248Z [INFO]: Sponsor 8 eligibility for group 1: true
+2025-08-11T05:40:33.248Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 8
+2025-08-11T05:40:33.256Z [INFO]: Added sponsor 8 as mentor candidate at level 3
+2025-08-11T05:40:33.257Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T05:40:33.258Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T05:40:33.260Z [INFO]: Member 7 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.260Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:40:33.260Z [INFO]: Sponsor 7 eligibility for group 2: false
+2025-08-11T05:40:33.260Z [INFO]: Sponsor 7 is not eligible, no commission paid.
+2025-08-11T05:40:33.263Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T05:40:33.264Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T05:40:33.265Z [INFO]: Member 6 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.265Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:40:33.266Z [INFO]: Sponsor 6 eligibility for group 2: false
+2025-08-11T05:40:33.266Z [INFO]: Sponsor 6 is not eligible, no commission paid.
+2025-08-11T05:40:33.268Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T05:40:33.268Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T05:40:33.270Z [INFO]: Member 5 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.270Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:40:33.270Z [INFO]: Sponsor 5 eligibility for group 2: false
+2025-08-11T05:40:33.270Z [INFO]: Sponsor 5 is not eligible, no commission paid.
+2025-08-11T05:40:33.272Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T05:40:33.272Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T05:40:33.273Z [INFO]: Member 4 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.273Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:40:33.274Z [INFO]: Sponsor 4 eligibility for group 2: false
+2025-08-11T05:40:33.274Z [INFO]: Sponsor 4 is not eligible, no commission paid.
+2025-08-11T05:40:33.275Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T05:40:33.275Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T05:40:33.277Z [INFO]: Member 3 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.292Z [INFO]: Direct referral 4 has 1 referrals
+2025-08-11T05:40:33.292Z [INFO]: Member 3 does NOT have 3 qualified downlines
+2025-08-11T05:40:33.293Z [INFO]: Member 3 eligibility (group 3): false
+2025-08-11T05:40:33.293Z [INFO]: Sponsor 3 eligibility for group 3: false
+2025-08-11T05:40:33.293Z [INFO]: Sponsor 3 is not eligible, no commission paid.
+2025-08-11T05:40:33.297Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T05:40:33.297Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T05:40:33.301Z [INFO]: Member 2 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.305Z [INFO]: Direct referral 3 has 1 referrals
+2025-08-11T05:40:33.305Z [INFO]: Member 2 does NOT have 3 qualified downlines
+2025-08-11T05:40:33.305Z [INFO]: Member 2 eligibility (group 3): false
+2025-08-11T05:40:33.305Z [INFO]: Sponsor 2 eligibility for group 3: false
+2025-08-11T05:40:33.305Z [INFO]: Sponsor 2 is not eligible, no commission paid.
+2025-08-11T05:40:33.309Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T05:40:33.309Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T05:40:33.313Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.321Z [INFO]: Direct referral 2 has 1 referrals
+2025-08-11T05:40:33.321Z [INFO]: Member 1 does NOT have 3 qualified downlines
+2025-08-11T05:40:33.321Z [INFO]: Member 1 eligibility (group 3): false
+2025-08-11T05:40:33.321Z [INFO]: Sponsor 1 eligibility for group 3: false
+2025-08-11T05:40:33.321Z [INFO]: Sponsor 1 is not eligible, no commission paid.
+2025-08-11T05:40:33.321Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T05:40:33.321Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T05:40:33.322Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T05:40:33.322Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:40:33.322Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T05:40:33.351Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T05:40:33.353Z [INFO]: Member 9 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.353Z [INFO]: Level 2 mentor eligibility for member 9: false
+2025-08-11T05:40:33.353Z [INFO]: Sponsor 9 is not eligible at level 2, skipping commission
+2025-08-11T05:40:33.353Z [INFO]: Checking mentor eligibility for member 8 at level 3
+2025-08-11T05:40:33.355Z [INFO]: Member 8 has 1 direct referrals (min required: 3)
+2025-08-11T05:40:33.358Z [INFO]: Direct referral 9 has 1 referrals
+2025-08-11T05:40:33.359Z [INFO]: Member 8 does NOT have 3 qualified downlines
+2025-08-11T05:40:33.359Z [INFO]: Level 3 mentor eligibility for member 8: false
+2025-08-11T05:40:33.359Z [INFO]: Sponsor 8 is not eligible at level 3, skipping commission
+2025-08-11T05:40:33.359Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T05:40:33.375Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:40:33.375Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:42:56.742Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T05:42:56.744Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:42:56.744Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:42:56.753Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T05:42:56.754Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T05:42:56.759Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T05:42:56.760Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T05:42:56.760Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:42:56.760Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T05:42:56.761Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T05:42:56.767Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T05:42:56.769Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T05:42:56.769Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T05:42:56.770Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:42:56.770Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T05:42:56.770Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T05:42:56.777Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T05:42:56.786Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T05:42:56.786Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T05:42:56.789Z [INFO]: Member 7 has 0 direct referrals (min required: 3)
+2025-08-11T05:42:56.789Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:42:56.789Z [INFO]: Sponsor 7 eligibility for group 2: false
+2025-08-11T05:42:56.789Z [INFO]: Sponsor 7 is not eligible, no commission paid.
+2025-08-11T05:42:56.792Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T05:42:56.792Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T05:42:56.796Z [INFO]: Member 6 has 1 direct referrals (min required: 3)
+2025-08-11T05:42:56.797Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:42:56.797Z [INFO]: Sponsor 6 eligibility for group 2: false
+2025-08-11T05:42:56.798Z [INFO]: Sponsor 6 is not eligible, no commission paid.
+2025-08-11T05:42:56.800Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T05:42:56.800Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T05:42:56.802Z [INFO]: Member 5 has 1 direct referrals (min required: 3)
+2025-08-11T05:42:56.802Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:42:56.802Z [INFO]: Sponsor 5 eligibility for group 2: false
+2025-08-11T05:42:56.803Z [INFO]: Sponsor 5 is not eligible, no commission paid.
+2025-08-11T05:42:56.805Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T05:42:56.805Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T05:42:56.808Z [INFO]: Member 4 has 1 direct referrals (min required: 3)
+2025-08-11T05:42:56.809Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:42:56.809Z [INFO]: Sponsor 4 eligibility for group 2: false
+2025-08-11T05:42:56.809Z [INFO]: Sponsor 4 is not eligible, no commission paid.
+2025-08-11T05:42:56.811Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T05:42:56.811Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T05:42:56.812Z [INFO]: Member 3 has 1 direct referrals (min required: 3)
+2025-08-11T05:42:56.817Z [INFO]: Direct referral 4 has 1 referrals
+2025-08-11T05:42:56.817Z [INFO]: Member 3 does NOT have 3 qualified downlines
+2025-08-11T05:42:56.817Z [INFO]: Member 3 eligibility (group 3): false
+2025-08-11T05:42:56.817Z [INFO]: Sponsor 3 eligibility for group 3: false
+2025-08-11T05:42:56.817Z [INFO]: Sponsor 3 is not eligible, no commission paid.
+2025-08-11T05:42:56.819Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T05:42:56.819Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T05:42:56.820Z [INFO]: Member 2 has 1 direct referrals (min required: 3)
+2025-08-11T05:42:56.823Z [INFO]: Direct referral 3 has 1 referrals
+2025-08-11T05:42:56.824Z [INFO]: Member 2 does NOT have 3 qualified downlines
+2025-08-11T05:42:56.824Z [INFO]: Member 2 eligibility (group 3): false
+2025-08-11T05:42:56.824Z [INFO]: Sponsor 2 eligibility for group 3: false
+2025-08-11T05:42:56.825Z [INFO]: Sponsor 2 is not eligible, no commission paid.
+2025-08-11T05:42:56.826Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T05:42:56.827Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T05:42:56.828Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:42:56.831Z [INFO]: Direct referral 2 has 1 referrals
+2025-08-11T05:42:56.832Z [INFO]: Member 1 does NOT have 3 qualified downlines
+2025-08-11T05:42:56.832Z [INFO]: Member 1 eligibility (group 3): false
+2025-08-11T05:42:56.832Z [INFO]: Sponsor 1 eligibility for group 3: false
+2025-08-11T05:42:56.832Z [INFO]: Sponsor 1 is not eligible, no commission paid.
+2025-08-11T05:42:56.833Z [INFO]: Completed distribution. Mentor candidates: 2
+2025-08-11T05:42:56.833Z [INFO]: Distributing mentor income for 2 candidates
+2025-08-11T05:42:56.833Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T05:42:56.834Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:42:56.834Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T05:42:56.843Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T05:42:56.845Z [INFO]: Member 9 has 1 direct referrals (min required: 3)
+2025-08-11T05:42:56.845Z [INFO]: Level 2 mentor eligibility for member 9: false
+2025-08-11T05:42:56.846Z [INFO]: Sponsor 9 is not eligible at level 2, skipping commission
+2025-08-11T05:42:56.846Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T05:42:56.859Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:42:56.859Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:45:23.240Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T05:45:23.242Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:45:23.242Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:45:23.250Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T05:45:23.251Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T05:45:23.255Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T05:45:23.255Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T05:45:23.255Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:45:23.255Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T05:45:23.256Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T05:45:23.265Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T05:45:23.267Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T05:45:23.267Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T05:45:23.267Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:45:23.267Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T05:45:23.267Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T05:45:23.273Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T05:45:23.275Z [INFO]: Level 3: Found sponsor 8 with percentage 100
+2025-08-11T05:45:23.275Z [INFO]: Checking eligibility for member 8 in group 1
+2025-08-11T05:45:23.275Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:45:23.275Z [INFO]: Sponsor 8 eligibility for group 1: true
+2025-08-11T05:45:23.275Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 8
+2025-08-11T05:45:23.282Z [INFO]: Added sponsor 8 as mentor candidate at level 3
+2025-08-11T05:45:23.284Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T05:45:23.284Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T05:45:23.286Z [INFO]: Member 7 has 4 direct referrals (min required: 3)
+2025-08-11T05:45:23.287Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: true
+2025-08-11T05:45:23.287Z [INFO]: Sponsor 7 eligibility for group 2: true
+2025-08-11T05:45:23.287Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 7
+2025-08-11T05:45:23.294Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T05:45:23.294Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T05:45:23.297Z [INFO]: Member 6 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.297Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:45:23.297Z [INFO]: Sponsor 6 eligibility for group 2: false
+2025-08-11T05:45:23.297Z [INFO]: Sponsor 6 is not eligible, no commission paid.
+2025-08-11T05:45:23.299Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T05:45:23.299Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T05:45:23.301Z [INFO]: Member 5 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.301Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:45:23.302Z [INFO]: Sponsor 5 eligibility for group 2: false
+2025-08-11T05:45:23.302Z [INFO]: Sponsor 5 is not eligible, no commission paid.
+2025-08-11T05:45:23.303Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T05:45:23.303Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T05:45:23.305Z [INFO]: Member 4 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.305Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:45:23.305Z [INFO]: Sponsor 4 eligibility for group 2: false
+2025-08-11T05:45:23.305Z [INFO]: Sponsor 4 is not eligible, no commission paid.
+2025-08-11T05:45:23.307Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T05:45:23.308Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T05:45:23.309Z [INFO]: Member 3 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.313Z [INFO]: Direct referral 4 has 1 referrals
+2025-08-11T05:45:23.314Z [INFO]: Member 3 does NOT have 3 qualified downlines
+2025-08-11T05:45:23.314Z [INFO]: Member 3 eligibility (group 3): false
+2025-08-11T05:45:23.314Z [INFO]: Sponsor 3 eligibility for group 3: false
+2025-08-11T05:45:23.314Z [INFO]: Sponsor 3 is not eligible, no commission paid.
+2025-08-11T05:45:23.316Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T05:45:23.316Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T05:45:23.317Z [INFO]: Member 2 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.320Z [INFO]: Direct referral 3 has 1 referrals
+2025-08-11T05:45:23.320Z [INFO]: Member 2 does NOT have 3 qualified downlines
+2025-08-11T05:45:23.320Z [INFO]: Member 2 eligibility (group 3): false
+2025-08-11T05:45:23.320Z [INFO]: Sponsor 2 eligibility for group 3: false
+2025-08-11T05:45:23.320Z [INFO]: Sponsor 2 is not eligible, no commission paid.
+2025-08-11T05:45:23.322Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T05:45:23.322Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T05:45:23.323Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.326Z [INFO]: Direct referral 2 has 1 referrals
+2025-08-11T05:45:23.326Z [INFO]: Member 1 does NOT have 3 qualified downlines
+2025-08-11T05:45:23.326Z [INFO]: Member 1 eligibility (group 3): false
+2025-08-11T05:45:23.326Z [INFO]: Sponsor 1 eligibility for group 3: false
+2025-08-11T05:45:23.327Z [INFO]: Sponsor 1 is not eligible, no commission paid.
+2025-08-11T05:45:23.327Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T05:45:23.327Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T05:45:23.327Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T05:45:23.327Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:45:23.327Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T05:45:23.336Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T05:45:23.338Z [INFO]: Member 9 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.338Z [INFO]: Level 2 mentor eligibility for member 9: false
+2025-08-11T05:45:23.338Z [INFO]: Sponsor 9 is not eligible at level 2, skipping commission
+2025-08-11T05:45:23.338Z [INFO]: Checking mentor eligibility for member 8 at level 3
+2025-08-11T05:45:23.340Z [INFO]: Member 8 has 1 direct referrals (min required: 3)
+2025-08-11T05:45:23.342Z [INFO]: Direct referral 9 has 1 referrals
+2025-08-11T05:45:23.343Z [INFO]: Member 8 does NOT have 3 qualified downlines
+2025-08-11T05:45:23.343Z [INFO]: Level 3 mentor eligibility for member 8: false
+2025-08-11T05:45:23.343Z [INFO]: Sponsor 8 is not eligible at level 3, skipping commission
+2025-08-11T05:45:23.343Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T05:45:23.357Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:45:23.357Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:48:04.579Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T05:48:04.582Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:48:04.583Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:48:04.593Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T05:48:04.594Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T05:48:04.602Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T05:48:04.603Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T05:48:04.604Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:48:04.604Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T05:48:04.604Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T05:48:04.615Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T05:48:04.618Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T05:48:04.619Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T05:48:04.619Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:48:04.620Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T05:48:04.620Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T05:48:04.627Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T05:48:04.630Z [INFO]: Level 3: Found sponsor 8 with percentage 100
+2025-08-11T05:48:04.631Z [INFO]: Checking eligibility for member 8 in group 1
+2025-08-11T05:48:04.631Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:48:04.631Z [INFO]: Sponsor 8 eligibility for group 1: true
+2025-08-11T05:48:04.631Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 8
+2025-08-11T05:48:04.641Z [INFO]: Added sponsor 8 as mentor candidate at level 3
+2025-08-11T05:48:04.643Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T05:48:04.643Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T05:48:04.647Z [INFO]: Member 7 has 4 direct referrals (min required: 3)
+2025-08-11T05:48:04.647Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: true
+2025-08-11T05:48:04.647Z [INFO]: Sponsor 7 eligibility for group 2: true
+2025-08-11T05:48:04.647Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 7
+2025-08-11T05:48:04.656Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T05:48:04.656Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T05:48:04.658Z [INFO]: Member 6 has 1 direct referrals (min required: 3)
+2025-08-11T05:48:04.658Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:48:04.658Z [INFO]: Sponsor 6 eligibility for group 2: false
+2025-08-11T05:48:04.658Z [INFO]: Sponsor 6 is not eligible, no commission paid.
+2025-08-11T05:48:04.660Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T05:48:04.662Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T05:48:04.664Z [INFO]: Member 5 has 4 direct referrals (min required: 3)
+2025-08-11T05:48:04.664Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: true
+2025-08-11T05:48:04.665Z [INFO]: Sponsor 5 eligibility for group 2: true
+2025-08-11T05:48:04.665Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 5
+2025-08-11T05:48:04.674Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T05:48:04.674Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T05:48:04.676Z [INFO]: Member 4 has 1 direct referrals (min required: 3)
+2025-08-11T05:48:04.676Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:48:04.676Z [INFO]: Sponsor 4 eligibility for group 2: false
+2025-08-11T05:48:04.676Z [INFO]: Sponsor 4 is not eligible, no commission paid.
+2025-08-11T05:48:04.678Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T05:48:04.678Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T05:48:04.680Z [INFO]: Member 3 has 1 direct referrals (min required: 3)
+2025-08-11T05:48:04.683Z [INFO]: Direct referral 4 has 1 referrals
+2025-08-11T05:48:04.683Z [INFO]: Member 3 does NOT have 3 qualified downlines
+2025-08-11T05:48:04.683Z [INFO]: Member 3 eligibility (group 3): false
+2025-08-11T05:48:04.683Z [INFO]: Sponsor 3 eligibility for group 3: false
+2025-08-11T05:48:04.683Z [INFO]: Sponsor 3 is not eligible, no commission paid.
+2025-08-11T05:48:04.685Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T05:48:04.685Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T05:48:04.686Z [INFO]: Member 2 has 1 direct referrals (min required: 3)
+2025-08-11T05:48:04.689Z [INFO]: Direct referral 3 has 1 referrals
+2025-08-11T05:48:04.689Z [INFO]: Member 2 does NOT have 3 qualified downlines
+2025-08-11T05:48:04.689Z [INFO]: Member 2 eligibility (group 3): false
+2025-08-11T05:48:04.689Z [INFO]: Sponsor 2 eligibility for group 3: false
+2025-08-11T05:48:04.689Z [INFO]: Sponsor 2 is not eligible, no commission paid.
+2025-08-11T05:48:04.691Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T05:48:04.691Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T05:48:04.693Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:48:04.695Z [INFO]: Direct referral 2 has 1 referrals
+2025-08-11T05:48:04.695Z [INFO]: Member 1 does NOT have 3 qualified downlines
+2025-08-11T05:48:04.695Z [INFO]: Member 1 eligibility (group 3): false
+2025-08-11T05:48:04.695Z [INFO]: Sponsor 1 eligibility for group 3: false
+2025-08-11T05:48:04.695Z [INFO]: Sponsor 1 is not eligible, no commission paid.
+2025-08-11T05:48:04.695Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T05:48:04.696Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T05:48:04.696Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T05:48:04.696Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:48:04.696Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T05:48:04.705Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T05:48:04.706Z [INFO]: Member 9 has 1 direct referrals (min required: 3)
+2025-08-11T05:48:04.707Z [INFO]: Level 2 mentor eligibility for member 9: false
+2025-08-11T05:48:04.707Z [INFO]: Sponsor 9 is not eligible at level 2, skipping commission
+2025-08-11T05:48:04.707Z [INFO]: Checking mentor eligibility for member 8 at level 3
+2025-08-11T05:48:04.708Z [INFO]: Member 8 has 1 direct referrals (min required: 3)
+2025-08-11T05:48:04.711Z [INFO]: Direct referral 9 has 1 referrals
+2025-08-11T05:48:04.711Z [INFO]: Member 8 does NOT have 3 qualified downlines
+2025-08-11T05:48:04.711Z [INFO]: Level 3 mentor eligibility for member 8: false
+2025-08-11T05:48:04.711Z [INFO]: Sponsor 8 is not eligible at level 3, skipping commission
+2025-08-11T05:48:04.711Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T05:48:04.728Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:48:04.729Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T05:53:13.970Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T05:53:13.972Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T05:53:13.972Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T05:53:14.001Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T05:53:14.002Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T05:53:14.006Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T05:53:14.006Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T05:53:14.006Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:53:14.006Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T05:53:14.007Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T05:53:14.014Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T05:53:14.017Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T05:53:14.017Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T05:53:14.017Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:53:14.017Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T05:53:14.018Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T05:53:14.025Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T05:53:14.027Z [INFO]: Level 3: Found sponsor 8 with percentage 100
+2025-08-11T05:53:14.027Z [INFO]: Checking eligibility for member 8 in group 1
+2025-08-11T05:53:14.027Z [INFO]: Group 1 members are always eligible
+2025-08-11T05:53:14.027Z [INFO]: Sponsor 8 eligibility for group 1: true
+2025-08-11T05:53:14.028Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 8
+2025-08-11T05:53:14.034Z [INFO]: Added sponsor 8 as mentor candidate at level 3
+2025-08-11T05:53:14.038Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T05:53:14.038Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T05:53:14.040Z [INFO]: Member 7 has 4 direct referrals (min required: 3)
+2025-08-11T05:53:14.040Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: true
+2025-08-11T05:53:14.041Z [INFO]: Sponsor 7 eligibility for group 2: true
+2025-08-11T05:53:14.041Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 7
+2025-08-11T05:53:14.049Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T05:53:14.049Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T05:53:14.051Z [INFO]: Member 6 has 1 direct referrals (min required: 3)
+2025-08-11T05:53:14.051Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:53:14.051Z [INFO]: Sponsor 6 eligibility for group 2: false
+2025-08-11T05:53:14.051Z [INFO]: Sponsor 6 is not eligible, no commission paid.
+2025-08-11T05:53:14.053Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T05:53:14.053Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T05:53:14.054Z [INFO]: Member 5 has 4 direct referrals (min required: 3)
+2025-08-11T05:53:14.054Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: true
+2025-08-11T05:53:14.055Z [INFO]: Sponsor 5 eligibility for group 2: true
+2025-08-11T05:53:14.055Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 5
+2025-08-11T05:53:14.064Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T05:53:14.064Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T05:53:14.066Z [INFO]: Member 4 has 1 direct referrals (min required: 3)
+2025-08-11T05:53:14.067Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: false
+2025-08-11T05:53:14.067Z [INFO]: Sponsor 4 eligibility for group 2: false
+2025-08-11T05:53:14.067Z [INFO]: Sponsor 4 is not eligible, no commission paid.
+2025-08-11T05:53:14.068Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T05:53:14.068Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T05:53:14.071Z [INFO]: Member 3 has 1 direct referrals (min required: 3)
+2025-08-11T05:53:14.074Z [INFO]: Direct referral 4 has 1 referrals
+2025-08-11T05:53:14.074Z [INFO]: Member 3 does NOT have 3 qualified downlines
+2025-08-11T05:53:14.074Z [INFO]: Member 3 eligibility (group 3): false
+2025-08-11T05:53:14.074Z [INFO]: Sponsor 3 eligibility for group 3: false
+2025-08-11T05:53:14.075Z [INFO]: Sponsor 3 is not eligible, no commission paid.
+2025-08-11T05:53:14.076Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T05:53:14.076Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T05:53:14.083Z [INFO]: Member 2 has 4 direct referrals (min required: 3)
+2025-08-11T05:53:14.086Z [INFO]: Direct referral 3 has 1 referrals
+2025-08-11T05:53:14.088Z [INFO]: Direct referral 18 has 3 referrals
+2025-08-11T05:53:14.089Z [INFO]: Direct referral 19 has 3 referrals
+2025-08-11T05:53:14.091Z [INFO]: Direct referral 20 has 3 referrals
+2025-08-11T05:53:14.091Z [INFO]: Member 2 has at least 3 qualified downlines
+2025-08-11T05:53:14.091Z [INFO]: Member 2 eligibility (group 3): true
+2025-08-11T05:53:14.091Z [INFO]: Sponsor 2 eligibility for group 3: true
+2025-08-11T05:53:14.091Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 2
+2025-08-11T05:53:14.101Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T05:53:14.101Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T05:53:14.103Z [INFO]: Member 1 has 1 direct referrals (min required: 3)
+2025-08-11T05:53:14.107Z [INFO]: Direct referral 2 has 4 referrals
+2025-08-11T05:53:14.107Z [INFO]: Member 1 does NOT have 3 qualified downlines
+2025-08-11T05:53:14.107Z [INFO]: Member 1 eligibility (group 3): false
+2025-08-11T05:53:14.107Z [INFO]: Sponsor 1 eligibility for group 3: false
+2025-08-11T05:53:14.107Z [INFO]: Sponsor 1 is not eligible, no commission paid.
+2025-08-11T05:53:14.107Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T05:53:14.107Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T05:53:14.107Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T05:53:14.107Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T05:53:14.108Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T05:53:14.116Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T05:53:14.117Z [INFO]: Member 9 has 4 direct referrals (min required: 3)
+2025-08-11T05:53:14.118Z [INFO]: Level 2 mentor eligibility for member 9: true
+2025-08-11T05:53:14.118Z [INFO]: Paying mentor commission of 2.50 to sponsor 9 at level 2
+2025-08-11T05:53:14.124Z [INFO]: Checking mentor eligibility for member 8 at level 3
+2025-08-11T05:53:14.125Z [INFO]: Member 8 has 1 direct referrals (min required: 3)
+2025-08-11T05:53:14.128Z [INFO]: Direct referral 9 has 4 referrals
+2025-08-11T05:53:14.128Z [INFO]: Member 8 does NOT have 3 qualified downlines
+2025-08-11T05:53:14.128Z [INFO]: Level 3 mentor eligibility for member 8: false
+2025-08-11T05:53:14.128Z [INFO]: Sponsor 8 is not eligible at level 3, skipping commission
+2025-08-11T05:53:14.128Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T05:53:14.142Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T05:53:14.142Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T06:05:43.148Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T06:05:43.150Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T06:05:43.150Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T06:05:43.158Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T06:05:43.158Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T06:05:43.163Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T06:05:43.164Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T06:05:43.164Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:05:43.164Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T06:05:43.164Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T06:05:43.171Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T06:05:43.173Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T06:05:43.173Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T06:05:43.173Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:05:43.173Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T06:05:43.174Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T06:05:43.180Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T06:05:43.182Z [INFO]: Level 3: Found sponsor 8 with percentage 100
+2025-08-11T06:05:43.182Z [INFO]: Checking eligibility for member 8 in group 1
+2025-08-11T06:05:43.182Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:05:43.182Z [INFO]: Sponsor 8 eligibility for group 1: true
+2025-08-11T06:05:43.182Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 8
+2025-08-11T06:05:43.189Z [INFO]: Added sponsor 8 as mentor candidate at level 3
+2025-08-11T06:05:43.191Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T06:05:43.191Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T06:05:43.193Z [INFO]: Member 7 has 4 direct referrals (min required: 3)
+2025-08-11T06:05:43.194Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:05:43.194Z [INFO]: Sponsor 7 eligibility for group 2: true
+2025-08-11T06:05:43.194Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 7
+2025-08-11T06:05:43.203Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T06:05:43.203Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T06:05:43.204Z [INFO]: Member 6 has 4 direct referrals (min required: 3)
+2025-08-11T06:05:43.204Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:05:43.204Z [INFO]: Sponsor 6 eligibility for group 2: true
+2025-08-11T06:05:43.204Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 6
+2025-08-11T06:05:43.211Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T06:05:43.212Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T06:05:43.214Z [INFO]: Member 5 has 4 direct referrals (min required: 3)
+2025-08-11T06:05:43.214Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:05:43.214Z [INFO]: Sponsor 5 eligibility for group 2: true
+2025-08-11T06:05:43.214Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 5
+2025-08-11T06:05:43.221Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T06:05:43.221Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T06:05:43.223Z [INFO]: Member 4 has 4 direct referrals (min required: 3)
+2025-08-11T06:05:43.223Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:05:43.223Z [INFO]: Sponsor 4 eligibility for group 2: true
+2025-08-11T06:05:43.223Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 4
+2025-08-11T06:05:43.230Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T06:05:43.231Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T06:05:43.234Z [INFO]: Member 3 has 4 direct referrals (min required: 3)
+2025-08-11T06:05:43.238Z [INFO]: Direct referral 4 has 4 referrals
+2025-08-11T06:05:43.239Z [INFO]: Direct referral 51 has 3 referrals
+2025-08-11T06:05:43.240Z [INFO]: Direct referral 52 has 3 referrals
+2025-08-11T06:05:43.241Z [INFO]: Member 3 has at least 3 qualified downlines
+2025-08-11T06:05:43.241Z [INFO]: Member 3 eligibility (group 3): true
+2025-08-11T06:05:43.241Z [INFO]: Sponsor 3 eligibility for group 3: true
+2025-08-11T06:05:43.241Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 3
+2025-08-11T06:05:43.248Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T06:05:43.248Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T06:05:43.250Z [INFO]: Member 2 has 6 direct referrals (min required: 3)
+2025-08-11T06:05:43.252Z [INFO]: Direct referral 3 has 4 referrals
+2025-08-11T06:05:43.253Z [INFO]: Direct referral 18 has 3 referrals
+2025-08-11T06:05:43.255Z [INFO]: Direct referral 19 has 3 referrals
+2025-08-11T06:05:43.255Z [INFO]: Member 2 has at least 3 qualified downlines
+2025-08-11T06:05:43.255Z [INFO]: Member 2 eligibility (group 3): true
+2025-08-11T06:05:43.255Z [INFO]: Sponsor 2 eligibility for group 3: true
+2025-08-11T06:05:43.255Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 2
+2025-08-11T06:05:43.262Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T06:05:43.263Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T06:05:43.264Z [INFO]: Member 1 has 3 direct referrals (min required: 3)
+2025-08-11T06:05:43.266Z [INFO]: Direct referral 2 has 6 referrals
+2025-08-11T06:05:43.267Z [INFO]: Direct referral 63 has 3 referrals
+2025-08-11T06:05:43.269Z [INFO]: Direct referral 64 has 3 referrals
+2025-08-11T06:05:43.269Z [INFO]: Member 1 has at least 3 qualified downlines
+2025-08-11T06:05:43.269Z [INFO]: Member 1 eligibility (group 3): true
+2025-08-11T06:05:43.269Z [INFO]: Sponsor 1 eligibility for group 3: true
+2025-08-11T06:05:43.269Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 1
+2025-08-11T06:05:43.276Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T06:05:43.276Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T06:05:43.276Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T06:05:43.277Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T06:05:43.277Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T06:05:43.286Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T06:05:43.288Z [INFO]: Member 9 has 4 direct referrals (min required: 3)
+2025-08-11T06:05:43.288Z [INFO]: Level 2 mentor eligibility for member 9: true
+2025-08-11T06:05:43.288Z [INFO]: Paying mentor commission of 2.50 to sponsor 9 at level 2
+2025-08-11T06:05:43.294Z [INFO]: Checking mentor eligibility for member 8 at level 3
+2025-08-11T06:05:43.296Z [INFO]: Member 8 has 4 direct referrals (min required: 3)
+2025-08-11T06:05:43.299Z [INFO]: Direct referral 9 has 4 referrals
+2025-08-11T06:05:43.300Z [INFO]: Direct referral 33 has 3 referrals
+2025-08-11T06:05:43.301Z [INFO]: Direct referral 34 has 3 referrals
+2025-08-11T06:05:43.302Z [INFO]: Member 8 has at least 3 qualified downlines
+2025-08-11T06:05:43.302Z [INFO]: Level 3 mentor eligibility for member 8: true
+2025-08-11T06:05:43.302Z [INFO]: Paying mentor commission of 10.00 to sponsor 8 at level 3
+2025-08-11T06:05:43.308Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T06:05:43.322Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T06:05:43.322Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T06:11:36.635Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T06:11:36.636Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T06:11:36.637Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T06:11:36.645Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T06:11:36.646Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T06:11:36.650Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T06:11:36.650Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T06:11:36.651Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:11:36.651Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T06:11:36.651Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T06:11:36.660Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T06:11:36.663Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T06:11:36.663Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T06:11:36.663Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:11:36.663Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T06:11:36.663Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T06:11:36.670Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T06:11:36.673Z [INFO]: Level 3: Found sponsor 8 with percentage 100
+2025-08-11T06:11:36.674Z [INFO]: Checking eligibility for member 8 in group 1
+2025-08-11T06:11:36.674Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:11:36.675Z [INFO]: Sponsor 8 eligibility for group 1: true
+2025-08-11T06:11:36.675Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 8
+2025-08-11T06:11:36.680Z [INFO]: Added sponsor 8 as mentor candidate at level 3
+2025-08-11T06:11:36.683Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T06:11:36.683Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T06:11:36.685Z [INFO]: Member 7 has 4 direct referrals (min required: 3)
+2025-08-11T06:11:36.685Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:11:36.685Z [INFO]: Sponsor 7 eligibility for group 2: true
+2025-08-11T06:11:36.686Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 7
+2025-08-11T06:11:36.694Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T06:11:36.694Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T06:11:36.696Z [INFO]: Member 6 has 4 direct referrals (min required: 3)
+2025-08-11T06:11:36.696Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:11:36.696Z [INFO]: Sponsor 6 eligibility for group 2: true
+2025-08-11T06:11:36.696Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 6
+2025-08-11T06:11:36.706Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T06:11:36.706Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T06:11:36.709Z [INFO]: Member 5 has 4 direct referrals (min required: 3)
+2025-08-11T06:11:36.709Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:11:36.709Z [INFO]: Sponsor 5 eligibility for group 2: true
+2025-08-11T06:11:36.709Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 5
+2025-08-11T06:11:36.717Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T06:11:36.717Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T06:11:36.719Z [INFO]: Member 4 has 4 direct referrals (min required: 3)
+2025-08-11T06:11:36.719Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:11:36.719Z [INFO]: Sponsor 4 eligibility for group 2: true
+2025-08-11T06:11:36.719Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 4
+2025-08-11T06:11:36.726Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T06:11:36.726Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T06:11:36.727Z [INFO]: Member 3 has 4 direct referrals (min required: 3)
+2025-08-11T06:11:36.730Z [INFO]: Direct referral 4 has 4 referrals
+2025-08-11T06:11:36.732Z [INFO]: Direct referral 51 has 3 referrals
+2025-08-11T06:11:36.733Z [INFO]: Direct referral 52 has 3 referrals
+2025-08-11T06:11:36.734Z [INFO]: Member 3 has at least 3 qualified downlines
+2025-08-11T06:11:36.734Z [INFO]: Member 3 eligibility (group 3): true
+2025-08-11T06:11:36.734Z [INFO]: Sponsor 3 eligibility for group 3: true
+2025-08-11T06:11:36.734Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 3
+2025-08-11T06:11:36.742Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T06:11:36.742Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T06:11:36.743Z [INFO]: Member 2 has 6 direct referrals (min required: 3)
+2025-08-11T06:11:36.746Z [INFO]: Direct referral 3 has 4 referrals
+2025-08-11T06:11:36.747Z [INFO]: Direct referral 18 has 3 referrals
+2025-08-11T06:11:36.749Z [INFO]: Direct referral 19 has 3 referrals
+2025-08-11T06:11:36.749Z [INFO]: Member 2 has at least 3 qualified downlines
+2025-08-11T06:11:36.749Z [INFO]: Member 2 eligibility (group 3): true
+2025-08-11T06:11:36.749Z [INFO]: Sponsor 2 eligibility for group 3: true
+2025-08-11T06:11:36.749Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 2
+2025-08-11T06:11:36.758Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T06:11:36.758Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T06:11:36.759Z [INFO]: Member 1 has 3 direct referrals (min required: 3)
+2025-08-11T06:11:36.762Z [INFO]: Direct referral 2 has 6 referrals
+2025-08-11T06:11:36.764Z [INFO]: Direct referral 63 has 3 referrals
+2025-08-11T06:11:36.765Z [INFO]: Direct referral 64 has 3 referrals
+2025-08-11T06:11:36.766Z [INFO]: Member 1 has at least 3 qualified downlines
+2025-08-11T06:11:36.766Z [INFO]: Member 1 eligibility (group 3): true
+2025-08-11T06:11:36.766Z [INFO]: Sponsor 1 eligibility for group 3: true
+2025-08-11T06:11:36.766Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 1
+2025-08-11T06:11:36.772Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T06:11:36.773Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T06:11:36.773Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T06:11:36.773Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T06:11:36.773Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T06:11:36.781Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T06:11:36.783Z [INFO]: Member 9 has 4 direct referrals (min required: 3)
+2025-08-11T06:11:36.783Z [INFO]: Level 2 mentor eligibility for member 9: true
+2025-08-11T06:11:36.783Z [INFO]: Paying mentor commission of 2.50 to sponsor 9 at level 2
+2025-08-11T06:11:36.789Z [INFO]: Checking mentor eligibility for member 8 at level 3
+2025-08-11T06:11:36.791Z [INFO]: Member 8 has 4 direct referrals (min required: 3)
+2025-08-11T06:11:36.793Z [INFO]: Direct referral 9 has 4 referrals
+2025-08-11T06:11:36.795Z [INFO]: Direct referral 33 has 3 referrals
+2025-08-11T06:11:36.796Z [INFO]: Direct referral 34 has 3 referrals
+2025-08-11T06:11:36.796Z [INFO]: Member 8 has at least 3 qualified downlines
+2025-08-11T06:11:36.796Z [INFO]: Level 3 mentor eligibility for member 8: true
+2025-08-11T06:11:36.797Z [INFO]: Paying mentor commission of 10.00 to sponsor 8 at level 3
+2025-08-11T06:11:36.802Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T06:11:36.816Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T06:11:36.816Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-11T06:12:17.677Z [INFO]: Starting cashback calculation for member ID: 11
+2025-08-11T06:12:17.678Z [INFO]: Calculated updatedAmount: 25
+2025-08-11T06:12:17.679Z [INFO]: Calculated cashbackAmount: 25
+2025-08-11T06:12:17.689Z [INFO]: Successfully updated member wallet balance for member ID: 11
+2025-08-11T06:12:17.689Z [INFO]: Starting repurchase income distribution for member 11 with BV 1000.00
+2025-08-11T06:12:17.693Z [INFO]: Level 1: Found sponsor 10 with percentage 100
+2025-08-11T06:12:17.694Z [INFO]: Checking eligibility for member 10 in group 1
+2025-08-11T06:12:17.694Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:12:17.694Z [INFO]: Sponsor 10 eligibility for group 1: true
+2025-08-11T06:12:17.694Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 10
+2025-08-11T06:12:17.701Z [INFO]: Added sponsor 10 as mentor candidate at level 1
+2025-08-11T06:12:17.703Z [INFO]: Level 2: Found sponsor 9 with percentage 100
+2025-08-11T06:12:17.703Z [INFO]: Checking eligibility for member 9 in group 1
+2025-08-11T06:12:17.704Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:12:17.704Z [INFO]: Sponsor 9 eligibility for group 1: true
+2025-08-11T06:12:17.704Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 9
+2025-08-11T06:12:17.710Z [INFO]: Added sponsor 9 as mentor candidate at level 2
+2025-08-11T06:12:17.712Z [INFO]: Level 3: Found sponsor 8 with percentage 100
+2025-08-11T06:12:17.713Z [INFO]: Checking eligibility for member 8 in group 1
+2025-08-11T06:12:17.713Z [INFO]: Group 1 members are always eligible
+2025-08-11T06:12:17.713Z [INFO]: Sponsor 8 eligibility for group 1: true
+2025-08-11T06:12:17.713Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 8
+2025-08-11T06:12:17.719Z [INFO]: Added sponsor 8 as mentor candidate at level 3
+2025-08-11T06:12:17.721Z [INFO]: Level 4: Found sponsor 7 with percentage 100
+2025-08-11T06:12:17.721Z [INFO]: Checking eligibility for member 7 in group 2
+2025-08-11T06:12:17.723Z [INFO]: Member 7 has 4 direct referrals (min required: 3)
+2025-08-11T06:12:17.723Z [INFO]: Member 7 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:12:17.723Z [INFO]: Sponsor 7 eligibility for group 2: true
+2025-08-11T06:12:17.723Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 7
+2025-08-11T06:12:17.731Z [INFO]: Level 5: Found sponsor 6 with percentage 100
+2025-08-11T06:12:17.732Z [INFO]: Checking eligibility for member 6 in group 2
+2025-08-11T06:12:17.733Z [INFO]: Member 6 has 4 direct referrals (min required: 3)
+2025-08-11T06:12:17.733Z [INFO]: Member 6 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:12:17.733Z [INFO]: Sponsor 6 eligibility for group 2: true
+2025-08-11T06:12:17.733Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 6
+2025-08-11T06:12:17.741Z [INFO]: Level 6: Found sponsor 5 with percentage 100
+2025-08-11T06:12:17.742Z [INFO]: Checking eligibility for member 5 in group 2
+2025-08-11T06:12:17.743Z [INFO]: Member 5 has 4 direct referrals (min required: 3)
+2025-08-11T06:12:17.744Z [INFO]: Member 5 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:12:17.744Z [INFO]: Sponsor 5 eligibility for group 2: true
+2025-08-11T06:12:17.744Z [INFO]: Paying commission: base 50.00, actual 50.00 to sponsor 5
+2025-08-11T06:12:17.751Z [INFO]: Level 7: Found sponsor 4 with percentage 100
+2025-08-11T06:12:17.751Z [INFO]: Checking eligibility for member 4 in group 2
+2025-08-11T06:12:17.752Z [INFO]: Member 4 has 4 direct referrals (min required: 3)
+2025-08-11T06:12:17.752Z [INFO]: Member 4 eligibility (group 2) based on min direct referrals: true
+2025-08-11T06:12:17.753Z [INFO]: Sponsor 4 eligibility for group 2: true
+2025-08-11T06:12:17.753Z [INFO]: Paying commission: base 100.00, actual 100.00 to sponsor 4
+2025-08-11T06:12:17.760Z [INFO]: Level 8: Found sponsor 3 with percentage 100
+2025-08-11T06:12:17.760Z [INFO]: Checking eligibility for member 3 in group 3
+2025-08-11T06:12:17.762Z [INFO]: Member 3 has 4 direct referrals (min required: 3)
+2025-08-11T06:12:17.764Z [INFO]: Direct referral 4 has 4 referrals
+2025-08-11T06:12:17.766Z [INFO]: Direct referral 51 has 3 referrals
+2025-08-11T06:12:17.767Z [INFO]: Direct referral 52 has 3 referrals
+2025-08-11T06:12:17.767Z [INFO]: Member 3 has at least 3 qualified downlines
+2025-08-11T06:12:17.767Z [INFO]: Member 3 eligibility (group 3): true
+2025-08-11T06:12:17.767Z [INFO]: Sponsor 3 eligibility for group 3: true
+2025-08-11T06:12:17.768Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 3
+2025-08-11T06:12:17.774Z [INFO]: Level 9: Found sponsor 2 with percentage 100
+2025-08-11T06:12:17.774Z [INFO]: Checking eligibility for member 2 in group 3
+2025-08-11T06:12:17.776Z [INFO]: Member 2 has 6 direct referrals (min required: 3)
+2025-08-11T06:12:17.778Z [INFO]: Direct referral 3 has 4 referrals
+2025-08-11T06:12:17.779Z [INFO]: Direct referral 18 has 3 referrals
+2025-08-11T06:12:17.781Z [INFO]: Direct referral 19 has 3 referrals
+2025-08-11T06:12:17.781Z [INFO]: Member 2 has at least 3 qualified downlines
+2025-08-11T06:12:17.781Z [INFO]: Member 2 eligibility (group 3): true
+2025-08-11T06:12:17.781Z [INFO]: Sponsor 2 eligibility for group 3: true
+2025-08-11T06:12:17.781Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 2
+2025-08-11T06:12:17.788Z [INFO]: Level 10: Found sponsor 1 with percentage 100
+2025-08-11T06:12:17.789Z [INFO]: Checking eligibility for member 1 in group 3
+2025-08-11T06:12:17.790Z [INFO]: Member 1 has 3 direct referrals (min required: 3)
+2025-08-11T06:12:17.792Z [INFO]: Direct referral 2 has 6 referrals
+2025-08-11T06:12:17.793Z [INFO]: Direct referral 63 has 3 referrals
+2025-08-11T06:12:17.795Z [INFO]: Direct referral 64 has 3 referrals
+2025-08-11T06:12:17.795Z [INFO]: Member 1 has at least 3 qualified downlines
+2025-08-11T06:12:17.795Z [INFO]: Member 1 eligibility (group 3): true
+2025-08-11T06:12:17.795Z [INFO]: Sponsor 1 eligibility for group 3: true
+2025-08-11T06:12:17.796Z [INFO]: Paying commission: base 150.00, actual 150.00 to sponsor 1
+2025-08-11T06:12:17.802Z [INFO]: Completed distribution. Mentor candidates: 3
+2025-08-11T06:12:17.803Z [INFO]: Distributing mentor income for 3 candidates
+2025-08-11T06:12:17.803Z [INFO]: Checking mentor eligibility for member 10 at level 1
+2025-08-11T06:12:17.803Z [INFO]: Level 1 mentor always eligible.
+2025-08-11T06:12:17.803Z [INFO]: Paying mentor commission of 5.00 to sponsor 10 at level 1
+2025-08-11T06:12:17.811Z [INFO]: Checking mentor eligibility for member 9 at level 2
+2025-08-11T06:12:17.812Z [INFO]: Member 9 has 4 direct referrals (min required: 3)
+2025-08-11T06:12:17.813Z [INFO]: Level 2 mentor eligibility for member 9: true
+2025-08-11T06:12:17.813Z [INFO]: Paying mentor commission of 2.50 to sponsor 9 at level 2
+2025-08-11T06:12:17.818Z [INFO]: Checking mentor eligibility for member 8 at level 3
+2025-08-11T06:12:17.820Z [INFO]: Member 8 has 4 direct referrals (min required: 3)
+2025-08-11T06:12:17.822Z [INFO]: Direct referral 9 has 4 referrals
+2025-08-11T06:12:17.823Z [INFO]: Direct referral 33 has 3 referrals
+2025-08-11T06:12:17.825Z [INFO]: Direct referral 34 has 3 referrals
+2025-08-11T06:12:17.825Z [INFO]: Member 8 has at least 3 qualified downlines
+2025-08-11T06:12:17.825Z [INFO]: Level 3 mentor eligibility for member 8: true
+2025-08-11T06:12:17.825Z [INFO]: Paying mentor commission of 10.00 to sponsor 8 at level 3
+2025-08-11T06:12:17.831Z [INFO]: Repurchase Done MemberId: 11
+2025-08-11T06:12:17.860Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-11T06:12:17.861Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null

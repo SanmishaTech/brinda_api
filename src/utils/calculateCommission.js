@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const { DEBIT, APPROVED } = require("../config/data");
+const { DEBIT, APPROVED, MATCHING_INCOME_WALLET } = require("../config/data");
 const prisma = new PrismaClient();
 
 const calculateCommission = async (parent, updates) => {
@@ -24,18 +24,20 @@ const calculateCommission = async (parent, updates) => {
     updates.matchingIncomeWalletBalance = {
       increment: commissionToGive,
     };
-
-    updates.walletTransactions = {
-      create: {
-        amount: commissionToGive,
-        status: APPROVED,
-        type: DEBIT,
-        transactionDate: new Date(),
-        notes: `Matching Commission (${commissionToGive})`,
-        // Optional:
-        // paymentMethod: "System Auto",
-      },
-    };
+    if (commissionToGive > 0) {
+      updates.walletTransactions = {
+        create: {
+          amount: commissionToGive,
+          status: APPROVED,
+          type: DEBIT,
+          transactionDate: new Date(),
+          walletType: MATCHING_INCOME_WALLET,
+          notes: `Matching Commission (₹${commissionToGive})`,
+          // Optional:
+          // paymentMethod: "System Auto",
+        },
+      };
+    }
   } else if (percentage === 0) {
     updates.matchingIncomeWalletBalance = {
       increment: 0,
@@ -46,15 +48,18 @@ const calculateCommission = async (parent, updates) => {
     updates.matchingIncomeWalletBalance = {
       increment: incrementValue,
     };
-    updates.walletTransactions = {
-      create: {
-        amount: incrementValue,
-        status: APPROVED,
-        type: DEBIT,
-        transactionDate: new Date(),
-        notes: `Matching Commission (${incrementValue})`,
-      },
-    };
+    if (incrementValue > 0) {
+      updates.walletTransactions = {
+        create: {
+          amount: incrementValue,
+          status: APPROVED,
+          type: DEBIT,
+          transactionDate: new Date(),
+          walletType: MATCHING_INCOME_WALLET,
+          notes: `Matching Commission (₹${incrementValue})`,
+        },
+      };
+    }
   }
 
   parent = await prisma.member.update({

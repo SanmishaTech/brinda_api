@@ -108,6 +108,11 @@ const createPurchase = async (req, res) => {
     totalAmountWithGst: decimalString("Total Amount With GST", 10, 2),
     totalGstAmount: decimalString("Total GST Amount", 10, 2),
     totalProductPV: decimalString("Total PV", 10, 2),
+    walletType: z.enum([FUND_WALLET, UPGRADE_WALLET, MATCHING_INCOME_WALLET], {
+      required_error: "walletType is required",
+      invalid_type_error:
+        "walletType must be either FUND WALLET, UPGRADE WALLET or MATCHING INCOME WALLET",
+    }),
   });
 
   const validationErrors = await validateRequest(schema, req.body, res);
@@ -143,14 +148,14 @@ const createPurchase = async (req, res) => {
           },
         });
       }
-    } else {
+    } else if (walletType === FUND_WALLET) {
       if (
         parseFloat(req.user.member.walletBalance) <
         parseFloat(totalAmountWithGst)
       ) {
         return res.status(400).json({
           errors: {
-            message: "Insufficient fund wallet balance",
+            message: "Insufficient Fund wallet balance",
           },
         });
       }
@@ -166,10 +171,16 @@ const createPurchase = async (req, res) => {
       data.upgradeWalletBalance = {
         decrement: new Prisma.Decimal(totalAmountWithGst),
       };
-    } else {
+    } else if (walletType === FUND_WALLET) {
       data.walletBalance = {
         decrement: new Prisma.Decimal(totalAmountWithGst),
       };
+    } else {
+      return res.status(400).json({
+        errors: {
+          message: "Invalid wallet type provided",
+        },
+      });
     }
 
     const member = await prisma.member.update({
@@ -184,6 +195,7 @@ const createPurchase = async (req, res) => {
       totalGstAmount,
       totalProductPV,
       purchaseDetails,
+      walletType,
     });
 
     return res.status(202).json({ message: "Purchase request is queued." });

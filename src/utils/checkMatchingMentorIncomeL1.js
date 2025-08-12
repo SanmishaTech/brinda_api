@@ -1,6 +1,16 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { LEFT, RIGHT, TOP, GOLD, SILVER, DIAMOND } = require("../config/data");
+const {
+  LEFT,
+  RIGHT,
+  TOP,
+  GOLD,
+  SILVER,
+  DIAMOND,
+  HOLD_WALLET,
+  APPROVED,
+  DEBIT,
+} = require("../config/data");
 
 const checkMatchingMentorIncomeL1 = async (parent, value) => {
   if (parent?.sponsor?.isMatchingMentorL1 === true && value > 0) {
@@ -15,12 +25,25 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
       commissionToGive = 0;
     }
     // end
-    const sponsor = await prisma.member.update({
-      where: { id: parent.sponsor.id },
-      data: {
-        matchingMentorIncomeL1: { increment: commissionToGive },
-      },
-    });
+    if (commissionToGive > 0) {
+      const sponsor = await prisma.member.update({
+        where: { id: parent.sponsor.id },
+        data: {
+          matchingMentorIncomeL1: { increment: commissionToGive },
+          holdWalletBalance: { increment: commissionToGive },
+          walletTransactions: {
+            create: {
+              amount: commissionToGive,
+              status: APPROVED,
+              type: DEBIT,
+              transactionDate: new Date(),
+              walletType: HOLD_WALLET,
+              notes: `Matching Mentor Income L1 (₹${commissionToGive})`,
+            },
+          },
+        },
+      });
+    }
   } else if (
     (parent.sponsor?.status === GOLD || parent.sponsor?.status === DIAMOND) &&
     parent.sponsor?.isDirectMatch === true &&
@@ -44,6 +67,17 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
         isMatchingMentorL1: true,
         ...(commissionToGive > 0 && {
           matchingMentorIncomeL1: { increment: commissionToGive },
+          holdWalletBalance: { increment: commissionToGive },
+          walletTransactions: {
+            create: {
+              amount: commissionToGive,
+              status: APPROVED,
+              type: DEBIT,
+              transactionDate: new Date(),
+              walletType: HOLD_WALLET,
+              notes: `Matching Mentor Income L1 (₹${commissionToGive})`,
+            },
+          },
         }),
       },
     });

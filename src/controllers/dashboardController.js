@@ -33,6 +33,7 @@ const dashboardInformation = async (req, res) => {
 
     return res.status(200).json({
       walletBalance: member.walletBalance,
+      holdWalletBalance: member.holdWalletBalance,
       pvBalance: member.pvBalance,
       status: member.status,
       totalPurchase: totalPurchase,

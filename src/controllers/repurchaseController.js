@@ -14,6 +14,7 @@ const {
   ASSOCIATE,
   DIAMOND,
   MATCHING_INCOME_WALLET,
+  FUND_WALLET,
 } = require("../config/data");
 const {
   generateProductRepurchaseInvoice,
@@ -106,6 +107,11 @@ const createRepurchase = async (req, res) => {
     totalAmountWithGst: decimalString("Total Amount With GST", 10, 2),
     totalGstAmount: decimalString("Total GST Amount", 10, 2),
     totalProductBV: decimalString("Total BV", 10, 2),
+    walletType: z.enum([FUND_WALLET, MATCHING_INCOME_WALLET], {
+      required_error: "walletType is required",
+      invalid_type_error:
+        "walletType must be either FUND WALLET or UPGRADE WALLET",
+    }),
   });
 
   const validationErrors = await validateRequest(schema, req.body, res);
@@ -130,7 +136,7 @@ const createRepurchase = async (req, res) => {
           },
         });
       }
-    } else {
+    } else if (walletType === FUND_WALLET) {
       if (
         parseFloat(req.user.member.walletBalance) <
         parseFloat(totalAmountWithGst)
@@ -149,10 +155,16 @@ const createRepurchase = async (req, res) => {
       data.matchingIncomeWalletBalance = {
         decrement: new Prisma.Decimal(totalAmountWithGst),
       };
-    } else {
+    } else if (walletType === FUND_WALLET) {
       data.walletBalance = {
         decrement: new Prisma.Decimal(totalAmountWithGst),
       };
+    } else {
+      return res.status(400).json({
+        errors: {
+          message: "Invalid wallet type provided",
+        },
+      });
     }
 
     let member = await prisma.member.update({
@@ -167,6 +179,7 @@ const createRepurchase = async (req, res) => {
       totalGstAmount,
       totalProductBV,
       repurchaseDetails,
+      walletType,
     });
 
     return res.status(202).json({ message: "Repurchase request is queued." });

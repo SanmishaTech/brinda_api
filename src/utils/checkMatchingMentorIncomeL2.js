@@ -1,6 +1,14 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { GOLD, DIAMOND, LEFT, RIGHT } = require("../config/data");
+const {
+  GOLD,
+  DIAMOND,
+  LEFT,
+  RIGHT,
+  HOLD_WALLET,
+  APPROVED,
+  DEBIT,
+} = require("../config/data");
 
 const checkMatchingMentorIncomeL2 = async (parent, value) => {
   const L1SponsorId = parent?.sponsor?.id;
@@ -23,7 +31,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   const L2SponsorId = L1Sponsor?.sponsor?.id;
 
   if (!L2SponsorId) {
-
     return;
   }
 
@@ -63,14 +70,25 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
       commissionToGive = 0;
     }
     // end
-    await prisma.member.update({
-      where: { id: L2Sponsor.id },
-      data: {
-        ...(commissionToGive > 0 && {
+    if (commissionToGive > 0) {
+      await prisma.member.update({
+        where: { id: L2Sponsor.id },
+        data: {
           matchingMentorIncomeL2: { increment: commissionToGive },
-        }),
-      },
-    });
+          holdWalletBalance: { increment: commissionToGive },
+          walletTransactions: {
+            create: {
+              amount: commissionToGive,
+              status: APPROVED,
+              type: DEBIT,
+              transactionDate: new Date(),
+              walletType: HOLD_WALLET,
+              notes: `Matching Mentor Income L2 (₹${commissionToGive})`,
+            },
+          },
+        },
+      });
+    }
 
     return;
   }
@@ -119,11 +137,9 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   for (const leftChild of leftCandidates) {
     const isLeftQualified = validStatuses.includes(leftChild.status);
     if (!isLeftQualified) {
-
       continue;
     }
     if (leftChild.leftDirectCount < 1 || leftChild.rightDirectCount < 1) {
-
       continue;
     }
     const leftDirects = await prisma.member.findMany({
@@ -146,7 +162,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     );
 
     if (!leftHasGoldOrDiamondLeft || !leftHasGoldOrDiamondRight) {
-
       continue;
     }
     LEFT_SIDE = true;
@@ -157,11 +172,9 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
   for (const rightChild of rightCandidates) {
     const isRightQualified = validStatuses.includes(rightChild.status);
     if (!isRightQualified) {
-
       continue;
     }
     if (rightChild.leftDirectCount < 1 || rightChild.rightDirectCount < 1) {
-
       continue;
     }
     const rightDirects = await prisma.member.findMany({
@@ -184,7 +197,6 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     );
 
     if (!rightHasGoldOrDiamondLeft || !rightHasGoldOrDiamondRight) {
-
       continue;
     }
     RIGHT_SIDE = true;
@@ -209,6 +221,17 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
         isMatchingMentorL2: true,
         ...(commissionToGive > 0 && {
           matchingMentorIncomeL2: { increment: commissionToGive },
+          holdWalletBalance: { increment: commissionToGive },
+          walletTransactions: {
+            create: {
+              amount: commissionToGive,
+              status: APPROVED,
+              type: DEBIT,
+              transactionDate: new Date(),
+              walletType: HOLD_WALLET,
+              notes: `Matching Mentor Income L2 (₹${commissionToGive})`,
+            },
+          },
         }),
       },
     });

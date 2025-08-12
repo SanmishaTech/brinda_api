@@ -25,6 +25,7 @@ process.on("message", async (data) => {
       totalGstAmount,
       totalProductBV,
       repurchaseDetails,
+      walletType,
     } = data;
 
     const newRepurchase = await prisma.repurchase.create({
@@ -77,6 +78,7 @@ process.on("message", async (data) => {
         type: CREDIT,
         status: APPROVED,
         notes: `Products Repurchased (${invoiceNumber})`,
+        walletType: walletType,
         transactionDate: new Date(),
       },
     });
