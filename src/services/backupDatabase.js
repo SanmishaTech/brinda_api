@@ -19,11 +19,11 @@ if (matches) {
   // ✅ Default port to 3306 if not provided in DATABASE_URL
   DB_PORT = DB_PORT || "3306";
 
-  logger.info(`User: ${DB_USER}`);
-  logger.info(`Password: ${DB_PASSWORD}`);
-  logger.info(`Host: ${DB_HOST}`);
-  logger.info(`Port: ${DB_PORT}`);
-  logger.info(`Database: ${DB_NAME}`);
+  // logger.info(`User: ${DB_USER}`);
+  // logger.info(`Password: ${DB_PASSWORD}`);
+  // logger.info(`Host: ${DB_HOST}`);
+  // logger.info(`Port: ${DB_PORT}`);
+  // logger.info(`Database: ${DB_NAME}`);
 } else {
   logger.error("❌ DATABASE_URL is invalid");
   process.exit(1); // Stop execution if invalid

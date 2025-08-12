@@ -125,6 +125,9 @@ const distributeRepurchaseIncome = async (startingMember, totalProductBV) => {
             repurchaseIncome: {
               increment: new Prisma.Decimal(actualCommission),
             },
+            [`repurchaseIncomeL${level}`]: {
+              increment: new Prisma.Decimal(actualCommission),
+            },
             holdWalletBalance: {
               increment: new Prisma.Decimal(actualCommission),
             },
@@ -135,7 +138,7 @@ const distributeRepurchaseIncome = async (startingMember, totalProductBV) => {
                 type: DEBIT,
                 transactionDate: new Date(),
                 walletType: HOLD_WALLET,
-                notes: `Repurchase Income (₹${actualCommission})`,
+                notes: `Repurchase Income L${level} (₹${actualCommission})`,
               },
             },
           },

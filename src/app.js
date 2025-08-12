@@ -38,7 +38,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // For application/x-www-form-urlencoded (optional, but common)
 const uploadsPath = path.join(__dirname, "..", "uploads");
-console.log(`Serving static files from: ${uploadsPath}`); // Verify this path on startup!
+// console.log(`Serving static files from: ${uploadsPath}`); // Verify this path on startup!
 app.use("/uploads", express.static(uploadsPath));
 app.use("/api/auth", authRoutes);
 app.use("/api/roles", roleRoutes);
