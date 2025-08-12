@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { updateCount } = require("./updateCount");
 const {
@@ -9,6 +9,13 @@ const {
   SILVER,
   GOLD,
   DIAMOND,
+  TRANSFERRED,
+  CREDIT,
+  HOLD_WALLET,
+  UPGRADE_WALLET,
+  APPROVED,
+  DEBIT,
+  MATCHING_INCOME_WALLET,
 } = require("../config/data");
 const { checkDirectMatch } = require("./checkDirectMatch");
 const { check2_1Pass } = require("./check2_1Pass");
@@ -115,6 +122,32 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
           status: DIAMOND,
           pvBalance: {
             decrement: 10,
+          },
+          upgradeWalletBalance: {
+            decrement: member.upgradeWalletBalance,
+          },
+          matchingIncomeWalletBalance: {
+            increment: member.upgradeWalletBalance,
+          },
+          walletTransactions: {
+            create: [
+              {
+                amount: new Prisma.Decimal(member.upgradeWalletBalance),
+                status: APPROVED,
+                type: CREDIT,
+                transactionDate: new Date(),
+                walletType: UPGRADE_WALLET,
+                notes: `Transferred Upgrade wallet Amount to Matching Income Wallet.`,
+              },
+              {
+                amount: new Prisma.Decimal(member.upgradeWalletBalance),
+                status: APPROVED,
+                type: DEBIT,
+                transactionDate: new Date(),
+                walletType: MATCHING_INCOME_WALLET,
+                notes: `Received amount from member's Upgrade Wallet.`,
+              },
+            ],
           },
         },
         include: {
