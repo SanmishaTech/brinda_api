@@ -1,13 +1,23 @@
 const cron = require("node-cron");
 const logger = require("../utils/logger");
 const backupDatabase = require("../services/backupDatabase");
-// Schedule the task to run every day at 02:00 AM
-cron.schedule("0 2 12 * *", async () => {
-  // cron.schedule("* * * * *", async () => {
-  //runs every minute
+
+// 1st Schedule: Run at 10:00 AM every day
+cron.schedule("0 10 * * *", async () => {
   try {
-    await backupDatabase(); // Your custom function
+    await backupDatabase();
+    logger.info("✅ Backup ran at 10:00 AM");
   } catch (err) {
-    logger.error(`❌ Error in Getting Backup: ${err}`);
+    logger.error(`❌ Error in 10 AM Backup: ${err}`);
+  }
+});
+
+// 2nd Schedule: Run at 6:00 PM every day
+cron.schedule("0 18 * * *", async () => {
+  try {
+    await backupDatabase();
+    logger.info("✅ Backup ran at 6:00 PM");
+  } catch (err) {
+    logger.error(`❌ Error in 6 PM Backup: ${err}`);
   }
 });

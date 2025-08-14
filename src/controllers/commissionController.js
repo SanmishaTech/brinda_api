@@ -87,60 +87,6 @@ const matchingIncomePayoutList = async (req, res) => {
     });
   }
 };
-// const payMatchingIncomeAmount = async (req, res) => {
-//   const { commissionId } = req.params;
-
-//   try {
-//     const matchingIncomeCommission =
-//       await prisma.matchingIncomeCommission.findUnique({
-//         where: { id: parseInt(commissionId) },
-//       });
-
-//     if (!matchingIncomeCommission) {
-//       return res.status(404).json({
-//         errors: {
-//           message: "Commission record does not exist",
-//         },
-//       });
-//     }
-
-//     if (matchingIncomeCommission.isPaid) {
-//       return res.status(400).json({
-//         errors: {
-//           message: "Commission is already paid",
-//         },
-//       });
-//     }
-
-//     const updatedIncomeCommission =
-//       await prisma.matchingIncomeCommission.update({
-//         where: { id: parseInt(commissionId) },
-//         data: {
-//           isPaid: true,
-//           paidAt: new Date(),
-//           member: {
-//             update: {
-//               matchingIncomeEarned: {
-//                 increment: matchingIncomeCommission.matchingIncomeCommission,
-//               },
-//             },
-//           },
-//         },
-//       });
-
-//     return res.status(200).json({
-//       message: "Commission paid successfully",
-//     });
-//   } catch (error) {
-//     console.error("Pay Commission Error:", error);
-//     return res.status(500).json({
-//       errors: {
-//         message: "Failed to pay commission",
-//         details: error.message,
-//       },
-//     });
-//   }
-// };
 const payMatchingIncomeAmount = async (req, res) => {
   const { commissionId } = req.params;
 
@@ -177,22 +123,6 @@ const payMatchingIncomeAmount = async (req, res) => {
               matchingIncomeEarned: {
                 increment: matchingIncomeCommission.matchingIncomeCommission,
               },
-              matchingIncomeWalletBalance: {
-                decrement: matchingIncomeCommission.matchingIncomeCommission,
-              },
-              walletTransactions: {
-                create: {
-                  amount: matchingIncomeCommission.matchingIncomeCommission,
-                  status: APPROVED,
-                  type: CREDIT,
-                  transactionDate: new Date(),
-                  walletType: MATCHING_INCOME_WALLET,
-                  processedByAdminId: req.user.id,
-                  notes: `₹${matchingIncomeCommission.matchingIncomeCommission.toFixed(
-                    2
-                  )} Matching Income payout transferred to your bank.`,
-                },
-              }, //was here last time
             },
           },
         },
@@ -211,6 +141,76 @@ const payMatchingIncomeAmount = async (req, res) => {
     });
   }
 };
+// const payMatchingIncomeAmount = async (req, res) => {
+//   const { commissionId } = req.params;
+
+//   try {
+//     const matchingIncomeCommission =
+//       await prisma.matchingIncomeCommission.findUnique({
+//         where: { id: parseInt(commissionId) },
+//       });
+
+//     if (!matchingIncomeCommission) {
+//       return res.status(404).json({
+//         errors: {
+//           message: "Commission record does not exist",
+//         },
+//       });
+//     }
+
+//     if (matchingIncomeCommission.isPaid) {
+//       return res.status(400).json({
+//         errors: {
+//           message: "Commission is already paid",
+//         },
+//       });
+//     }
+
+//     const updatedIncomeCommission =
+//       await prisma.matchingIncomeCommission.update({
+//         where: { id: parseInt(commissionId) },
+//         data: {
+//           isPaid: true,
+//           paidAt: new Date(),
+//           member: {
+//             update: {
+//               matchingIncomeEarned: {
+//                 increment: matchingIncomeCommission.matchingIncomeCommission,
+//               },
+//               matchingIncomeWalletBalance: {
+//                 decrement: matchingIncomeCommission.matchingIncomeCommission,
+//               },
+//               walletTransactions: {
+//                 create: {
+//                   amount: matchingIncomeCommission.matchingIncomeCommission,
+//                   status: APPROVED,
+//                   type: CREDIT,
+//                   transactionDate: new Date(),
+//                   walletType: MATCHING_INCOME_WALLET,
+//                   processedByAdminId: req.user.id,
+//                   notes: `₹${matchingIncomeCommission.matchingIncomeCommission.toFixed(
+//                     2
+//                   )} Matching Income payout transferred to your bank.`,
+//                 },
+//               }, //was here last time
+//             },
+//           },
+//         },
+//       });
+
+//     return res.status(200).json({
+//       message: "Commission paid successfully",
+//     });
+//   } catch (error) {
+//     console.error("Pay Commission Error:", error);
+//     return res.status(500).json({
+//       errors: {
+//         message: "Failed to pay commission",
+//         details: error.message,
+//       },
+//     });
+//   }
+// };
 
 const getAdminPaidCommissions = async (req, res) => {
   const page = parseInt(req.query.page) || 1;

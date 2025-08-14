@@ -1,0 +1,30 @@
+2025-08-14T07:12:00.881Z [INFO]: Starting cashback calculation for member ID: 192
+2025-08-14T07:12:00.882Z [INFO]: Calculated updatedAmount: 187.5
+2025-08-14T07:12:00.883Z [INFO]: Calculated cashbackAmount: 187.5
+2025-08-14T07:12:00.894Z [INFO]: Successfully updated member wallet balance for member ID: 192
+2025-08-14T07:12:00.895Z [INFO]: Starting repurchase income distribution for member 192 with BV 1200.00
+2025-08-14T07:12:00.899Z [INFO]: Level 1: Found sponsor 143 with percentage 100
+2025-08-14T07:12:00.900Z [INFO]: Checking eligibility for member 143 in group 1
+2025-08-14T07:12:00.900Z [INFO]: Group 1 members are always eligible
+2025-08-14T07:12:00.901Z [INFO]: Sponsor 143 eligibility for group 1: true
+2025-08-14T07:12:00.901Z [INFO]: Paying commission: base 120.00, actual 120.00 to sponsor 143
+2025-08-14T07:12:00.912Z [INFO]: Added sponsor 143 as mentor candidate at level 1
+2025-08-14T07:12:00.914Z [INFO]: Level 2: Found sponsor 1 with percentage 100
+2025-08-14T07:12:00.914Z [INFO]: Checking eligibility for member 1 in group 1
+2025-08-14T07:12:00.914Z [INFO]: Group 1 members are always eligible
+2025-08-14T07:12:00.914Z [INFO]: Sponsor 1 eligibility for group 1: true
+2025-08-14T07:12:00.915Z [INFO]: Paying commission: base 60.00, actual 60.00 to sponsor 1
+2025-08-14T07:12:00.926Z [INFO]: Added sponsor 1 as mentor candidate at level 2
+2025-08-14T07:12:00.926Z [INFO]: No sponsor found at level 3, stopping distribution.
+2025-08-14T07:12:00.926Z [INFO]: Completed distribution. Mentor candidates: 2
+2025-08-14T07:12:00.926Z [INFO]: Distributing mentor income for 2 candidates
+2025-08-14T07:12:00.927Z [INFO]: Checking mentor eligibility for member 143 at level 1
+2025-08-14T07:12:00.927Z [INFO]: Level 1 mentor always eligible.
+2025-08-14T07:12:00.927Z [INFO]: Paying mentor commission of 6.00 to sponsor 143 at level 1
+2025-08-14T07:12:00.940Z [INFO]: Checking mentor eligibility for member 1 at level 2
+2025-08-14T07:12:00.943Z [INFO]: Member 1 has 4 direct referrals (min required: 3)
+2025-08-14T07:12:00.944Z [INFO]: Level 2 mentor eligibility for member 1: true
+2025-08-14T07:12:00.944Z [INFO]: Paying mentor commission of 3.00 to sponsor 1 at level 2
+2025-08-14T07:12:00.953Z [INFO]: Repurchase Done MemberId: 192
+2025-08-14T07:12:00.975Z [INFO]: repurchase Task Subprocess exited with code 0
+2025-08-14T07:12:00.976Z [INFO]:  repurchase Task Subprocess closed. Code: 0, Signal: null
