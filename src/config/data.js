@@ -94,6 +94,11 @@ const REPURCHASE_COMMISSIONS = [
 // Repurchase
 const CASHBACK_PERCENT = 5;
 
+// virtual power start
+const SELF = "SELF";
+const SELF_PLUS_UPLINE = "SELF_PLUS_UPLINE";
+// virtual power end
+
 module.exports = {
   stateOptions,
   GENDER_MALE,
@@ -131,4 +136,6 @@ module.exports = {
   TDS_PERCENT,
   PLATFORM_CHARGE_PERCENT,
   HOLD_WALLET,
+  SELF,
+  SELF_PLUS_UPLINE,
 };
