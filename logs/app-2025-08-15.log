@@ -73,3 +73,14 @@ operable program or batch file.
 2025-08-15T12:40:55.703Z [INFO]: Commission amount: 0
 2025-08-15T12:40:55.721Z [INFO]: Decremented balances and updated matching income
 2025-08-15T12:40:55.728Z [INFO]: Created virtual power record
+2025-08-15T12:44:18.039Z [INFO]: Incoming request to addVirtualPower
+2025-08-15T12:44:18.059Z [INFO]: Fetched member: 1
+2025-08-15T12:44:18.060Z [INFO]: Matched DIAMOND / LEFT
+2025-08-15T12:44:18.061Z [INFO]: Incrementing power on column: leftDiamondBalance
+2025-08-15T12:44:18.081Z [INFO]: Updated member: 1 - incremented leftDiamondBalance
+2025-08-15T12:44:18.082Z [INFO]: Should increment matching income: true
+2025-08-15T12:44:18.083Z [INFO]: Starting commission logic...
+2025-08-15T12:44:18.084Z [INFO]: Same commission day
+2025-08-15T12:44:18.085Z [INFO]: Commission amount: 0
+2025-08-15T12:44:18.101Z [INFO]: Decremented balances and updated matching income
+2025-08-15T12:44:18.112Z [INFO]: Created virtual power record
