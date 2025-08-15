@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 const { z } = require('zod');
 const validateRequest = require('../utils/validateRequest');
 const createError = require('http-errors');
+const dayjs = require('dayjs'); // Import dayjs
 const { numberToWords } = require('../utils/numberToWords');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs').promises; // Use promises API
@@ -10,7 +11,7 @@ const path = require('path');
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
-const logger = require('../utils/logger'); // Assuming you have a logger utility
+
 const today = dayjs().utc().startOf('day').toDate();
 const {
   CREDIT,
@@ -31,25 +32,18 @@ const {
   DEBIT,
   MATCHING_INCOME_WALLET,
 } = require('../config/data');
+const { ifError } = require('assert');
 
+// Get a purchase by ID
 const addVirtualPower = async (req, res) => {
   const { memberId, statusType, powerPosition, powerCount, powerType } =
     req.body;
-
-  logger.info('Incoming request to addVirtualPower', {
-    memberId,
-    statusType,
-    powerPosition,
-    powerCount,
-    powerType,
-  });
-
   try {
+
+    
     let member = await prisma.member.findUnique({
       where: { id: parseInt(memberId, 10) },
     });
-
-    logger.info(`Fetched member: ${member?.id || 'NOT FOUND'}`);
 
     let columnName = null;
     let oppositeColumnName = null;
@@ -59,69 +53,59 @@ const addVirtualPower = async (req, res) => {
     let updates = {};
 
     if (statusType === ASSOCIATE && powerPosition === LEFT) {
-      logger.info('Matched ASSOCIATE / LEFT');
       columnName = 'leftAssociateBalance';
       oppositeColumnName = 'rightAssociateBalance';
       commissionCount = 'associateCommissionCount';
       commissionDate = 'associateCommissionDate';
       commissionAmount = ASSOCIATE_COMMISSION;
     } else if (statusType === ASSOCIATE && powerPosition === RIGHT) {
-      logger.info('Matched ASSOCIATE / RIGHT');
       columnName = 'rightAssociateBalance';
       oppositeColumnName = 'leftAssociateBalance';
       commissionCount = 'associateCommissionCount';
       commissionDate = 'associateCommissionDate';
       commissionAmount = ASSOCIATE_COMMISSION;
     } else if (statusType === SILVER && powerPosition === LEFT) {
-      logger.info('Matched SILVER / LEFT');
       columnName = 'leftSilverBalance';
       oppositeColumnName = 'rightSilverBalance';
       commissionCount = 'silverCommissionCount';
       commissionDate = 'silverCommissionDate';
       commissionAmount = SILVER_COMMISSION;
     } else if (statusType === SILVER && powerPosition === RIGHT) {
-      logger.info('Matched SILVER / RIGHT');
       columnName = 'rightSilverBalance';
       oppositeColumnName = 'leftSilverBalance';
       commissionCount = 'silverCommissionCount';
       commissionDate = 'silverCommissionDate';
       commissionAmount = SILVER_COMMISSION;
     } else if (statusType === GOLD && powerPosition === LEFT) {
-      logger.info('Matched GOLD / LEFT');
       columnName = 'leftGoldBalance';
       oppositeColumnName = 'rightGoldBalance';
       commissionCount = 'goldCommissionCount';
       commissionDate = 'silverCommissionDate';
       commissionAmount = GOLD_COMMISSION;
     } else if (statusType === GOLD && powerPosition === RIGHT) {
-      logger.info('Matched GOLD / RIGHT');
       columnName = 'rightGoldBalance';
       oppositeColumnName = 'leftGoldBalance';
       commissionCount = 'goldCommissionCount';
       commissionDate = 'goldCommissionDate';
       commissionAmount = GOLD_COMMISSION;
     } else if (statusType === DIAMOND && powerPosition === LEFT) {
-      logger.info('Matched DIAMOND / LEFT');
       columnName = 'leftDiamondBalance';
       oppositeColumnName = 'rightDiamondBalance';
       commissionCount = 'diamondCommissionCount';
       commissionDate = 'diamondCommissionDate';
       commissionAmount = DIAMOND_COMMISSION;
     } else if (statusType === DIAMOND && powerPosition === RIGHT) {
-      logger.info('Matched DIAMOND / RIGHT');
       columnName = 'rightDiamondBalance';
       oppositeColumnName = 'leftDiamondBalance';
       commissionCount = 'diamondCommissionCount';
       commissionDate = 'diamondCommissionDate';
       commissionAmount = DIAMOND_COMMISSION;
     } else {
-      logger.info('Invalid statusType or powerPosition');
       return res
         .status(400)
         .json({ errors: { message: 'Invalid statusType or powerPosition' } });
     }
 
-    logger.info(`Incrementing power on column: ${columnName}`);
     member = await prisma.member.update({
       where: { id: parseInt(memberId, 10) },
       data: {
@@ -131,15 +115,8 @@ const addVirtualPower = async (req, res) => {
       },
     });
 
-    logger.info(`Updated member: ${member.id} - incremented ${columnName}`);
-
     if (member[oppositeColumnName] === 0) {
-      logger.info(
-        `No opposite power (${oppositeColumnName}) available, skipping commission.`
-      );
-      return res
-        .status(200)
-        .json({ message: 'No opposite power available, skipping commission' });
+      return;
     }
 
     const minBalance = Math.min(member[columnName], member[oppositeColumnName]);
@@ -161,21 +138,14 @@ const addVirtualPower = async (req, res) => {
         member.is2_1Pass &&
         member.isDirectMatch);
 
-    logger.info(
-      `Should increment matching income: ${shouldIncrementMatchingIncome}`
-    );
-    logger.info(`Starting commission logic...`);
+    // start commission logic
 
     const isSameCommissionDay =
-      member[commissionDate] &&
-      dayjs(member[commissionDate]).utc().isSame(today, 'day');
+      commissionDate && dayjs(commissionDate).utc().isSame(today, 'day');
 
     if (isSameCommissionDay) {
-      logger.info('Same commission day');
-      if (member[commissionCount] < MAX_COMMISSIONS_PER_DAY) {
-        const availableCount =
-          MAX_COMMISSIONS_PER_DAY - member[commissionCount];
-        logger.info(`Available commission count: ${availableCount}`);
+      if (commissionCount < MAX_COMMISSIONS_PER_DAY) {
+        const availableCount = MAX_COMMISSIONS_PER_DAY - commissionCount;
 
         if (minBalance < availableCount) {
           updates[commissionCount] = {
@@ -190,7 +160,6 @@ const addVirtualPower = async (req, res) => {
         }
       }
     } else {
-      logger.info('New commission day');
       updates[commissionDate] = today;
 
       if (minBalance < MAX_COMMISSIONS_PER_DAY) {
@@ -202,7 +171,8 @@ const addVirtualPower = async (req, res) => {
       }
     }
 
-    logger.info(`Commission amount: ${matchingIncomeIncrement}`);
+    //add 2 if condition is2_1 pass and is direct match thats it.
+    // end commission logic
 
     member = await prisma.member.update({
       where: { id: parseInt(memberId, 10) },
@@ -217,25 +187,22 @@ const addVirtualPower = async (req, res) => {
           matchingIncomeWalletBalance: {
             increment: matchingIncomeIncrement,
           },
-          ...updates,
-          ...(matchingIncomeIncrement > 0 && {
-            walletTransactions: {
-              create: {
-                amount: matchingIncomeIncrement,
-                status: APPROVED,
-                type: DEBIT,
-                transactionDate: new Date(),
-                walletType: MATCHING_INCOME_WALLET,
-                notes: `Virtual Power Commission`,
-              },
+          ...updates, //contains commission date and count
+          walletTransactions: {
+            create: {
+              amount: matchingIncomeIncrement,
+              status: APPROVED,
+              type: DEBIT,
+              transactionDate: new Date(),
+              walletType: MATCHING_INCOME_WALLET,
+              notes: `Virtual Power Commission`,
             },
-          }),
+          },
         }),
       },
     });
 
-    logger.info(`Decremented balances and updated matching income`);
-
+    // this code should be outside of loop
     await prisma.virtualPower.create({
       data: {
         memberId: parseInt(memberId),
@@ -245,14 +212,7 @@ const addVirtualPower = async (req, res) => {
         powerCount: parseInt(powerCount),
       },
     });
-
-    logger.info(`Created virtual power record`);
-
-    return res.status(200).json({
-      message: 'Virtual Power Added Successfully',
-    });
   } catch (error) {
-    logger.error(`Error in addVirtualPower: ${error}`);
     res.status(500).json({
       errors: {
         message: 'Failed to Add Virtual Power',

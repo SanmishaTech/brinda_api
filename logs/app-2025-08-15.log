@@ -1,0 +1,75 @@
+2025-08-15T12:23:02.009Z [INFO]: Purchase Done MemberId: 1
+2025-08-15T12:23:02.058Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-15T12:23:02.062Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-15T12:24:26.449Z [INFO]: Purchase Done MemberId: 2
+2025-08-15T12:24:26.506Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-15T12:24:26.507Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-15T12:24:45.863Z [INFO]: Purchase Done MemberId: 3
+2025-08-15T12:24:45.886Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-15T12:24:45.888Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-15T12:25:10.480Z [INFO]: Purchase Done MemberId: 4
+2025-08-15T12:25:10.511Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-15T12:25:10.511Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-15T12:27:12.838Z [INFO]: Incoming request to addVirtualPower
+2025-08-15T12:27:12.851Z [INFO]: Fetched member: 1
+2025-08-15T12:27:12.852Z [INFO]: Matched DIAMOND / LEFT
+2025-08-15T12:27:12.852Z [INFO]: Incrementing power on column: leftDiamondBalance
+2025-08-15T12:27:12.871Z [INFO]: Updated member: 1 - incremented leftDiamondBalance
+2025-08-15T12:27:12.872Z [INFO]: No opposite power (rightDiamondBalance) available, skipping commission.
+
+
+
+
+2025-08-15T12:28:02.658Z [INFO]: Incoming request to addVirtualPower
+2025-08-15T12:28:02.668Z [INFO]: Fetched member: 1
+2025-08-15T12:28:02.669Z [INFO]: Matched DIAMOND / RIGHT
+2025-08-15T12:28:02.669Z [INFO]: Incrementing power on column: rightDiamondBalance
+2025-08-15T12:28:02.685Z [INFO]: Updated member: 1 - incremented rightDiamondBalance
+2025-08-15T12:28:02.686Z [INFO]: Should increment matching income: true
+2025-08-15T12:28:02.686Z [INFO]: Starting commission logic...
+2025-08-15T12:28:02.688Z [INFO]: Same commission day
+2025-08-15T12:28:02.689Z [INFO]: Commission amount: 0
+2025-08-15T12:28:02.705Z [INFO]: Decremented balances and updated matching income
+2025-08-15T12:28:02.714Z [INFO]: Created virtual power record
+2025-08-15T12:30:00.054Z [INFO]: ✅ Backup ran at 6:00 PM
+2025-08-15T12:30:00.087Z [ERROR]: ❌ Backup failed: Command failed: mysqldump -hlocalhost -P3306 -uroot -p18051999%40%23may brinda > "C:\All about coding\work\brinda\brinda\backend\backups\brinda-backup-15_08_2025_18_00.sql"
+'mysqldump' is not recognized as an internal or external command,
+operable program or batch file.
+
+
+
+2025-08-15T12:34:53.421Z [INFO]: Incoming request to addVirtualPower
+2025-08-15T12:34:53.441Z [INFO]: Fetched member: 1
+2025-08-15T12:34:53.442Z [INFO]: Matched DIAMOND / RIGHT
+2025-08-15T12:34:53.443Z [INFO]: Incrementing power on column: rightDiamondBalance
+2025-08-15T12:34:53.466Z [INFO]: Updated member: 1 - incremented rightDiamondBalance
+2025-08-15T12:34:53.467Z [INFO]: Should increment matching income: true
+2025-08-15T12:34:53.468Z [INFO]: Starting commission logic...
+2025-08-15T12:34:53.471Z [INFO]: Same commission day
+2025-08-15T12:34:53.471Z [INFO]: Available commission count: 24
+2025-08-15T12:34:53.473Z [INFO]: Commission amount: 1000
+2025-08-15T12:34:53.489Z [INFO]: Decremented balances and updated matching income
+2025-08-15T12:34:53.498Z [INFO]: Created virtual power record
+2025-08-15T12:39:27.570Z [INFO]: Incoming request to addVirtualPower
+2025-08-15T12:39:27.578Z [INFO]: Fetched member: 1
+2025-08-15T12:39:27.579Z [INFO]: Matched DIAMOND / LEFT
+2025-08-15T12:39:27.580Z [INFO]: Incrementing power on column: leftDiamondBalance
+2025-08-15T12:39:27.598Z [INFO]: Updated member: 1 - incremented leftDiamondBalance
+2025-08-15T12:39:27.599Z [INFO]: Should increment matching income: true
+2025-08-15T12:39:27.600Z [INFO]: Starting commission logic...
+2025-08-15T12:39:27.601Z [INFO]: Same commission day
+2025-08-15T12:39:27.602Z [INFO]: Available commission count: 23
+2025-08-15T12:39:27.603Z [INFO]: Commission amount: 23000
+2025-08-15T12:39:27.617Z [INFO]: Decremented balances and updated matching income
+2025-08-15T12:39:27.625Z [INFO]: Created virtual power record
+2025-08-15T12:40:55.662Z [INFO]: Incoming request to addVirtualPower
+2025-08-15T12:40:55.680Z [INFO]: Fetched member: 1
+2025-08-15T12:40:55.681Z [INFO]: Matched DIAMOND / RIGHT
+2025-08-15T12:40:55.681Z [INFO]: Incrementing power on column: rightDiamondBalance
+2025-08-15T12:40:55.700Z [INFO]: Updated member: 1 - incremented rightDiamondBalance
+2025-08-15T12:40:55.701Z [INFO]: Should increment matching income: true
+2025-08-15T12:40:55.702Z [INFO]: Starting commission logic...
+2025-08-15T12:40:55.703Z [INFO]: Same commission day
+2025-08-15T12:40:55.703Z [INFO]: Commission amount: 0
+2025-08-15T12:40:55.721Z [INFO]: Decremented balances and updated matching income
+2025-08-15T12:40:55.728Z [INFO]: Created virtual power record
