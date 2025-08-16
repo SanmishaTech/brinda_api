@@ -59,6 +59,7 @@ const addVirtualPower = async (req, res) => {
       let commissionAmount = null;
       let commissionDate = null;
       let updates = {};
+      let is2_1Pass = member.is2_1Pass;
 
       if (statusType === ASSOCIATE && powerPosition === LEFT) {
         logger.info("Matched ASSOCIATE / LEFT");
@@ -157,11 +158,39 @@ const addVirtualPower = async (req, res) => {
         continue;
       }
 
-      const minBalance = Math.min(
-        member[columnName],
-        member[oppositeColumnName]
-      );
+      let minBalance = Math.min(member[columnName], member[oppositeColumnName]);
       let matchingIncomeIncrement = 0;
+
+      if (!is2_1Pass && statusType === ASSOCIATE) {
+        // 2:1 logic
+        if (member[columnName] >= 2 && member[oppositeColumnName] >= 1) {
+          updates[columnName] = { decrement: 2 };
+          updates[oppositeColumnName] = { decrement: 1 };
+          is2_1Pass = true;
+        } else if (member[oppositeColumnName] >= 2 && member[columnName] >= 1) {
+          updates[oppositeColumnName] = { decrement: 2 };
+          updates[columnName] = { decrement: 1 };
+          is2_1Pass = true;
+        }
+
+        const updatedMember = await prisma.member.update({
+          where: { id: parseInt(member.id, 10) },
+          data: {
+            ...updates, //contains 2_1 ,left and right associate balance
+            ...(member.isDirectMatch && {
+              matchingIncomeIncrement: {
+                increment: (ASSOCIATE_COMMISSION * member.percentage) / 100,
+              },
+              associateCommissionCount:{
+                increment: 1,
+              }
+            }),
+          },
+        });
+        updates = {};
+        minBalance = Math.min(member[columnName], member[oppositeColumnName]);
+        // here
+      }
 
       const shouldIncrementMatchingIncome =
         (member.status === DIAMOND &&

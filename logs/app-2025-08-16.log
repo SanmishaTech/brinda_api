@@ -1,0 +1,66 @@
+2025-08-16T13:13:32.664Z [INFO]: Purchase Done MemberId: 5
+2025-08-16T13:13:32.683Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-16T13:13:32.683Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-16T13:16:55.326Z [INFO]: Purchase Done MemberId: 9
+2025-08-16T13:16:55.346Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-16T13:16:55.346Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-16T13:18:17.485Z [INFO]: Purchase Done MemberId: 10
+2025-08-16T13:18:17.507Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-16T13:18:17.507Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-16T13:23:48.853Z [INFO]: Purchase Done MemberId: 11
+2025-08-16T13:23:48.886Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-16T13:23:48.888Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-16T13:25:48.030Z [INFO]: Purchase Done MemberId: 12
+2025-08-16T13:25:48.058Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-16T13:25:48.058Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-16T13:26:27.632Z [INFO]: Incoming request to addVirtualPower
+2025-08-16T13:26:27.638Z [INFO]: Fetched member: 7
+2025-08-16T13:26:27.639Z [INFO]: Matched DIAMOND / RIGHT
+2025-08-16T13:26:27.639Z [INFO]: Incrementing power on column: rightDiamondBalance
+2025-08-16T13:26:27.647Z [INFO]: Updated member: 7 - incremented rightDiamondBalance
+2025-08-16T13:26:27.648Z [INFO]: Should increment matching income: false
+2025-08-16T13:26:27.649Z [INFO]: Starting commission logic...
+2025-08-16T13:26:27.649Z [INFO]: New commission day
+2025-08-16T13:26:27.649Z [INFO]: Commission amount: 1000
+2025-08-16T13:26:27.659Z [INFO]: Decremented balances and updated matching income
+2025-08-16T13:26:27.659Z [INFO]: Self power.
+2025-08-16T13:26:27.665Z [INFO]: Created virtual power record
+2025-08-16T13:27:59.415Z [INFO]: Incoming request to addVirtualPower
+2025-08-16T13:27:59.420Z [INFO]: Fetched member: 7
+2025-08-16T13:27:59.421Z [INFO]: Matched ASSOCIATE / RIGHT
+2025-08-16T13:27:59.421Z [INFO]: Incrementing power on column: rightAssociateBalance
+2025-08-16T13:27:59.435Z [INFO]: Updated member: 7 - incremented rightAssociateBalance
+2025-08-16T13:27:59.445Z [INFO]: Should increment matching income: false
+2025-08-16T13:27:59.445Z [INFO]: Starting commission logic...
+2025-08-16T13:27:59.445Z [INFO]: New commission day
+2025-08-16T13:27:59.445Z [INFO]: Commission amount: 0
+2025-08-16T13:27:59.454Z [INFO]: Decremented balances and updated matching income
+2025-08-16T13:27:59.455Z [INFO]: Self power.
+2025-08-16T13:27:59.460Z [INFO]: Created virtual power record
+2025-08-16T13:29:59.296Z [INFO]: Incoming request to addVirtualPower
+2025-08-16T13:29:59.301Z [INFO]: Fetched member: 7
+2025-08-16T13:29:59.301Z [INFO]: Matched DIAMOND / LEFT
+2025-08-16T13:29:59.301Z [INFO]: Incrementing power on column: leftDiamondBalance
+2025-08-16T13:29:59.310Z [INFO]: Updated member: 7 - incremented leftDiamondBalance
+2025-08-16T13:29:59.310Z [INFO]: Should increment matching income: false
+2025-08-16T13:29:59.312Z [INFO]: Starting commission logic...
+2025-08-16T13:29:59.312Z [INFO]: New commission day
+2025-08-16T13:29:59.313Z [INFO]: Commission amount: 1000
+2025-08-16T13:29:59.322Z [INFO]: Decremented balances and updated matching income
+2025-08-16T13:29:59.322Z [INFO]: Self power.
+2025-08-16T13:29:59.329Z [INFO]: Created virtual power record
+2025-08-16T13:32:54.604Z [INFO]: Purchase Done MemberId: 7
+2025-08-16T13:32:54.648Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-16T13:32:54.648Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-16T13:34:03.394Z [INFO]: Incoming request to addVirtualPower
+2025-08-16T13:34:03.405Z [INFO]: Fetched member: 7
+2025-08-16T13:34:03.405Z [INFO]: Matched DIAMOND / RIGHT
+2025-08-16T13:34:03.405Z [INFO]: Incrementing power on column: rightDiamondBalance
+2025-08-16T13:34:03.417Z [INFO]: Updated member: 7 - incremented rightDiamondBalance
+2025-08-16T13:34:03.417Z [INFO]: Should increment matching income: true
+2025-08-16T13:34:03.417Z [INFO]: Starting commission logic...
+2025-08-16T13:34:03.417Z [INFO]: New commission day
+2025-08-16T13:34:03.417Z [INFO]: Commission amount: 1000
+2025-08-16T13:34:03.428Z [INFO]: Decremented balances and updated matching income
+2025-08-16T13:34:03.428Z [INFO]: Self power.
+2025-08-16T13:34:03.436Z [INFO]: Created virtual power record
