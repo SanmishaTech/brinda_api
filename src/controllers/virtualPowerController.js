@@ -34,17 +34,94 @@ const {
   INACTIVE,
 } = require("../config/data");
 
+/**
+ * Get all members with pagination, sorting, and search
+ */
+const getVirtualPowers = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const search = req.query.search?.trim() || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  let orderByClause = {};
+  if (
+    sortBy === "memberUsername" ||
+    sortBy === "memberName" ||
+    sortBy === "bankAccountNumber"
+  ) {
+    orderByClause = {
+      member: {
+        [sortBy]: sortOrder,
+      },
+    };
+  } else {
+    orderByClause = {
+      [sortBy]: sortOrder,
+    };
+  }
+  try {
+    const whereClause = {
+      ...(search && {
+        OR: [
+          {
+            member: {
+              memberUsername: {
+                contains: search,
+              },
+            },
+          },
+          {
+            member: {
+              memberName: {
+                contains: search,
+              },
+            },
+          },
+        ],
+      }),
+    };
+
+    const virtualPowers = await prisma.virtualPower.findMany({
+      where: whereClause,
+      include: {
+        member: true,
+      },
+      skip,
+      take: limit,
+      orderBy: orderByClause,
+    });
+
+    const totalRecords = await prisma.virtualPower.count({
+      where: whereClause,
+    });
+
+    const totalPages = Math.ceil(totalRecords / limit);
+
+    res.json({
+      virtualPowers,
+      page,
+      totalPages,
+      totalRecords,
+    });
+  } catch (error) {
+    logger.error(`Virtual Power List Error: ${error}`);
+    return res.status(500).json({
+      errors: {
+        message: "Failed to Fetch Virtual Power List",
+        details: error.message,
+      },
+    });
+  }
+};
+
 const addVirtualPower = async (req, res) => {
   const { memberId, statusType, powerPosition, powerCount, powerType } =
     req.body;
 
-  logger.info("Incoming request to addVirtualPower", {
-    memberId,
-    statusType,
-    powerPosition,
-    powerCount,
-    powerType,
-  });
+  logger.info(
+    `Incoming request to addVirtualPower: ${memberId}, ${statusType}, ${powerPosition}, ${powerCount}, ${powerType}`
+  );
 
   try {
     let member = await prisma.member.findUnique({
@@ -181,7 +258,7 @@ const addVirtualPower = async (req, res) => {
             is2_1Pass: true,
             ...(member.isDirectMatch &&
               member.status !== INACTIVE && {
-                matchingIncomeIncrement: {
+                matchingIncomeWalletBalance: {
                   increment: (ASSOCIATE_COMMISSION * member.percentage) / 100,
                 },
                 associateCommissionCount: 1,
@@ -341,5 +418,6 @@ const addVirtualPower = async (req, res) => {
 };
 
 module.exports = {
+  getVirtualPowers,
   addVirtualPower,
 };

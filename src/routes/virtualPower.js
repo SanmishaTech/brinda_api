@@ -1,8 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { addVirtualPower } = require('../controllers/virtualPowerController');
-const auth = require('../middleware/auth');
-const acl = require('../middleware/acl');
+const {
+  addVirtualPower,
+  getVirtualPowers,
+} = require("../controllers/virtualPowerController");
+const auth = require("../middleware/auth");
+const acl = require("../middleware/acl");
 
 /**
  * @swagger
@@ -20,6 +23,98 @@ const acl = require('../middleware/acl');
  *       scheme: bearer
  *       bearerFormat: JWT
  */
+
+/**
+ * @swagger
+ * /api/virtual-power:
+ *   get:
+ *     summary: Retrieve a paginated list of virtual powers
+ *     tags: [VirtualPower]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by member username or name
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [id, memberUsername, memberName, bankAccountNumber]
+ *           default: id
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: asc
+ *         description: Sort order (ascending or descending)
+ *     responses:
+ *       200:
+ *         description: List of virtual powers retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 virtualPowers:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       memberId:
+ *                         type: integer
+ *                       powerCount:
+ *                         type: integer
+ *                       powerPosition:
+ *                         type: string
+ *                       statusType:
+ *                         type: string
+ *                       powerType:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       member:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           memberUsername:
+ *                             type: string
+ *                           memberName:
+ *                             type: string
+ *                           bankAccountNumber:
+ *                             type: string
+ *                 page:
+ *                   type: integer
+ *                 totalPages:
+ *                   type: integer
+ *                 totalRecords:
+ *                   type: integer
+ *                 hasMore:
+ *                   type: boolean
+ *       500:
+ *         description: Failed to retrieve virtual power list
+ */
+router.get("/", auth, acl("virtualPower.read"), getVirtualPowers);
 
 /**
  * @swagger
@@ -74,6 +169,6 @@ const acl = require('../middleware/acl');
  *       500:
  *         description: Failed to add virtual power
  */
-router.post('/', auth, acl('virtualPower.write'), addVirtualPower);
+router.post("/", auth, acl("virtualPower.write"), addVirtualPower);
 
 module.exports = router;

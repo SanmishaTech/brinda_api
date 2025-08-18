@@ -129,26 +129,30 @@ const updatePVBalance = async (type = INCREMENT, value, memberId) => {
           matchingIncomeWalletBalance: {
             increment: member.upgradeWalletBalance,
           },
-          walletTransactions: {
-            create: [
-              {
-                amount: new Prisma.Decimal(member.upgradeWalletBalance),
-                status: APPROVED,
-                type: CREDIT,
-                transactionDate: new Date(),
-                walletType: UPGRADE_WALLET,
-                notes: `Transferred Upgrade wallet Amount to Matching Income Wallet.`,
-              },
-              {
-                amount: new Prisma.Decimal(member.upgradeWalletBalance),
-                status: APPROVED,
-                type: DEBIT,
-                transactionDate: new Date(),
-                walletType: MATCHING_INCOME_WALLET,
-                notes: `Received amount from member's Upgrade Wallet.`,
-              },
-            ],
-          },
+
+          walletTransactions:
+            parseFloat(member.upgradeWalletBalance) > 0
+              ? {
+                  create: [
+                    {
+                      amount: new Prisma.Decimal(member.upgradeWalletBalance),
+                      status: APPROVED,
+                      type: CREDIT,
+                      transactionDate: new Date(),
+                      walletType: UPGRADE_WALLET,
+                      notes: `Transferred Upgrade wallet Amount to Matching Income Wallet.`,
+                    },
+                    {
+                      amount: new Prisma.Decimal(member.upgradeWalletBalance),
+                      status: APPROVED,
+                      type: DEBIT,
+                      transactionDate: new Date(),
+                      walletType: MATCHING_INCOME_WALLET,
+                      notes: `Received amount from member's Upgrade Wallet.`,
+                    },
+                  ],
+                }
+              : undefined, // If the condition fails, no wallet transactions will be created
         },
         include: {
           sponsor: true,

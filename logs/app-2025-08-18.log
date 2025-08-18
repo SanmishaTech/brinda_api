@@ -1,85 +1,14 @@
-2025-08-18T05:33:13.311Z [INFO]: Purchase Done MemberId: 13
-2025-08-18T05:33:13.337Z [INFO]: purchase Task Subprocess exited with code 0
-2025-08-18T05:33:13.339Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
-2025-08-18T05:40:29.803Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T05:40:29.834Z [INFO]: Fetched member: 7
-2025-08-18T05:40:29.834Z [INFO]: Matched ASSOCIATE / LEFT
-2025-08-18T05:40:29.834Z [INFO]: Incrementing power on column: leftAssociateBalance
-2025-08-18T05:40:29.847Z [INFO]: Updated member: 7 - incremented leftAssociateBalance
-2025-08-18T05:40:29.848Z [INFO]: No opposite power (rightAssociateBalance) available, skipping commission.
-2025-08-18T05:40:29.848Z [INFO]: Self power.
-2025-08-18T05:40:29.855Z [INFO]: Created virtual power record
-2025-08-18T05:41:11.180Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T05:41:11.185Z [INFO]: Fetched member: 7
-2025-08-18T05:41:11.186Z [INFO]: Matched ASSOCIATE / RIGHT
-2025-08-18T05:41:11.186Z [INFO]: Incrementing power on column: rightAssociateBalance
-2025-08-18T05:41:11.196Z [INFO]: Updated member: 7 - incremented rightAssociateBalance
-2025-08-18T05:41:11.197Z [INFO]: Should increment matching income: true
-2025-08-18T05:41:11.197Z [INFO]: Starting commission logic...
-2025-08-18T05:41:11.198Z [INFO]: Same commission day
-2025-08-18T05:41:11.198Z [INFO]: Available commission count: 25
-2025-08-18T05:41:11.199Z [INFO]: Commission amount: 2500
-2025-08-18T05:41:11.210Z [INFO]: Decremented balances and updated matching income
-2025-08-18T05:41:11.211Z [INFO]: Self power.
-2025-08-18T05:41:11.216Z [INFO]: Created virtual power record
-2025-08-18T05:43:02.956Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T05:43:02.962Z [INFO]: Fetched member: 7
-2025-08-18T05:43:02.962Z [INFO]: Matched GOLD / LEFT
-2025-08-18T05:43:02.962Z [INFO]: Incrementing power on column: leftGoldBalance
-2025-08-18T05:43:02.975Z [INFO]: Updated member: 7 - incremented leftGoldBalance
-2025-08-18T05:43:02.975Z [INFO]: No opposite power (rightGoldBalance) available, skipping commission.
-2025-08-18T05:43:02.975Z [INFO]: Self power.
-2025-08-18T05:43:02.982Z [INFO]: Created virtual power record
-2025-08-18T05:43:44.384Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T05:43:44.392Z [INFO]: Fetched member: 7
-2025-08-18T05:43:44.393Z [INFO]: Matched GOLD / RIGHT
-2025-08-18T05:43:44.395Z [INFO]: Incrementing power on column: rightGoldBalance
-2025-08-18T05:43:44.406Z [INFO]: Updated member: 7 - incremented rightGoldBalance
-2025-08-18T05:43:44.407Z [INFO]: Should increment matching income: true
-2025-08-18T05:43:44.407Z [INFO]: Starting commission logic...
-2025-08-18T05:43:44.408Z [INFO]: Same commission day
-2025-08-18T05:43:44.408Z [INFO]: Available commission count: 24
-2025-08-18T05:43:44.408Z [INFO]: Commission amount: 16800
-2025-08-18T05:43:44.423Z [INFO]: Decremented balances and updated matching income
-2025-08-18T05:43:44.423Z [INFO]: Self power.
-2025-08-18T05:43:44.427Z [INFO]: Created virtual power record
-2025-08-18T05:47:03.551Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T05:47:03.570Z [INFO]: Fetched member: 7
-2025-08-18T05:47:03.570Z [INFO]: Matched DIAMOND / LEFT
-2025-08-18T05:47:03.570Z [INFO]: Incrementing power on column: leftDiamondBalance
-2025-08-18T05:47:03.581Z [INFO]: Updated member: 7 - incremented leftDiamondBalance
-2025-08-18T05:47:03.582Z [INFO]: No opposite power (rightDiamondBalance) available, skipping commission.
-2025-08-18T05:47:03.582Z [INFO]: Self power.
-2025-08-18T05:47:03.587Z [INFO]: Created virtual power record
-2025-08-18T05:47:55.358Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T05:47:55.362Z [INFO]: Fetched member: 7
-2025-08-18T05:47:55.362Z [INFO]: Matched DIAMOND / RIGHT
-2025-08-18T05:47:55.363Z [INFO]: Incrementing power on column: rightDiamondBalance
-2025-08-18T05:47:55.376Z [INFO]: Updated member: 7 - incremented rightDiamondBalance
-2025-08-18T05:47:55.376Z [INFO]: Should increment matching income: true
-2025-08-18T05:47:55.376Z [INFO]: Starting commission logic...
-2025-08-18T05:47:55.376Z [INFO]: Same commission day
-2025-08-18T05:47:55.376Z [INFO]: Available commission count: 1
-2025-08-18T05:47:55.376Z [INFO]: Commission amount: 1000
-2025-08-18T05:47:55.390Z [INFO]: Decremented balances and updated matching income
-2025-08-18T05:47:55.390Z [INFO]: Self power.
-2025-08-18T05:47:55.395Z [INFO]: Created virtual power record
-2025-08-18T05:48:27.610Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T05:48:27.616Z [INFO]: Fetched member: 7
-2025-08-18T05:48:27.616Z [INFO]: Matched DIAMOND / RIGHT
-2025-08-18T05:48:27.616Z [INFO]: Incrementing power on column: rightDiamondBalance
-2025-08-18T05:48:27.630Z [INFO]: Updated member: 7 - incremented rightDiamondBalance
-2025-08-18T05:48:27.631Z [INFO]: Should increment matching income: true
-2025-08-18T05:48:27.631Z [INFO]: Starting commission logic...
-2025-08-18T05:48:27.631Z [INFO]: Same commission day
-2025-08-18T05:48:27.632Z [INFO]: Commission amount: 0
-2025-08-18T05:48:27.644Z [INFO]: Decremented balances and updated matching income
-2025-08-18T05:48:27.644Z [INFO]: Self power.
-2025-08-18T05:48:27.661Z [INFO]: Created virtual power record
-2025-08-18T05:54:08.050Z [INFO]: Purchase Done MemberId: 14
-2025-08-18T05:54:08.076Z [INFO]: purchase Task Subprocess exited with code 0
-2025-08-18T05:54:08.076Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
-2025-08-18T06:06:56.819Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T06:06:56.880Z [INFO]: Self power.
-2025-08-18T06:07:36.104Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T06:07:40.398Z [INFO]: Top Member Found
+start
+2025-08-18T07:14:58.089Z [INFO]: Incoming request to addVirtualPower
+2025-08-18T07:14:58.186Z [INFO]: Self power.
+2025-08-18T07:24:57.270Z [INFO]: Incoming request to addVirtualPower: 1, Silver, Left, 1, SELF
+2025-08-18T07:24:57.332Z [INFO]: Self power.
+2025-08-18T08:40:11.872Z [INFO]: Purchase Done MemberId: 4
+2025-08-18T08:40:11.895Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-18T08:40:11.897Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-18T08:40:56.288Z [INFO]: Purchase Done MemberId: 5
+2025-08-18T08:40:56.307Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-18T08:40:56.308Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-18T08:41:19.806Z [INFO]: Purchase Done MemberId: 3
+2025-08-18T08:41:19.829Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-18T08:41:19.829Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
