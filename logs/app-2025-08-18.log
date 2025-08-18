@@ -1,14 +1,2 @@
 start
-2025-08-18T07:14:58.089Z [INFO]: Incoming request to addVirtualPower
-2025-08-18T07:14:58.186Z [INFO]: Self power.
-2025-08-18T07:24:57.270Z [INFO]: Incoming request to addVirtualPower: 1, Silver, Left, 1, SELF
-2025-08-18T07:24:57.332Z [INFO]: Self power.
-2025-08-18T08:40:11.872Z [INFO]: Purchase Done MemberId: 4
-2025-08-18T08:40:11.895Z [INFO]: purchase Task Subprocess exited with code 0
-2025-08-18T08:40:11.897Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
-2025-08-18T08:40:56.288Z [INFO]: Purchase Done MemberId: 5
-2025-08-18T08:40:56.307Z [INFO]: purchase Task Subprocess exited with code 0
-2025-08-18T08:40:56.308Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
-2025-08-18T08:41:19.806Z [INFO]: Purchase Done MemberId: 3
-2025-08-18T08:41:19.829Z [INFO]: purchase Task Subprocess exited with code 0
-2025-08-18T08:41:19.829Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-18T17:56:34.433Z [INFO]: Incoming request to addVirtualPower: 2, Associate, Left, 100, SELF_PLUS_UPLINE
