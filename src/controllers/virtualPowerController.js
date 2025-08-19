@@ -143,63 +143,81 @@ const addVirtualPower = async (req, res) => {
       let commissionDate = null;
       let updates = {};
       let is2_1Pass = member.is2_1Pass;
+      let totalStatusBalance = null;
+      let totalStatusMatched = null;
 
       if (statusType === ASSOCIATE && currentPosition === LEFT) {
         // logger.info("Matched ASSOCIATE / LEFT");
         columnName = 'leftAssociateBalance';
         oppositeColumnName = 'rightAssociateBalance';
+        totalStatusBalance = 'totalLeftAssociateBalance';
         commissionCount = 'associateCommissionCount';
         commissionDate = 'associateCommissionDate';
         commissionAmount = ASSOCIATE_COMMISSION;
+        totalStatusMatched = 'totalAssociateMatched';
       } else if (statusType === ASSOCIATE && currentPosition === RIGHT) {
         // logger.info("Matched ASSOCIATE / RIGHT");
         columnName = 'rightAssociateBalance';
         oppositeColumnName = 'leftAssociateBalance';
+        totalStatusBalance = 'totalRightAssociateBalance';
         commissionCount = 'associateCommissionCount';
         commissionDate = 'associateCommissionDate';
         commissionAmount = ASSOCIATE_COMMISSION;
+        totalStatusMatched = 'totalAssociateMatched';
       } else if (statusType === SILVER && currentPosition === LEFT) {
         // logger.info("Matched SILVER / LEFT");
         columnName = 'leftSilverBalance';
         oppositeColumnName = 'rightSilverBalance';
+        totalStatusBalance = 'totalLeftSilverBalance';
         commissionCount = 'silverCommissionCount';
         commissionDate = 'silverCommissionDate';
         commissionAmount = SILVER_COMMISSION;
+        totalStatusMatched = 'totalSilverMatched';
       } else if (statusType === SILVER && currentPosition === RIGHT) {
         // logger.info("Matched SILVER / RIGHT");
         columnName = 'rightSilverBalance';
         oppositeColumnName = 'leftSilverBalance';
+        totalStatusBalance = 'totalRightSilverBalance';
         commissionCount = 'silverCommissionCount';
         commissionDate = 'silverCommissionDate';
         commissionAmount = SILVER_COMMISSION;
+        totalStatusMatched = 'totalSilverMatched';
       } else if (statusType === GOLD && currentPosition === LEFT) {
         // logger.info("Matched GOLD / LEFT");
         columnName = 'leftGoldBalance';
         oppositeColumnName = 'rightGoldBalance';
+        totalStatusBalance = 'totalLeftGoldBalance';
         commissionCount = 'goldCommissionCount';
         commissionDate = 'silverCommissionDate';
         commissionAmount = GOLD_COMMISSION;
+        totalStatusMatched = 'totalGoldMatched';
       } else if (statusType === GOLD && currentPosition === RIGHT) {
         // logger.info("Matched GOLD / RIGHT");
         columnName = 'rightGoldBalance';
         oppositeColumnName = 'leftGoldBalance';
+        totalStatusBalance = 'totalRightGoldBalance';
         commissionCount = 'goldCommissionCount';
         commissionDate = 'goldCommissionDate';
         commissionAmount = GOLD_COMMISSION;
+        totalStatusMatched = 'totalGoldMatched';
       } else if (statusType === DIAMOND && currentPosition === LEFT) {
         // logger.info("Matched DIAMOND / LEFT");
         columnName = 'leftDiamondBalance';
         oppositeColumnName = 'rightDiamondBalance';
+        totalStatusBalance = 'totalLeftDiamondBalance';
         commissionCount = 'diamondCommissionCount';
         commissionDate = 'diamondCommissionDate';
         commissionAmount = DIAMOND_COMMISSION;
+        totalStatusMatched = 'totalDiamondMatched';
       } else if (statusType === DIAMOND && currentPosition === RIGHT) {
         // logger.info("Matched DIAMOND / RIGHT");
         columnName = 'rightDiamondBalance';
         oppositeColumnName = 'leftDiamondBalance';
+        totalStatusBalance = 'totalRightDiamondBalance';
         commissionCount = 'diamondCommissionCount';
         commissionDate = 'diamondCommissionDate';
         commissionAmount = DIAMOND_COMMISSION;
+        totalStatusMatched = 'totalDiamondMatched';
       } else {
         // logger.info("Invalid statusType or powerPosition");
         return res
@@ -212,6 +230,9 @@ const addVirtualPower = async (req, res) => {
         where: { id: parseInt(member.id, 10) },
         data: {
           [columnName]: {
+            increment: parseInt(powerCount),
+          },
+          [totalStatusBalance]: {
             increment: parseInt(powerCount),
           },
         },
@@ -242,14 +263,18 @@ const addVirtualPower = async (req, res) => {
           member = await prisma.member.update({
             where: { id: parseInt(member.id, 10) },
             data: {
-              ...updates, //contains 2_1 ,left and right associate balance
-              is2_1Pass: true,
+              ...updates, //contains 2_1 ,left and right associate balance,total balance
+              is2_1Pass: is2_1Pass, //before it was is2_1Pass: true
               ...(member.isDirectMatch &&
+                is2_1Pass &&
                 member.status !== INACTIVE && {
                   matchingIncomeWalletBalance: {
                     increment: (ASSOCIATE_COMMISSION * member.percentage) / 100,
                   },
-                  associateCommissionCount: 1,
+                  associateCommissionCount: {
+                    increment: 1,
+                  },
+                  totalAssociateMatched: { increment: 1 },
                   associateCommissionDate: today,
                   walletTransactions: {
                     create: {
@@ -302,11 +327,22 @@ const addVirtualPower = async (req, res) => {
               updates[commissionCount] = {
                 increment: minBalance,
               };
+              if (statusType !== GOLD) {
+                updates[totalStatusMatched] = {
+                  increment: minBalance,
+                };
+              }
+
               matchingIncomeIncrement = minBalance * commissionAmount;
             } else {
               updates[commissionCount] = {
                 increment: availableCount,
               };
+              if (statusType !== GOLD) {
+                updates[totalStatusMatched] = {
+                  increment: availableCount,
+                };
+              }
               matchingIncomeIncrement = availableCount * commissionAmount;
             }
           }
@@ -316,9 +352,19 @@ const addVirtualPower = async (req, res) => {
 
           if (minBalance < MAX_COMMISSIONS_PER_DAY) {
             updates[commissionCount] = minBalance;
+            if (statusType !== GOLD) {
+              updates[totalStatusMatched] = {
+                increment: minBalance,
+              };
+            }
             matchingIncomeIncrement = minBalance * commissionAmount;
           } else {
             updates[commissionCount] = MAX_COMMISSIONS_PER_DAY;
+            if (statusType !== GOLD) {
+              updates[totalStatusMatched] = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
+            }
             matchingIncomeIncrement =
               MAX_COMMISSIONS_PER_DAY * commissionAmount;
           }
@@ -341,7 +387,7 @@ const addVirtualPower = async (req, res) => {
               matchingIncomeWalletBalance: {
                 increment: matchingIncomeIncrement,
               },
-              ...updates, // contains commissionCount, commissionDate
+              ...updates, // contains commissionCount, commissionDate,status matched
               ...(matchingIncomeIncrement > 0 && {
                 walletTransactions: {
                   create: {

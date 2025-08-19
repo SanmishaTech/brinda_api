@@ -1,0 +1,30 @@
+2025-08-19T09:26:03.006Z [INFO]: Incoming request to addVirtualPower: 4, Associate, Right, 1, SELF_PLUS_UPLINE
+2025-08-19T09:27:45.299Z [INFO]: Incoming request to addVirtualPower: 4, Associate, Left, 1, SELF_PLUS_UPLINE
+2025-08-19T09:41:34.343Z [INFO]: Incoming request to addVirtualPower: 4, Associate, Left, 1, SELF_PLUS_UPLINE
+2025-08-19T09:41:53.984Z [INFO]: Incoming request to addVirtualPower: 4, Associate, Right, 2, SELF_PLUS_UPLINE
+2025-08-19T09:43:05.233Z [INFO]: Incoming request to addVirtualPower: 4, Diamond, Left, 500, SELF_PLUS_UPLINE
+2025-08-19T09:43:28.617Z [INFO]: Incoming request to addVirtualPower: 4, Diamond, Right, 500, SELF_PLUS_UPLINE
+2025-08-19T09:44:18.922Z [INFO]: Purchase Done MemberId: 1
+2025-08-19T09:44:18.961Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-19T09:44:18.962Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-19T09:44:58.552Z [INFO]: Purchase Done MemberId: 2
+2025-08-19T09:44:58.590Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-19T09:44:58.591Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-19T09:49:29.181Z [INFO]: Incoming request to addVirtualPower: 2, Associate, Left, 1, SELF
+2025-08-19T09:49:29.253Z [INFO]: Self power.
+2025-08-19T09:58:12.364Z [INFO]: Purchase Done MemberId: 5
+2025-08-19T09:58:12.387Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-19T09:58:12.388Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-19T10:10:18.628Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Left, 1, SELF
+2025-08-19T10:10:18.701Z [INFO]: Self power.
+2025-08-19T10:11:12.299Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Left, 1, SELF
+2025-08-19T10:11:12.373Z [INFO]: Self power.
+2025-08-19T10:12:19.446Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Left, 1, SELF
+2025-08-19T10:12:19.514Z [INFO]: Self power.
+2025-08-19T10:17:13.807Z [INFO]: Purchase Done MemberId: 6
+2025-08-19T10:17:13.850Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-19T10:17:13.850Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-19T10:23:54.362Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Right, 1, SELF
+2025-08-19T10:23:54.414Z [INFO]: Self power.
+2025-08-19T10:25:03.486Z [INFO]: Incoming request to addVirtualPower: 1, Gold, Right, 1, SELF
+2025-08-19T10:25:03.536Z [INFO]: Self power.

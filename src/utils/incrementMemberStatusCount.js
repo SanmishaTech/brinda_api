@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const {
   LEFT,
@@ -8,7 +8,7 @@ const {
   SILVER,
   GOLD,
   DIAMOND,
-} = require("../config/data");
+} = require('../config/data');
 
 const incrementMemberStatusCount = async (newUser) => {
   let parentId = newUser.parentId;
@@ -34,30 +34,38 @@ const incrementMemberStatusCount = async (newUser) => {
       switch (status) {
         case ASSOCIATE:
           updates.leftAssociateBalance = { increment: 1 };
+          updates.totalLeftAssociateBalance = { increment: 1 };
           break;
         case SILVER:
           updates.leftSilverBalance = { increment: 1 };
+          updates.totalLeftSilverBalance = { increment: 1 };
           break;
         case GOLD:
           updates.leftGoldBalance = { increment: 1 };
+          updates.totalLeftGoldBalance = { increment: 1 };
           break;
         case DIAMOND:
           updates.leftDiamondBalance = { increment: 1 };
+          updates.totalLeftDiamondBalance = { increment: 1 };
           break;
       }
     } else if (currentPosition === RIGHT) {
       switch (status) {
         case ASSOCIATE:
           updates.rightAssociateBalance = { increment: 1 };
+          updates.totalRightAssociateBalance = { increment: 1 };
           break;
         case SILVER:
           updates.rightSilverBalance = { increment: 1 };
+          updates.totalRightSilverBalance = { increment: 1 };
           break;
         case GOLD:
           updates.rightGoldBalance = { increment: 1 };
+          updates.totalRightGoldBalance = { increment: 1 };
           break;
         case DIAMOND:
           updates.rightDiamondBalance = { increment: 1 };
+          updates.totalRightDiamondBalance = { increment: 1 };
           break;
       }
     }

@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const {
   LEFT,
@@ -14,14 +14,14 @@ const {
   SILVER_COMMISSION,
   GOLD_COMMISSION,
   DIAMOND_COMMISSION,
-} = require("../config/data");
+} = require('../config/data');
 const {
   checkMatchingMentorIncomeL1,
-} = require("./checkMatchingMentorIncomeL1");
+} = require('./checkMatchingMentorIncomeL1');
 const {
   checkMatchingMentorIncomeL2,
-} = require("./checkMatchingMentorIncomeL2");
-const { calculateCommission } = require("./calculateCommission");
+} = require('./checkMatchingMentorIncomeL2');
+const { calculateCommission } = require('./calculateCommission');
 
 const check2_1Pass = async (member) => {
   let currentMember = member;
@@ -34,27 +34,27 @@ const check2_1Pass = async (member) => {
       },
     });
 
-    const dayjs = require("dayjs");
-    const utc = require("dayjs/plugin/utc");
+    const dayjs = require('dayjs');
+    const utc = require('dayjs/plugin/utc');
     dayjs.extend(utc);
 
-    const today = dayjs().utc().startOf("day").toDate(); // ✅ full JS Date in UTC 00:00:00
+    const today = dayjs().utc().startOf('day').toDate(); // ✅ full JS Date in UTC 00:00:00
 
     const isSameAssociateCommissionDay =
       parent.associateCommissionDate &&
-      dayjs(parent.associateCommissionDate).utc().isSame(today, "day");
+      dayjs(parent.associateCommissionDate).utc().isSame(today, 'day');
 
     const isSameSilverCommissionDay =
       parent.silverCommissionDate &&
-      dayjs(parent.silverCommissionDate).utc().isSame(today, "day");
+      dayjs(parent.silverCommissionDate).utc().isSame(today, 'day');
 
     const isSameGoldCommissionDay =
       parent.goldCommissionDate &&
-      dayjs(parent.goldCommissionDate).utc().isSame(today, "day");
+      dayjs(parent.goldCommissionDate).utc().isSame(today, 'day');
 
     const isSameDiamondCommissionDay =
       parent.diamondCommissionDate &&
-      dayjs(parent.diamondCommissionDate).utc().isSame(today, "day");
+      dayjs(parent.diamondCommissionDate).utc().isSame(today, 'day');
 
     if (parent.is2_1Pass) {
       let updates = {};
@@ -531,21 +531,27 @@ const check2_1Pass = async (member) => {
         updates.diamondCommissionDate = today; // this is imp. if brinda is by default 1:1 and 2:1 true then will get commission date error
         if (parent.status === ASSOCIATE) {
           updates.associateCommissionCount = 1;
+          updates.totalAssociateMatched = 1;
           updates.matchingIncomeWalletBalance = {
             increment: ASSOCIATE_COMMISSION,
           };
         } else if (parent.status === SILVER) {
           updates.associateCommissionCount = 1; //since 2:1 is not true that means silverCommissionCount must be 0
+          updates.totalAssociateMatched = 1;
           updates.silverCommissionCount = minSilverBalance;
+          updates.totalSilverMatched = minSilverBalance;
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
           updates.matchingIncomeWalletBalance = {
             increment: totalSilverCommission + ASSOCIATE_COMMISSION,
           };
         } else if (parent.status === GOLD) {
           updates.associateCommissionCount = 1;
+          updates.totalAssociateMatched = 1;
           updates.silverCommissionCount = minSilverBalance;
+          updates.totalSilverMatched = minSilverBalance;
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
           updates.goldCommissionCount = minGoldBalance;
+          updates.totalGoldMatched = minGoldBalance;
           let totalGoldCommission = minGoldBalance * GOLD_COMMISSION;
           updates.matchingIncomeWalletBalance = {
             increment:
@@ -555,11 +561,15 @@ const check2_1Pass = async (member) => {
           };
         } else if (parent.status === DIAMOND) {
           updates.associateCommissionCount = 1;
+          updates.totalAssociateMatched = 1;
           updates.silverCommissionCount = minSilverBalance;
+          updates.totalSilverMatched = minSilverBalance;
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
           updates.goldCommissionCount = minGoldBalance;
+          updates.totalGoldMatched = minGoldBalance;
           let totalGoldCommission = minGoldBalance * GOLD_COMMISSION;
           updates.diamondCommissionCount = minDiamondBalance;
+          updates.totalDiamondMatched = minDiamondBalance;
           let totalDiamondCommission = minDiamondBalance * DIAMOND_COMMISSION;
           updates.matchingIncomeWalletBalance = {
             increment:
