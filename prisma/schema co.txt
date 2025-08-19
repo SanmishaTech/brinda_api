@@ -112,6 +112,8 @@ model Member {
   totalRightSilverBalance Int     @default(0)
   totalRightGoldBalance Int     @default(0)
   totalRightDiamondBalance Int     @default(0)
+  goldRewardBalance Int     @default(0)
+  goldRewardLevel Int     @default(0)
   // end
   associateCommissionCount Int     @default(0)
   silverCommissionCount Int     @default(0)

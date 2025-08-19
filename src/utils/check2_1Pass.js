@@ -14,6 +14,7 @@ const {
   SILVER_COMMISSION,
   GOLD_COMMISSION,
   DIAMOND_COMMISSION,
+  REWARDS_COMMISSIONS,
 } = require('../config/data');
 const {
   checkMatchingMentorIncomeL1,
@@ -58,6 +59,10 @@ const check2_1Pass = async (member) => {
 
     if (parent.is2_1Pass) {
       let updates = {};
+      let rewardDetails = {
+        isRewardLevelReached: false,
+        amount: 0,
+      };
       let matchingIncomeWalletBalance = 0;
       const minAssociateBalance = Math.min(
         parent.leftAssociateBalance,
@@ -126,11 +131,17 @@ const check2_1Pass = async (member) => {
                 updates.associateCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalAssociateMatched = {
+                  increment: availableCommissionCount,
+                };
               } else {
                 matchingIncomeWalletBalance +=
                   minAssociateBalance * ASSOCIATE_COMMISSION;
 
                 updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+                updates.totalAssociateMatched = {
                   increment: minAssociateBalance,
                 };
                 // matchingMentorIncomeL1 = minBalance;
@@ -142,11 +153,17 @@ const check2_1Pass = async (member) => {
               matchingIncomeWalletBalance +=
                 minAssociateBalance * ASSOCIATE_COMMISSION;
               updates.associateCommissionCount = minAssociateBalance;
+              updates.totalAssociateMatched = {
+                increment: minAssociateBalance,
+              };
               // matchingMentorIncomeL1 = minBalance;
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
               updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalAssociateMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
               // matchingMentorIncomeL1 = MAX_COMMISSIONS_PER_DAY;
             }
           }
@@ -163,12 +180,18 @@ const check2_1Pass = async (member) => {
                 updates.associateCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalAssociateMatched = {
+                  increment: availableCommissionCount,
+                };
                 // matchingMentorIncomeL1 = availableCommissionCount;
               } else {
                 matchingIncomeWalletBalance +=
                   minAssociateBalance * ASSOCIATE_COMMISSION;
 
                 updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+                updates.totalAssociateMatched = {
                   increment: minAssociateBalance,
                 };
                 // matchingMentorIncomeL1 = minBalance;
@@ -181,10 +204,16 @@ const check2_1Pass = async (member) => {
                 minAssociateBalance * ASSOCIATE_COMMISSION;
 
               updates.associateCommissionCount = minAssociateBalance;
+              updates.totalAssociateMatched = {
+                increment: minAssociateBalance,
+              };
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
               updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalAssociateMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
             }
           }
           // FOR SILVER
@@ -199,11 +228,17 @@ const check2_1Pass = async (member) => {
                 updates.silverCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalSilverMatched = {
+                  increment: availableCommissionCount,
+                };
               } else {
                 matchingIncomeWalletBalance +=
                   minSilverBalance * SILVER_COMMISSION;
 
                 updates.silverCommissionCount = {
+                  increment: minSilverBalance,
+                };
+                updates.totalSilverMatched = {
                   increment: minSilverBalance,
                 };
               }
@@ -215,10 +250,16 @@ const check2_1Pass = async (member) => {
                 minSilverBalance * SILVER_COMMISSION;
 
               updates.silverCommissionCount = minSilverBalance;
+              updates.totalSilverMatched = {
+                increment: minSilverBalance,
+              };
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
               updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalSilverMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
             }
           }
         } else if (parent.status === GOLD) {
@@ -234,11 +275,17 @@ const check2_1Pass = async (member) => {
                 updates.associateCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalAssociateMatched = {
+                  increment: availableCommissionCount,
+                };
               } else {
                 matchingIncomeWalletBalance +=
                   minAssociateBalance * ASSOCIATE_COMMISSION;
 
                 updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+                updates.totalAssociateMatched = {
                   increment: minAssociateBalance,
                 };
               }
@@ -250,10 +297,16 @@ const check2_1Pass = async (member) => {
                 minAssociateBalance * ASSOCIATE_COMMISSION;
 
               updates.associateCommissionCount = minAssociateBalance;
+              updates.totalAssociateMatched = {
+                increment: minAssociateBalance,
+              };
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
               updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalAssociateMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
             }
           }
           // FOR SILVER
@@ -268,11 +321,17 @@ const check2_1Pass = async (member) => {
                 updates.silverCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalSilverMatched = {
+                  increment: availableCommissionCount,
+                };
               } else {
                 matchingIncomeWalletBalance +=
                   minSilverBalance * SILVER_COMMISSION;
 
                 updates.silverCommissionCount = {
+                  increment: minSilverBalance,
+                };
+                updates.totalSilverMatched = {
                   increment: minSilverBalance,
                 };
               }
@@ -284,10 +343,16 @@ const check2_1Pass = async (member) => {
                 minSilverBalance * SILVER_COMMISSION;
 
               updates.silverCommissionCount = minSilverBalance;
+              updates.totalSilverMatched = {
+                increment: minSilverBalance,
+              };
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
               updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalSilverMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
             }
           }
           // FOR GOLD
@@ -302,12 +367,71 @@ const check2_1Pass = async (member) => {
                 updates.goldCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalGoldMatched = {
+                  increment: availableCommissionCount,
+                };
+                // start
+                if (parent.goldRewardLevel < 17) {
+                  updates.goldRewardBalance = {
+                    increment: availableCommissionCount,
+                  };
+                  // Find the current reward level config
+                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                  );
+
+                  if (nextRewardLevel) {
+                    if (
+                      parseFloat(
+                        parent.goldRewardBalance + availableCommissionCount
+                      ) >= parseFloat(nextRewardLevel.pair)
+                    ) {
+                      // Reset reward balance
+                      rewardDetails.isRewardLevelReached = true;
+                      rewardDetails.amount = nextRewardLevel.amount;
+                      updates.goldRewardBalance = 0;
+                      updates.goldRewardLevel = {
+                        increment: 1,
+                      };
+                    }
+                  }
+                }
+                // end
               } else {
                 matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
                 updates.goldCommissionCount = {
                   increment: minGoldBalance,
                 };
+                updates.totalGoldMatched = {
+                  increment: minGoldBalance,
+                };
+                // start
+                if (parent.goldRewardLevel < 17) {
+                  updates.goldRewardBalance = {
+                    increment: minGoldBalance,
+                  };
+                  // Find the current reward level config
+                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                  );
+
+                  if (nextRewardLevel) {
+                    if (
+                      parseFloat(parent.goldRewardBalance + minGoldBalance) >=
+                      parseFloat(nextRewardLevel.pair)
+                    ) {
+                      // Reset reward balance
+                      rewardDetails.isRewardLevelReached = true;
+                      rewardDetails.amount = nextRewardLevel.amount;
+                      updates.goldRewardBalance = 0;
+                      updates.goldRewardLevel = {
+                        increment: 1,
+                      };
+                    }
+                  }
+                }
+                // end
               }
             }
           } else {
@@ -316,10 +440,69 @@ const check2_1Pass = async (member) => {
               matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
               updates.goldCommissionCount = minGoldBalance;
+              updates.totalGoldMatched = {
+                increment: minGoldBalance,
+              };
+              // start
+              if (parent.goldRewardLevel < 17) {
+                updates.goldRewardBalance = {
+                  increment: minGoldBalance,
+                };
+                // Find the current reward level config
+                const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                );
+
+                if (nextRewardLevel) {
+                  if (
+                    parseFloat(parent.goldRewardBalance + minGoldBalance) >=
+                    parseFloat(nextRewardLevel.pair)
+                  ) {
+                    // Reset reward balance
+                    rewardDetails.isRewardLevelReached = true;
+                    rewardDetails.amount = nextRewardLevel.amount;
+                    updates.goldRewardBalance = 0;
+                    updates.goldRewardLevel = {
+                      increment: 1,
+                    };
+                  }
+                }
+              }
+              // end
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
               updates.goldCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalGoldMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
+              // start
+              if (parent.goldRewardLevel < 17) {
+                updates.goldRewardBalance = {
+                  increment: MAX_COMMISSIONS_PER_DAY,
+                };
+                // Find the current reward level config
+                const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                );
+
+                if (nextRewardLevel) {
+                  if (
+                    parseFloat(
+                      parent.goldRewardBalance + MAX_COMMISSIONS_PER_DAY
+                    ) >= parseFloat(nextRewardLevel.pair)
+                  ) {
+                    // Reset reward balance
+                    rewardDetails.isRewardLevelReached = true;
+                    rewardDetails.amount = nextRewardLevel.amount;
+                    updates.goldRewardBalance = 0;
+                    updates.goldRewardLevel = {
+                      increment: 1,
+                    };
+                  }
+                }
+              }
+              // end
             }
           }
         } else if (parent.status === DIAMOND) {
@@ -335,11 +518,17 @@ const check2_1Pass = async (member) => {
                 updates.associateCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalAssociateMatched = {
+                  increment: availableCommissionCount,
+                };
               } else {
                 matchingIncomeWalletBalance +=
                   minAssociateBalance * ASSOCIATE_COMMISSION;
 
                 updates.associateCommissionCount = {
+                  increment: minAssociateBalance,
+                };
+                updates.totalAssociateMatched = {
                   increment: minAssociateBalance,
                 };
               }
@@ -351,10 +540,16 @@ const check2_1Pass = async (member) => {
                 minAssociateBalance * ASSOCIATE_COMMISSION;
 
               updates.associateCommissionCount = minAssociateBalance;
+              updates.totalAssociateMatched = {
+                increment: minAssociateBalance,
+              };
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * ASSOCIATE_COMMISSION;
               updates.associateCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalAssociateMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
             }
           }
           // FOR SILVER
@@ -369,11 +564,17 @@ const check2_1Pass = async (member) => {
                 updates.silverCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalSilverMatched = {
+                  increment: availableCommissionCount,
+                };
               } else {
                 matchingIncomeWalletBalance +=
                   minSilverBalance * SILVER_COMMISSION;
 
                 updates.silverCommissionCount = {
+                  increment: minSilverBalance,
+                };
+                updates.totalSilverMatched = {
                   increment: minSilverBalance,
                 };
               }
@@ -385,10 +586,16 @@ const check2_1Pass = async (member) => {
                 minSilverBalance * SILVER_COMMISSION;
 
               updates.silverCommissionCount = minSilverBalance;
+              updates.totalSilverMatched = {
+                increment: minSilverBalance,
+              };
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
               updates.silverCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalSilverMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
             }
           }
           // FOR GOLD
@@ -403,12 +610,71 @@ const check2_1Pass = async (member) => {
                 updates.goldCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalGoldMatched = {
+                  increment: availableCommissionCount,
+                };
+                // start
+                if (parent.goldRewardLevel < 17) {
+                  updates.goldRewardBalance = {
+                    increment: availableCommissionCount,
+                  };
+                  // Find the current reward level config
+                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                  );
+
+                  if (nextRewardLevel) {
+                    if (
+                      parseFloat(
+                        parent.goldRewardBalance + availableCommissionCount
+                      ) >= parseFloat(nextRewardLevel.pair)
+                    ) {
+                      // Reset reward balance
+                      rewardDetails.isRewardLevelReached = true;
+                      rewardDetails.amount = nextRewardLevel.amount;
+                      updates.goldRewardBalance = 0;
+                      updates.goldRewardLevel = {
+                        increment: 1,
+                      };
+                    }
+                  }
+                }
+                // end
               } else {
                 matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
                 updates.goldCommissionCount = {
                   increment: minGoldBalance,
                 };
+                updates.totalGoldMatched = {
+                  increment: minGoldBalance,
+                };
+                // start
+                if (parent.goldRewardLevel < 17) {
+                  updates.goldRewardBalance = {
+                    increment: minGoldBalance,
+                  };
+                  // Find the current reward level config
+                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                  );
+
+                  if (nextRewardLevel) {
+                    if (
+                      parseFloat(parent.goldRewardBalance + minGoldBalance) >=
+                      parseFloat(nextRewardLevel.pair)
+                    ) {
+                      // Reset reward balance
+                      rewardDetails.isRewardLevelReached = true;
+                      rewardDetails.amount = nextRewardLevel.amount;
+                      updates.goldRewardBalance = 0;
+                      updates.goldRewardLevel = {
+                        increment: 1,
+                      };
+                    }
+                  }
+                }
+                // end
               }
             }
           } else {
@@ -417,10 +683,69 @@ const check2_1Pass = async (member) => {
               matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
               updates.goldCommissionCount = minGoldBalance;
+              updates.totalGoldMatched = {
+                increment: minGoldBalance,
+              };
+              // start
+              if (parent.goldRewardLevel < 17) {
+                updates.goldRewardBalance = {
+                  increment: minGoldBalance,
+                };
+                // Find the current reward level config
+                const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                );
+
+                if (nextRewardLevel) {
+                  if (
+                    parseFloat(parent.goldRewardBalance + minGoldBalance) >=
+                    parseFloat(nextRewardLevel.pair)
+                  ) {
+                    // Reset reward balance
+                    rewardDetails.isRewardLevelReached = true;
+                    rewardDetails.amount = nextRewardLevel.amount;
+                    updates.goldRewardBalance = 0;
+                    updates.goldRewardLevel = {
+                      increment: 1,
+                    };
+                  }
+                }
+              }
+              // end
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
               updates.goldCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalGoldMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
+              // start
+              if (parent.goldRewardLevel < 17) {
+                updates.goldRewardBalance = {
+                  increment: MAX_COMMISSIONS_PER_DAY,
+                };
+                // Find the current reward level config
+                const nextRewardLevel = REWARDS_COMMISSIONS.find(
+                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
+                );
+
+                if (nextRewardLevel) {
+                  if (
+                    parseFloat(
+                      parent.goldRewardBalance + MAX_COMMISSIONS_PER_DAY
+                    ) >= parseFloat(nextRewardLevel.pair)
+                  ) {
+                    // Reset reward balance
+                    rewardDetails.isRewardLevelReached = true;
+                    rewardDetails.amount = nextRewardLevel.amount;
+                    updates.goldRewardBalance = 0;
+                    updates.goldRewardLevel = {
+                      increment: 1,
+                    };
+                  }
+                }
+              }
+              // end
             }
           }
           // FOR DIAMOND
@@ -435,11 +760,17 @@ const check2_1Pass = async (member) => {
                 updates.diamondCommissionCount = {
                   increment: availableCommissionCount,
                 };
+                updates.totalDiamondMatched = {
+                  increment: availableCommissionCount,
+                };
               } else {
                 matchingIncomeWalletBalance +=
                   minDiamondBalance * DIAMOND_COMMISSION;
 
                 updates.diamondCommissionCount = {
+                  increment: minDiamondBalance,
+                };
+                updates.totalDiamondMatched = {
                   increment: minDiamondBalance,
                 };
               }
@@ -451,10 +782,16 @@ const check2_1Pass = async (member) => {
                 minDiamondBalance * DIAMOND_COMMISSION;
 
               updates.diamondCommissionCount = minDiamondBalance;
+              updates.totalDiamondMatched = {
+                increment: minDiamondBalance,
+              };
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * DIAMOND_COMMISSION;
               updates.diamondCommissionCount = MAX_COMMISSIONS_PER_DAY;
+              updates.totalDiamondMatched = {
+                increment: MAX_COMMISSIONS_PER_DAY,
+              };
             }
           }
         }
@@ -464,7 +801,7 @@ const check2_1Pass = async (member) => {
         increment: matchingIncomeWalletBalance,
       };
 
-      parent = await calculateCommission(parent, updates);
+      parent = await calculateCommission(parent, updates, rewardDetails);
 
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
 
@@ -473,7 +810,10 @@ const check2_1Pass = async (member) => {
       // 2:1 not true
       const leftTotal = parent.leftCount + parent.leftDirectCount;
       const rightTotal = parent.rightCount + parent.rightDirectCount;
-
+      let rewardDetails = {
+        isRewardLevelReached: false,
+        amount: 0,
+      };
       let minSilverBalance = 0;
       let minGoldBalance = 0;
       let minDiamondBalance = 0;
@@ -552,6 +892,31 @@ const check2_1Pass = async (member) => {
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
           updates.goldCommissionCount = minGoldBalance;
           updates.totalGoldMatched = minGoldBalance;
+          // start
+          if (parent.goldRewardLevel < 17) {
+            updates.goldRewardBalance = minGoldBalance;
+            // Find the current reward level config
+            const nextRewardLevel = REWARDS_COMMISSIONS.find(
+              (r) => r.rewardLevel === parent.goldRewardLevel + 1
+            );
+
+            if (nextRewardLevel) {
+              if (
+                parseFloat(minGoldBalance) >= parseFloat(nextRewardLevel.pair)
+              ) {
+                // Reset reward balance
+                rewardDetails.isRewardLevelReached = true;
+                rewardDetails.amount = nextRewardLevel.amount;
+                updates.goldRewardBalance = 0;
+                updates.goldRewardLevel = {
+                  increment: 1,
+                };
+              }
+            }
+          }
+          //write rewared transaction in commission.js
+          // i think logic is not writtin above .previous logic of matched
+          // end
           let totalGoldCommission = minGoldBalance * GOLD_COMMISSION;
           updates.matchingIncomeWalletBalance = {
             increment:
@@ -567,6 +932,31 @@ const check2_1Pass = async (member) => {
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
           updates.goldCommissionCount = minGoldBalance;
           updates.totalGoldMatched = minGoldBalance;
+          // start
+          if (parent.goldRewardLevel < 17) {
+            updates.goldRewardBalance = minGoldBalance;
+            // Find the current reward level config
+            const nextRewardLevel = REWARDS_COMMISSIONS.find(
+              (r) => r.rewardLevel === parent.goldRewardLevel + 1
+            );
+
+            if (nextRewardLevel) {
+              if (
+                parseFloat(minGoldBalance) >= parseFloat(nextRewardLevel.pair)
+              ) {
+                // Reset reward balance
+                rewardDetails.isRewardLevelReached = true;
+                rewardDetails.amount = nextRewardLevel.amount;
+                updates.goldRewardBalance = 0;
+                updates.goldRewardLevel = {
+                  increment: 1,
+                };
+              }
+            }
+          }
+
+          // end
+
           let totalGoldCommission = minGoldBalance * GOLD_COMMISSION;
           updates.diamondCommissionCount = minDiamondBalance;
           updates.totalDiamondMatched = minDiamondBalance;
@@ -584,7 +974,7 @@ const check2_1Pass = async (member) => {
       const matchingIncomeWalletBalance =
         updates.matchingIncomeWalletBalance?.increment;
 
-      parent = await calculateCommission(parent, updates);
+      parent = await calculateCommission(parent, updates, rewardDetails);
 
       await checkMatchingMentorIncomeL1(parent, matchingIncomeWalletBalance);
 

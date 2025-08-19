@@ -1,9 +1,15 @@
-const { PrismaClient } = require("@prisma/client");
-const { DEBIT, APPROVED, MATCHING_INCOME_WALLET } = require("../config/data");
+const { PrismaClient } = require('@prisma/client');
+const {
+  DEBIT,
+  APPROVED,
+  MATCHING_INCOME_WALLET,
+  HOLD_WALLET,
+} = require('../config/data');
 const prisma = new PrismaClient();
 
-const calculateCommission = async (parent, updates) => {
+const calculateCommission = async (parent, updates, rewardDetails) => {
   const percentage = parseFloat(parent.percentage);
+  const walletTransactions = [];
 
   // Default increment to 0 if undefined or null to avoid NaN issues
   // const incrementValue = updates.matchingIncomeWalletBalance?.increment ?? 0;
@@ -25,18 +31,25 @@ const calculateCommission = async (parent, updates) => {
       increment: commissionToGive,
     };
     if (commissionToGive > 0) {
-      updates.walletTransactions = {
-        create: {
-          amount: commissionToGive,
-          status: APPROVED,
-          type: DEBIT,
-          transactionDate: new Date(),
-          walletType: MATCHING_INCOME_WALLET,
-          notes: `Matching Commission (₹${commissionToGive})`,
-          // Optional:
-          // paymentMethod: "System Auto",
-        },
-      };
+      // updates.walletTransactions = {
+      //   create: {
+      //     amount: commissionToGive,
+      //     status: APPROVED,
+      //     type: DEBIT,
+      //     transactionDate: new Date(),
+      //     walletType: MATCHING_INCOME_WALLET,
+      //     notes: `Matching Commission (₹${commissionToGive})`,
+
+      //   },
+      // };
+      walletTransactions.push({
+        amount: commissionToGive,
+        status: APPROVED,
+        type: DEBIT,
+        transactionDate: new Date(),
+        walletType: MATCHING_INCOME_WALLET,
+        notes: `Matching Commission (₹${commissionToGive})`,
+      });
     }
   } else if (percentage === 0) {
     updates.matchingIncomeWalletBalance = {
@@ -49,17 +62,53 @@ const calculateCommission = async (parent, updates) => {
       increment: incrementValue,
     };
     if (incrementValue > 0) {
-      updates.walletTransactions = {
-        create: {
-          amount: incrementValue,
-          status: APPROVED,
-          type: DEBIT,
-          transactionDate: new Date(),
-          walletType: MATCHING_INCOME_WALLET,
-          notes: `Matching Commission (₹${incrementValue})`,
-        },
-      };
+      // updates.walletTransactions = {
+      //   create: {
+      //     amount: incrementValue,
+      //     status: APPROVED,
+      //     type: DEBIT,
+      //     transactionDate: new Date(),
+      //     walletType: MATCHING_INCOME_WALLET,
+      //     notes: `Matching Commission (₹${incrementValue})`,
+      //   },
+      // };
+      walletTransactions.push({
+        amount: incrementValue,
+        status: APPROVED,
+        type: DEBIT,
+        transactionDate: new Date(),
+        walletType: MATCHING_INCOME_WALLET,
+        notes: `Matching Commission (₹${incrementValue})`,
+      });
     }
+  }
+
+  // const rewardTransactions = {};
+  if (rewardDetails.isRewardLevelReached && rewardDetails.amount > 0) {
+    // rewardTransactions.walletTransactions = {
+    //   create: {
+    //     amount: rewardDetails.amount,
+    //     status: APPROVED,
+    //     type: DEBIT,
+    //     transactionDate: new Date(),
+    //     walletType: HOLD_WALLET,
+    //     notes: `Gold Matching Reward`,
+    //   },
+    // };
+    walletTransactions.push({
+      amount: rewardDetails.amount,
+      status: APPROVED,
+      type: DEBIT,
+      transactionDate: new Date(),
+      walletType: HOLD_WALLET,
+      notes: `Gold Matching Reward`,
+    });
+  }
+
+  if (walletTransactions.length > 0) {
+    updates.walletTransactions = {
+      create: walletTransactions,
+    };
   }
 
   parent = await prisma.member.update({
