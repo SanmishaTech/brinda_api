@@ -95,6 +95,9 @@ const calculateCommission = async (parent, updates, rewardDetails) => {
     //     notes: `Gold Matching Reward`,
     //   },
     // };
+    updates.holdWalletBalance = {
+      increment: rewardDetails.amount,
+    };
     walletTransactions.push({
       amount: rewardDetails.amount,
       status: APPROVED,
