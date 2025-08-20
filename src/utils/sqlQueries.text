@@ -1,0 +1,192 @@
+1)
+
+CREATE TABLE `virtual_powers` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `memberId` int NOT NULL,
+    `statusType` enum(
+        'Inactive',
+        'Associate',
+        'Silver',
+        'Gold',
+        'Diamond'
+    ) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `powerPosition` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `powerType` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `powerCount` int NOT NULL,
+    `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` datetime(3) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `virtual_powers_memberId_fkey` (`memberId`),
+    CONSTRAINT `virtual_powers_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `members` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci
+
+2)
+
+CREATE TABLE `reward_commissions` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `memberId` int NOT NULL,
+    `TDSPercent` decimal(5, 2) NOT NULL DEFAULT '0.00',
+    `TDSAmount` decimal(11, 2) NOT NULL DEFAULT '0.00',
+    `platformChargePercent` decimal(5, 2) NOT NULL DEFAULT '0.00',
+    `platformChargeAmount` decimal(11, 2) NOT NULL DEFAULT '0.00',
+    `totalAmountBeforeDeduction` decimal(11, 2) NOT NULL DEFAULT '0.00',
+    `totalAmountToGive` decimal(11, 2) NOT NULL DEFAULT '0.00',
+    `isPaid` tinyint(1) NOT NULL DEFAULT '0',
+    `paidAt` datetime(3) DEFAULT NULL,
+    `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (`id`),
+    KEY `reward_commissions_memberId_fkey` (`memberId`),
+    CONSTRAINT `reward_commissions_memberId_fkey` FOREIGN KEY (`memberId`) REFERENCES `members` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci
+
+
+3) matching_income_commissions 11,2
+
+ALTER TABLE `matching_income_commissions`
+MODIFY COLUMN `matchingIncomeCommission` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+4)member_logs 11,2
+
+ALTER TABLE `member_logs`
+MODIFY COLUMN `pv` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `bv` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+
+5) members  11,2
+
+ALTER TABLE `members`
+MODIFY COLUMN `matchingMentorIncomeL1` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `matchingMentorIncomeL2` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `walletBalance` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `matchingIncomeWalletBalance` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `pvBalance` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `matchingIncomeEarned` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `upgradeWalletBalance` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncome` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `repurchaseCashbackIncome` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `repurchaseMentorIncomeL1` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `repurchaseMentorIncomeL2` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `repurchaseMentorIncomeL3` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeEarned` decimal(11,2) DEFAULT 0.00,
+MODIFY COLUMN `holdWalletBalance` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL1` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL2` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL3` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL4` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL5` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL6` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL7` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL8` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL9` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncomeL10` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+
+6) products  11,2
+
+ALTER TABLE `products`
+MODIFY COLUMN `mrp` decimal(11,2) DEFAULT NULL,
+MODIFY COLUMN `mfgRate` decimal(11,2) DEFAULT NULL,
+MODIFY COLUMN `dspRate` decimal(11,2) DEFAULT NULL,
+MODIFY COLUMN `pv` decimal(11,2) DEFAULT NULL,
+MODIFY COLUMN `bv` decimal(11,2) DEFAULT NULL,
+MODIFY COLUMN `bvPrice` decimal(11,2) DEFAULT NULL;
+
+
+7) purchase_details   11,2
+
+ALTER TABLE `purchase_details`
+MODIFY COLUMN `rate` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `cgstAmount` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `sgstAmount` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `igstAmount` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `amountWithoutGst` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `amountWithGst` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `pvPerUnit` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `totalPV` decimal(11, 2) NOT NULL,
+MODIFY COLUMN `netUnitRate` decimal(11, 2) DEFAULT '0.00';
+
+
+
+8) purchase table 11,2
+ALTER TABLE `purchases`
+MODIFY COLUMN `totalAmountWithoutGst` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalAmountWithGst` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalGstAmount` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalProductPV` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+9) repurchase_details 11,2
+ALTER TABLE `repurchase_details`
+MODIFY COLUMN `rate` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `netUnitRate` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `cgstAmount` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `sgstAmount` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `igstAmount` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `amountWithoutGst` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `amountWithGst` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `bvPerUnit` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalBV` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+
+10) repurchase_income_commissions 11,2
+
+ALTER TABLE `repurchase_income_commissions`
+MODIFY COLUMN `MMI1` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `MMI2` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseIncome` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `repurchaseCashbackIncome` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `RMI1` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `RMI2` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `RMI3` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `TDSAmount` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `platformChargeAmount` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalAmountBeforeDeduction` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalAmountToGive` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+6) repurchases 11,2
+
+ALTER TABLE `repurchases`
+MODIFY COLUMN `totalAmountWithoutGst` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalAmountWithGst` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalGstAmount` decimal(11,2) NOT NULL DEFAULT 0.00,
+MODIFY COLUMN `totalProductBV` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+
+7) wallet_transactions 11,2
+
+ALTER TABLE `wallet_transactions`
+MODIFY COLUMN `amount` decimal(11,2) NOT NULL DEFAULT 0.00;
+
+
+
+8)
+
+ALTER TABLE `members`
+ADD COLUMN `totalAssociateMatched` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalSilverMatched` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalGoldMatched` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalDiamondMatched` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalLeftAssociateBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalLeftSilverBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalLeftGoldBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalLeftDiamondBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalRightAssociateBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalRightSilverBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalRightGoldBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `totalRightDiamondBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `goldRewardBalance` int NOT NULL DEFAULT 0,
+ADD COLUMN `goldRewardLevel` int NOT NULL DEFAULT 0,
+ADD COLUMN `goldRewardIncome` decimal(11, 2) NOT NULL DEFAULT '0.00';
+
+
+9)
+
+UPDATE `members`
+SET
+  `totalLeftAssociateBalance` = `leftAssociateBalance`,
+  `totalLeftSilverBalance` = `leftSilverBalance`,
+  `totalLeftGoldBalance` = `leftGoldBalance`,
+  `totalLeftDiamondBalance` = `leftDiamondBalance`,
+  `totalRightAssociateBalance` = `rightAssociateBalance`,
+  `totalRightSilverBalance` = `rightSilverBalance`,
+  `totalRightGoldBalance` = `rightGoldBalance`,
+  `totalRightDiamondBalance` = `rightDiamondBalance`;

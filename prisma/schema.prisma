@@ -112,7 +112,7 @@ model Member {
   totalRightSilverBalance Int     @default(0)
   totalRightGoldBalance Int     @default(0)
   totalRightDiamondBalance Int     @default(0)
-  goldRewardBalance Int     @default(0)
+  goldRewardBalance Int     @default(0) //pairs
   goldRewardLevel Int     @default(0)
   goldRewardIncome Decimal   @db.Decimal(11, 2)   @default(0.00)
   // end
@@ -140,6 +140,7 @@ model Member {
   matchingIncomeCommissions        MatchingIncomeCommission[] // Relation to memberLog
   repurchaseIncomeCommissions      RepurchaseIncomeCommission[] // Relation to memberLog
   virtualPowers      VirtualPower[] 
+  rewardCommissions      RewardCommission[] // Relation to memberLog
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -340,3 +341,22 @@ model VirtualPower {
   updatedAt            DateTime  @updatedAt
   @@map("virtual_powers")
 }
+
+
+model RewardCommission {
+  id                         Int      @id @default(autoincrement())
+  memberId                   Int
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  TDSPercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  TDSAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  platformChargePercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  platformChargeAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountBeforeDeduction  Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountToGive  Decimal  @db.Decimal(11, 2)  @default(0.00)
+  isPaid                     Boolean  @default(false)
+  paidAt                     DateTime?
+  createdAt                  DateTime @default(now())
+  @@map("reward_commissions")
+}
+
+// done 11,2 for all, new table virtual power and reward commission
