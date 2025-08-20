@@ -19,6 +19,7 @@ const dashboardRoutes = require('./routes/dashboard');
 const commissionRoutes = require('./routes/commission');
 const repurchasePayoutRoutes = require('./routes/repurchasePayout');
 const virtualPowerRoutes = require('./routes/virtualPower');
+const rewardRoutes = require('./routes/reward');
 const swaggerRouter = require('./swagger');
 const path = require('path');
 const config = require('./config/config');
@@ -55,6 +56,7 @@ app.use('/api/repurchases', repurchaseRoutes);
 app.use('/api/dashboards', dashboardRoutes);
 app.use('/api/commissions', commissionRoutes);
 app.use('/api/repurchase-payouts', repurchasePayoutRoutes);
+app.use('/api/rewards', rewardRoutes);
 app.use('/api/virtual-power', virtualPowerRoutes); // Ensure this route is defined in virtualPower.js
 app.use(swaggerRouter); // Add this line to include Swagger documentation
 

@@ -65,27 +65,27 @@ model Member {
   isDirectMatch Boolean  @default(false)
   isMatchingMentorL1 Boolean  @default(false)
   isMatchingMentorL2 Boolean  @default(false)
-  matchingMentorIncomeL1   Decimal   @db.Decimal(10, 2)   @default(0.00) 
-  matchingMentorIncomeL2   Decimal   @db.Decimal(10, 2)   @default(0.00) 
-  walletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  matchingIncomeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  upgradeWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  holdWalletBalance   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncome   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL1   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL2   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL3   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL4   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL5   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL6   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL7   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL8   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL9   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeL10   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseCashbackIncome   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseMentorIncomeL1   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseMentorIncomeL2   Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseMentorIncomeL3   Decimal   @db.Decimal(10, 2)   @default(0.00)
+  matchingMentorIncomeL1   Decimal   @db.Decimal(11, 2)   @default(0.00) 
+  matchingMentorIncomeL2   Decimal   @db.Decimal(11, 2)   @default(0.00) 
+  walletBalance   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  matchingIncomeWalletBalance   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  upgradeWalletBalance   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  holdWalletBalance   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncome   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL1   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL2   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL3   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL4   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL5   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL6   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL7   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL8   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL9   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeL10   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseCashbackIncome   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseMentorIncomeL1   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseMentorIncomeL2   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseMentorIncomeL3   Decimal   @db.Decimal(11, 2)   @default(0.00)
   percentage                  Decimal    @db.Decimal(5, 2)    @default(100)
   associateCommissionDate        DateTime?            // the date the counter applies to
   silverCommissionDate        DateTime?
@@ -114,6 +114,7 @@ model Member {
   totalRightDiamondBalance Int     @default(0)
   goldRewardBalance Int     @default(0)
   goldRewardLevel Int     @default(0)
+  goldRewardIncome Decimal   @db.Decimal(11, 2)   @default(0.00)
   // end
   associateCommissionCount Int     @default(0)
   silverCommissionCount Int     @default(0)
@@ -129,9 +130,9 @@ model Member {
   bankAccountNumber String?
   bankIfscCode    String?
   bankAccountType String?
-  pvBalance       Decimal   @db.Decimal(10, 2)   @default(0.00)
-  matchingIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
-  repurchaseIncomeEarned       Decimal   @db.Decimal(10, 2)   @default(0.00)
+  pvBalance       Decimal   @db.Decimal(11, 2)   @default(0.00)
+  matchingIncomeEarned       Decimal   @db.Decimal(11, 2)   @default(0.00)
+  repurchaseIncomeEarned       Decimal   @db.Decimal(11, 2)   @default(0.00)
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] // Relation to Purchase
   repurchases        Repurchase[] // Relation to Purchase
@@ -149,13 +150,13 @@ model Product {
   id          Int       @id @default(autoincrement())
   productName String?
   hsnCode     String?
-  mrp         Decimal?   @db.Decimal(10, 2)
-  mfgRate     Decimal?   @db.Decimal(10, 2)
+  mrp         Decimal?   @db.Decimal(11, 2)
+  mfgRate     Decimal?   @db.Decimal(11, 2)
   gst         Decimal?   @db.Decimal(5, 2)
-  dspRate     Decimal?   @db.Decimal(10, 2)
-  pv          Decimal?   @db.Decimal(10, 2)
-  bv          Decimal?   @db.Decimal(10, 2)
-  bvPrice     Decimal?   @db.Decimal(10, 2)
+  dspRate     Decimal?   @db.Decimal(11, 2)
+  pv          Decimal?   @db.Decimal(11, 2)
+  bv          Decimal?   @db.Decimal(11, 2)
+  bvPrice     Decimal?   @db.Decimal(11, 2)
   purchaseDetails PurchaseDetail[] // Relation to PurchaseDetail
   repurchaseDetails RepurchaseDetail[] 
   createdAt   DateTime  @default(now())
@@ -170,7 +171,7 @@ model WalletTransaction {
   memberId           Int
   member              Member         @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to User is now optional
   walletType         String?
-  amount             Decimal   @db.Decimal(10, 2)
+  amount             Decimal   @db.Decimal(11, 2)
   status             String     //pending, approved ,transferred, rejected,Paid
   type               String     // e.g., CREDIT for top-up, DEBIT for withdrawal
   paymentMethod      String?           // e.g., "Cash", "Bank Transfer", "UPI"
@@ -197,10 +198,10 @@ model Purchase {
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
   purchaseDate         DateTime  @default(now())
-  totalAmountWithoutGst Decimal   @db.Decimal(10, 2)
-  totalAmountWithGst   Decimal   @db.Decimal(10, 2)
-  totalGstAmount       Decimal   @db.Decimal(10, 2)
-  totalProductPV              Decimal   @db.Decimal(10, 2)
+  totalAmountWithoutGst Decimal   @db.Decimal(11, 2)
+  totalAmountWithGst   Decimal   @db.Decimal(11, 2)
+  totalGstAmount       Decimal   @db.Decimal(11, 2)
+  totalProductPV              Decimal   @db.Decimal(11, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
   purchaseDetails      PurchaseDetail[] // Relation to PurchaseDetail
   createdAt            DateTime  @default(now())
@@ -216,18 +217,18 @@ model PurchaseDetail {
   productId            Int
   product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
   quantity             Int
-  rate                 Decimal   @db.Decimal(10, 2)
-  netUnitRate                 Decimal   @db.Decimal(10, 2)
+  rate                 Decimal   @db.Decimal(11, 2)
+  netUnitRate                 Decimal   @db.Decimal(11, 2)
   cgstPercent         Decimal   @db.Decimal(5, 2)
   sgstPercent         Decimal   @db.Decimal(5, 2)
   igstPercent         Decimal   @db.Decimal(5, 2)
-  cgstAmount            Decimal   @db.Decimal(10, 2)
-  sgstAmount            Decimal   @db.Decimal(10, 2)
-  igstAmount            Decimal   @db.Decimal(10, 2)
-  amountWithoutGst     Decimal   @db.Decimal(10, 2)
-  amountWithGst        Decimal   @db.Decimal(10, 2)
-  pvPerUnit            Decimal   @db.Decimal(10, 2)
-  totalPV              Decimal   @db.Decimal(10, 2)
+  cgstAmount            Decimal   @db.Decimal(11, 2)
+  sgstAmount            Decimal   @db.Decimal(11, 2)
+  igstAmount            Decimal   @db.Decimal(11, 2)
+  amountWithoutGst     Decimal   @db.Decimal(11, 2)
+  amountWithGst        Decimal   @db.Decimal(11, 2)
+  pvPerUnit            Decimal   @db.Decimal(11, 2)
+  totalPV              Decimal   @db.Decimal(11, 2)
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -243,10 +244,10 @@ model Repurchase {
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
   repurchaseDate         DateTime  @default(now())
-  totalAmountWithoutGst Decimal   @db.Decimal(10, 2)
-  totalAmountWithGst   Decimal   @db.Decimal(10, 2)
-  totalGstAmount       Decimal   @db.Decimal(10, 2)
-  totalProductBV              Decimal   @db.Decimal(10, 2)
+  totalAmountWithoutGst Decimal   @db.Decimal(11, 2)
+  totalAmountWithGst   Decimal   @db.Decimal(11, 2)
+  totalGstAmount       Decimal   @db.Decimal(11, 2)
+  totalProductBV              Decimal   @db.Decimal(11, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
   repurchaseDetails      RepurchaseDetail[] // Relation to PurchaseDetail
   createdAt            DateTime  @default(now())
@@ -262,18 +263,18 @@ model RepurchaseDetail {
   productId            Int
   product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
   quantity             Int
-  rate                 Decimal   @db.Decimal(10, 2)
-  netUnitRate          Decimal   @db.Decimal(10, 2)
+  rate                 Decimal   @db.Decimal(11, 2)
+  netUnitRate          Decimal   @db.Decimal(11, 2)
   cgstPercent         Decimal   @db.Decimal(5, 2)
   sgstPercent         Decimal   @db.Decimal(5, 2)
   igstPercent         Decimal   @db.Decimal(5, 2)
-  cgstAmount            Decimal   @db.Decimal(10, 2)
-  sgstAmount            Decimal   @db.Decimal(10, 2)
-  igstAmount            Decimal   @db.Decimal(10, 2)
-  amountWithoutGst     Decimal   @db.Decimal(10, 2)
-  amountWithGst        Decimal   @db.Decimal(10, 2)
-  bvPerUnit            Decimal   @db.Decimal(10, 2)
-  totalBV              Decimal   @db.Decimal(10, 2)
+  cgstAmount            Decimal   @db.Decimal(11, 2)
+  sgstAmount            Decimal   @db.Decimal(11, 2)
+  igstAmount            Decimal   @db.Decimal(11, 2)
+  amountWithoutGst     Decimal   @db.Decimal(11, 2)
+  amountWithGst        Decimal   @db.Decimal(11, 2)
+  bvPerUnit            Decimal   @db.Decimal(11, 2)
+  totalBV              Decimal   @db.Decimal(11, 2)
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -286,8 +287,8 @@ model memberLog {
   memberId    Int
   member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
   message     String?
-  pv          Decimal   @db.Decimal(10, 2)
-  bv          Decimal   @db.Decimal(10, 2)
+  pv          Decimal   @db.Decimal(11, 2)
+  bv          Decimal   @db.Decimal(11, 2)
   createdAt   DateTime @default(now())
   updatedAt            DateTime  @updatedAt
     @@map("member_logs")
@@ -297,7 +298,7 @@ model MatchingIncomeCommission {
   id                         Int      @id @default(autoincrement())
   memberId                   Int
   member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  matchingIncomeCommission   Decimal  @db.Decimal(10, 2)
+  matchingIncomeCommission   Decimal  @db.Decimal(11, 2)
   isPaid                     Boolean  @default(false)
   paidAt                     DateTime?
   createdAt                  DateTime @default(now())
@@ -308,19 +309,19 @@ model RepurchaseIncomeCommission {
   id                         Int      @id @default(autoincrement())
   memberId                   Int
   member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  MMI1   Decimal  @db.Decimal(10, 2)  @default(0.00)
-  MMI2   Decimal  @db.Decimal(10, 2)  @default(0.00)
-  repurchaseIncome   Decimal  @db.Decimal(10, 2) @default(0.00)
-  repurchaseCashbackIncome   Decimal  @db.Decimal(10, 2) @default(0.00)
-  RMI1 Decimal  @db.Decimal(10, 2) @default(0.00)
-  RMI2 Decimal  @db.Decimal(10, 2) @default(0.00)
-  RMI3 Decimal  @db.Decimal(10, 2) @default(0.00)
+  MMI1   Decimal  @db.Decimal(11, 2)  @default(0.00)
+  MMI2   Decimal  @db.Decimal(11, 2)  @default(0.00)
+  repurchaseIncome   Decimal  @db.Decimal(11, 2) @default(0.00)
+  repurchaseCashbackIncome   Decimal  @db.Decimal(11, 2) @default(0.00)
+  RMI1 Decimal  @db.Decimal(11, 2) @default(0.00)
+  RMI2 Decimal  @db.Decimal(11, 2) @default(0.00)
+  RMI3 Decimal  @db.Decimal(11, 2) @default(0.00)
   TDSPercent   Decimal  @db.Decimal(5, 2) @default(0.00)
-  TDSAmount   Decimal  @db.Decimal(10, 2) @default(0.00)
+  TDSAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
   platformChargePercent   Decimal  @db.Decimal(5, 2) @default(0.00)
-  platformChargeAmount   Decimal  @db.Decimal(10, 2) @default(0.00)
-  totalAmountBeforeDeduction  Decimal  @db.Decimal(10, 2) @default(0.00)
-  totalAmountToGive  Decimal  @db.Decimal(10, 2) @default(0.00)
+  platformChargeAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountBeforeDeduction  Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountToGive  Decimal  @db.Decimal(11, 2) @default(0.00)
   isPaid                     Boolean  @default(false)
   paidAt                     DateTime?
   createdAt                  DateTime @default(now())

@@ -98,6 +98,10 @@ const calculateCommission = async (parent, updates, rewardDetails) => {
     updates.holdWalletBalance = {
       increment: rewardDetails.amount,
     };
+    updates.goldRewardIncome = {
+      increment: rewardDetails.amount,
+    };
+
     walletTransactions.push({
       amount: rewardDetails.amount,
       status: APPROVED,

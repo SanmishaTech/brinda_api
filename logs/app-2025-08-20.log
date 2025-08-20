@@ -46,3 +46,27 @@
 2025-08-19T18:59:33.238Z [INFO]: purchase Task Subprocess exited with code 0
 2025-08-19T18:59:33.240Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
 2025-08-19T19:00:12.807Z [INFO]: Purchase Done MemberId: 11
+2025-08-20T09:46:47.750Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Left, 2, SELF
+2025-08-20T09:46:47.783Z [INFO]: Self power.
+2025-08-20T09:47:00.021Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Right, 2, SELF
+2025-08-20T09:47:00.072Z [INFO]: Self power.
+2025-08-20T09:47:22.125Z [INFO]: Incoming request to addVirtualPower: 1, Gold, Left, 4, SELF
+2025-08-20T09:47:22.148Z [INFO]: Self power.
+2025-08-20T09:48:02.979Z [INFO]: Purchase Done MemberId: 1
+2025-08-20T09:48:03.010Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T09:48:03.011Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T09:49:35.138Z [INFO]: Purchase Done MemberId: 2
+2025-08-20T09:49:35.170Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T09:49:35.172Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T09:50:00.244Z [INFO]: Purchase Done MemberId: 2
+2025-08-20T09:50:00.283Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T09:50:00.284Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T09:51:47.327Z [INFO]: Purchase Done MemberId: 3
+2025-08-20T09:51:47.370Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T09:51:47.371Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T09:53:35.542Z [INFO]: Incoming request to addVirtualPower: 1, Gold, Right, 1, SELF
+2025-08-20T09:53:35.582Z [INFO]: Self power.
+2025-08-20T09:54:46.200Z [INFO]: Purchase Done MemberId: 4
+2025-08-20T09:54:46.236Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T09:54:46.237Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T09:56:45.795Z [INFO]: Purchase Done MemberId: 5
