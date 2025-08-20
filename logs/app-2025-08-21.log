@@ -1,0 +1,45 @@
+start
+2025-08-20T18:43:50.261Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Right, 1, SELF
+2025-08-20T18:43:51.021Z [INFO]: Self power.
+2025-08-20T18:43:51.033Z [INFO]: Created virtual power record
+2025-08-20T18:43:51.035Z [INFO]: Message from purchaseTask subprocess: data of type virtualPower completed successfully.
+2025-08-20T18:43:51.053Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T18:43:51.054Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+
+2025-08-20T18:46:50.492Z [INFO]: Purchase task for MemberId: 5632
+2025-08-20T18:46:51.117Z [INFO]: Purchase Done MemberId: 5632
+2025-08-20T18:46:51.118Z [INFO]: Message from purchaseTask subprocess: data of type purchase completed successfully.
+2025-08-20T18:46:51.150Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T18:46:51.151Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T18:57:07.469Z [INFO]: Purchase task for MemberId: 1
+2025-08-20T18:57:07.881Z [INFO]: Purchase Done MemberId: 1
+2025-08-20T18:57:07.884Z [INFO]: Message from purchaseTask subprocess: data of type purchase completed successfully.
+2025-08-20T18:57:07.903Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T18:57:07.906Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T18:57:35.059Z [INFO]: Incoming request to addVirtualPower: 1, Diamond, Right, 500, SELF
+2025-08-20T18:57:35.776Z [INFO]: Self power.
+2025-08-20T18:57:35.785Z [INFO]: Created virtual power record
+2025-08-20T18:57:35.786Z [INFO]: Message from purchaseTask subprocess: data of type virtualPower completed successfully.
+2025-08-20T18:57:35.804Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T18:57:35.805Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T18:59:03.022Z [INFO]: Purchase task for MemberId: 2
+2025-08-20T18:59:03.576Z [INFO]: Purchase Done MemberId: 2
+2025-08-20T18:59:03.578Z [INFO]: Message from purchaseTask subprocess: data of type purchase completed successfully.
+2025-08-20T18:59:03.600Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T18:59:03.602Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T19:00:05.396Z [INFO]: Purchase task for MemberId: 3
+2025-08-20T19:00:06.047Z [INFO]: Purchase Done MemberId: 3
+2025-08-20T19:00:06.050Z [INFO]: Message from purchaseTask subprocess: data of type purchase completed successfully.
+2025-08-20T19:00:06.077Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T19:00:06.078Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T19:00:40.380Z [INFO]: Incoming request to addVirtualPower: 1, Associate, Left, 1, SELF
+2025-08-20T19:00:41.135Z [INFO]: Self power.
+2025-08-20T19:00:41.147Z [INFO]: Created virtual power record
+2025-08-20T19:00:41.149Z [INFO]: Message from purchaseTask subprocess: data of type virtualPower completed successfully.
+2025-08-20T19:00:41.165Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T19:00:41.166Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null
+2025-08-20T19:02:08.151Z [INFO]: Purchase task for MemberId: 4
+2025-08-20T19:02:08.934Z [INFO]: Purchase Done MemberId: 4
+2025-08-20T19:02:08.937Z [INFO]: Message from purchaseTask subprocess: data of type purchase completed successfully.
+2025-08-20T19:02:08.969Z [INFO]: purchase Task Subprocess exited with code 0
+2025-08-20T19:02:08.970Z [INFO]:  Purchase Task Subprocess closed. Code: 0, Signal: null

@@ -189,6 +189,7 @@ const createPurchase = async (req, res) => {
     });
 
     purchaseTask({
+      type: 'purchase',
       user: req.user,
       totalAmountWithoutGst,
       totalAmountWithGst,
