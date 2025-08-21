@@ -49,15 +49,6 @@ const weeklyMatchingPayout = async () => {
         skipDuplicates: true,
       });
 
-      await prisma.member.updateMany({
-        where: {
-          id: { in: batch.map((item) => item.memberId) },
-        },
-        data: {
-          matchingIncomeWalletBalance: new Prisma.Decimal(0),
-        },
-      });
-
       console.log(`Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}`);
     }
 
