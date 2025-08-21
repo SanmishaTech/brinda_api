@@ -1,8 +1,8 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
-const validateRequest = require('../utils/validateRequest');
+const { PrismaClient, Prisma } = require("@prisma/client");
+const validateRequest = require("../utils/validateRequest");
 const prisma = new PrismaClient();
-const { z } = require('zod');
-const { LEFT, RIGHT, PENDING } = require('../config/data');
+const { z } = require("zod");
+const { LEFT, RIGHT, PENDING } = require("../config/data");
 
 /**
  * Get all members with pagination, sorting, and search
@@ -11,9 +11,9 @@ const getMembers = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
-  const search = req.query.search || '';
-  const sortBy = req.query.sortBy || 'id';
-  const sortOrder = req.query.sortOrder === 'desc' ? 'desc' : 'asc';
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
 
   try {
     const trimmedSearch = search?.trim();
@@ -32,9 +32,9 @@ const getMembers = async (req, res) => {
     };
 
     const orderByClause =
-      sortBy === 'sponsor'
+      sortBy === "sponsor"
         ? { sponsor: { memberUsername: sortOrder } }
-        : sortBy === 'parent'
+        : sortBy === "parent"
         ? { parent: { memberUsername: sortOrder } }
         : { [sortBy]: sortOrder };
 
@@ -64,7 +64,7 @@ const getMembers = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       errors: {
-        message: 'Failed to fetch members',
+        message: "Failed to fetch members",
         details: error.message,
       },
     });
@@ -97,14 +97,14 @@ const getMemberById = async (req, res) => {
 
     if (!member) {
       return res.status(404).json({
-        message: 'Member not found',
+        message: "Member not found",
       });
     }
 
     res.status(200).json(member);
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed to fetch member',
+      message: "Failed to fetch member",
       details: error.message,
     });
   }
@@ -134,34 +134,34 @@ const updateMember = async (req, res) => {
     .object({
       name: z
         .string()
-        .min(1, 'Name cannot be left blank.') // Ensuring minimum length of 2
-        .max(100, 'Name must not exceed 100 characters.')
+        .min(1, "Name cannot be left blank.") // Ensuring minimum length of 2
+        .max(100, "Name must not exceed 100 characters.")
         .refine((val) => /^[A-Za-z\s\u0900-\u097F]+$/.test(val), {
-          message: 'Name can only contain letters.',
+          message: "Name can only contain letters.",
         }),
       email: z
         .string()
         .refine(
           (val) =>
-            val === '' ||
+            val === "" ||
             val === null ||
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
           {
-            message: 'Email must be a valid email address.',
+            message: "Email must be a valid email address.",
           }
         )
         .optional(),
       mobile: z
         .string()
         .optional()
-        .refine((val) => val === '' || /^\d{10}$/.test(val), {
-          message: 'Mobile number must be exactly 10 digits.',
+        .refine((val) => val === "" || /^\d{10}$/.test(val), {
+          message: "Mobile number must be exactly 10 digits.",
         }),
       password: z
         .string()
-        .min(6, 'Password must be at least 6 characters.')
-        .max(100, 'Password must not exceed 100 characters.'),
-      percentage: decimalString('Percentage', 5, 2),
+        .min(6, "Password must be at least 6 characters.")
+        .max(100, "Password must not exceed 100 characters."),
+      percentage: decimalString("Percentage", 5, 2),
     })
     .superRefine(async (data, ctx) => {
       const { id } = req.params;
@@ -176,7 +176,7 @@ const updateMember = async (req, res) => {
 
         if (existingMemberEmail && existingMemberEmail.id !== parseInt(id)) {
           ctx.addIssue({
-            path: ['email'],
+            path: ["email"],
             message: `Email ${data.email} already exists.`,
           });
         }
@@ -192,7 +192,7 @@ const updateMember = async (req, res) => {
 
         if (existingMemberMobile && existingMemberMobile.id !== parseInt(id)) {
           ctx.addIssue({
-            path: ['mobile'],
+            path: ["mobile"],
             message: `Mobile ${data.mobile} already exists.`,
           });
         }
@@ -227,7 +227,7 @@ const updateMember = async (req, res) => {
     res.status(200).json(updatedMember);
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed to update member',
+      message: "Failed to update member",
       details: error.message,
     });
   }
@@ -248,7 +248,7 @@ const getAllMembers = async (req, res) => {
     res.status(200).json(members);
   } catch (error) {
     return res.status(500).json({
-      message: 'Failed to fetch members',
+      message: "Failed to fetch members",
       details: error.message,
     });
   }
@@ -258,9 +258,9 @@ const getMemberLogs = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
-  const search = req.query.search || '';
-  const sortBy = req.query.sortBy || 'id';
-  const sortOrder = req.query.sortOrder === 'desc' ? 'desc' : 'asc';
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
 
   try {
     const trimmedSearch = search?.trim();
@@ -295,7 +295,7 @@ const getMemberLogs = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       errors: {
-        message: 'Failed to fetch members logs.',
+        message: "Failed to fetch members logs.",
         details: error.message,
       },
     });
@@ -304,6 +304,56 @@ const getMemberLogs = async (req, res) => {
 const myGenealogy = async (req, res, next) => {
   try {
     const { memberId } = req.params;
+    let currentRightMemberId = parseInt(memberId); // starting point
+    let rightMostMember = null;
+    let leftMostMember = null;
+
+    let currentLeftMemberId = parseInt(memberId); // starting point
+    // Left start
+    while (true) {
+      const nextLeftMember = await prisma.member.findFirst({
+        where: {
+          parentId: currentLeftMemberId,
+          positionToParent: LEFT, // assuming LEFT is a string constant or enum
+        },
+        select: {
+          id: true,
+          memberName: true,
+          memberUsername: true,
+        },
+      });
+
+      if (!nextLeftMember) {
+        break; // no further left child found
+      }
+
+      leftMostMember = nextLeftMember;
+      currentLeftMemberId = nextLeftMember.id;
+    }
+    // Left end
+
+    // right start
+    while (true) {
+      const nextLeftMember = await prisma.member.findFirst({
+        where: {
+          parentId: currentRightMemberId,
+          positionToParent: RIGHT, // assuming LEFT is a string constant or enum
+        },
+        select: {
+          id: true,
+          memberName: true,
+          memberUsername: true,
+        },
+      });
+
+      if (!nextLeftMember) {
+        break; // no further left child found
+      }
+
+      rightMostMember = nextLeftMember;
+      currentRightMemberId = nextLeftMember.id;
+    }
+    // right end
 
     const rootMember = await prisma.member.findUnique({
       where: { id: parseInt(memberId) },
@@ -444,11 +494,13 @@ const myGenealogy = async (req, res, next) => {
       rightMember,
       rightsLeftMember,
       rightsRightMember,
+      leftMostMember: leftMostMember,
+      rightMostMember: rightMostMember,
     });
   } catch (error) {
     return res.status(500).json({
       errors: {
-        message: 'Failed to fetch Genealogy.',
+        message: "Failed to fetch Genealogy.",
         details: error.message,
       },
     });
@@ -513,11 +565,11 @@ const myDirectReferralList = async (req, res, next) => {
     const skip = (page - 1) * limit;
 
     // Optional sorting
-    const sortBy = req.query.sortBy || 'id';
-    const sortOrder = req.query.sortOrder === 'desc' ? 'desc' : 'asc';
+    const sortBy = req.query.sortBy || "id";
+    const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
 
     // Optional search
-    const search = req.query.search || '';
+    const search = req.query.search || "";
 
     // Build search condition
     const searchCondition = search
@@ -596,7 +648,7 @@ const myDirectReferralList = async (req, res, next) => {
   } catch (error) {
     return res.status(500).json({
       errors: {
-        message: 'Failed to fetch referrals.',
+        message: "Failed to fetch referrals.",
         details: error.message,
       },
     });
@@ -607,9 +659,9 @@ const getMembersWithPendingTransactions = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
-  const search = req.query.search || '';
-  const sortBy = req.query.sortBy || 'id';
-  const sortOrder = req.query.sortOrder || 'desc';
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder || "desc";
 
   try {
     const whereClause = {
@@ -653,9 +705,9 @@ const getMembersWithPendingTransactions = async (req, res) => {
       totalMembers,
     });
   } catch (error) {
-    console.error('Error fetching members with pending transactions:', error);
+    console.error("Error fetching members with pending transactions:", error);
     res.status(500).json({
-      message: 'Failed to fetch members',
+      message: "Failed to fetch members",
       details: error.message,
     });
   }
