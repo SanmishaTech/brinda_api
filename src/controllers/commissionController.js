@@ -125,6 +125,11 @@ const payMatchingIncomeAmount = async (req, res) => {
               },
             },
           },
+          walletTransaction: {
+            update: {
+              status: APPROVED,
+            },
+          },
         },
       });
 

@@ -183,7 +183,7 @@ model WalletTransaction {
   processedByAdmin   User?             @relation( fields: [processedByAdminId], references: [id]) // Renamed relation
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
-
+  matchingIncomeCommission       MatchingIncomeCommission?
   @@index([processedByAdminId])   
   @@index([memberId])     
 
@@ -298,7 +298,9 @@ model memberLog {
 model MatchingIncomeCommission {
   id                         Int      @id @default(autoincrement())
   memberId                   Int
+  walletTransactionId        Int?  @unique 
   member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  walletTransaction    WalletTransaction?    @relation(fields: [walletTransactionId], references: [id],onDelete: Restrict) 
   matchingIncomeCommission   Decimal  @db.Decimal(11, 2)
   isPaid                     Boolean  @default(false)
   paidAt                     DateTime?
@@ -359,4 +361,3 @@ model RewardCommission {
   @@map("reward_commissions")
 }
 
-// done 11,2 for all, new table virtual power and reward commission

@@ -1,4 +1,4 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
 const {
   INACTIVE,
@@ -6,9 +6,9 @@ const {
   CREDIT,
   PENDING,
   MATCHING_INCOME_WALLET,
-} = require('../config/data');
+} = require("../config/data");
 
-const BATCH_SIZE = 300;
+const BATCH_SIZE = 150;
 
 const weeklyMatchingPayout = async () => {
   try {
@@ -30,63 +30,57 @@ const weeklyMatchingPayout = async () => {
     });
 
     if (members.length === 0) {
-      console.log('No eligible members.');
+      console.log("No eligible members.");
       return;
     }
 
-    const commissionData = [];
-    const walletTransactions = [];
-    const memberIdsToUpdate = [];
+    let totalInserted = 0;
 
-    for (const member of members) {
-      const amount = member.matchingIncomeWalletBalance;
+    for (let i = 0; i < members.length; i += BATCH_SIZE) {
+      const batch = members.slice(i, i + BATCH_SIZE);
 
-      commissionData.push({
-        memberId: member.id,
-        matchingIncomeCommission: amount,
-        isPaid: false,
-        createdAt: new Date(),
+      // Create an array of promises for this batch
+      const createPromises = batch.map((member) => {
+        const amount = member.matchingIncomeWalletBalance;
+
+        return prisma.walletTransaction.create({
+          data: {
+            memberId: member.id,
+            amount,
+            type: CREDIT,
+            transactionDate: new Date(),
+            status: PENDING,
+            walletType: MATCHING_INCOME_WALLET,
+            notes: "Transferring matching Wallet Amount To your Bank.",
+            matchingIncomeCommission: {
+              create: {
+                memberId: member.id,
+                matchingIncomeCommission: amount,
+                isPaid: false,
+                createdAt: new Date(),
+              },
+            },
+          },
+        });
       });
 
-      walletTransactions.push({
-        memberId: member.id,
-        amount,
-        type: CREDIT,
-        transactionDate: new Date(),
-        status: PENDING,
-        walletType: MATCHING_INCOME_WALLET,
-        notes: 'Transferring Amount To your Bank.',
-      });
+      // Execute all creates in parallel
+      await Promise.all(createPromises);
+      totalInserted += batch.length;
 
-      memberIdsToUpdate.push(member.id);
-    }
-
-    // Batch insert helper
-    for (let i = 0; i < commissionData.length; i += BATCH_SIZE) {
-      const commissionBatch = commissionData.slice(i, i + BATCH_SIZE);
-      const transactionBatch = walletTransactions.slice(i, i + BATCH_SIZE);
-      const memberIdBatch = memberIdsToUpdate.slice(i, i + BATCH_SIZE);
-
-      await prisma.matchingIncomeCommission.createMany({
-        data: commissionBatch,
-        skipDuplicates: true,
-      });
-
-      await prisma.walletTransaction.createMany({
-        data: transactionBatch,
-      });
-
+      // Batch update member balances
+      const memberIds = batch.map((m) => m.id);
       await prisma.member.updateMany({
-        where: { id: { in: memberIdBatch } },
+        where: { id: { in: memberIds } },
         data: { matchingIncomeWalletBalance: new Prisma.Decimal(0) },
       });
 
       console.log(`Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}`);
     }
 
-    console.log(`Total inserted records: ${commissionData.length}`);
+    console.log(`Total inserted records: ${totalInserted}`);
   } catch (error) {
-    console.error('Error in weeklyMatchingPayout:', error);
+    console.error("Error in weeklyMatchingPayout:", error);
   }
 };
 
