@@ -139,8 +139,8 @@ const register = async (req, res, next) => {
               username,
               email,
               mobile,
-              // password: password,
-              password: "abcd123",
+              password: password,
+              // password: "abcd123",
               role: config.defaultUserRole,
               member: {
                 create: {
@@ -153,7 +153,7 @@ const register = async (req, res, next) => {
                   memberMobile: mobile,
                   memberState: state,
                   positionToParent: position,
-                  walletBalance: 99999999,
+                  // walletBalance: 99999999,
                 },
               },
             },
