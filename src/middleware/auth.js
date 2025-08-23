@@ -19,7 +19,13 @@ module.exports = async (req, res, next) => {
     if (!user) {
       return next(createError(401, "Unauthorized"));
     }
-    req.user = user;
+    // req.user = user;
+    // Attach impersonation info if available
+    req.user = {
+      ...user,
+      impersonating: decoded.impersonating || false,
+      originalAdminId: decoded.originalAdminId || null,
+    };
     next();
   } catch (error) {
     return next(createError(401, "Unauthorized"));

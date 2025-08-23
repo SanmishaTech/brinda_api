@@ -2,7 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 const authController = require("../controllers/authController");
-
+const auth = require("../middleware/auth");
+const acl = require("../middleware/acl");
 /**
  * @swagger
  * tags:
@@ -221,5 +222,123 @@ router.post("/logout", (req, res) => {
  *                   example: "Error details here"
  */
 router.get("/:username", authController.getSponsorNameByUsername);
+
+/**
+ * @swagger
+ * /auth/impersonate:
+ *   post:
+ *     summary: Admin impersonates a user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: ID of the user to impersonate
+ *     responses:
+ *       200:
+ *         description: Impersonation successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: JWT token as impersonated user
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     memberId:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     impersonating:
+ *                       type: boolean
+ *                     lastLogin:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *       403:
+ *         description: Only admins can impersonate users
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Failed to impersonate user
+ */
+router.post(
+  "/impersonate/:userId",
+  auth,
+  acl("auth.impersonate"),
+  authController.impersonateUser
+);
+
+/**
+ * @swagger
+ * /auth/back-to-admin:
+ *   post:
+ *     summary: Revert back to admin from impersonated session
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully reverted to admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: New JWT token as admin
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     memberId:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     impersonating:
+ *                       type: boolean
+ *                     lastLogin:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *       403:
+ *         description: Not impersonating any user or original admin not found
+ *       500:
+ *         description: Error reverting to admin
+ */
+router.post(
+  "/back-to-admin",
+  auth,
+  // acl("auth.backToAdmin"),
+  authController.backToAdmin
+);
 
 module.exports = router;
