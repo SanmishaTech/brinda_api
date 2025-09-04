@@ -15,7 +15,6 @@ const {
   UPGRADE_WALLET,
   REJECTED,
   HOLD_WALLET,
-  APPROVED,
 } = require("../config/data");
 
 const BATCH_SIZE = 150;
@@ -159,7 +158,7 @@ const repurchasePayout = async () => {
             .sub(TDSAmount)
             .sub(platformChargeAmount);
 
-          if (subtotal.gt(0)) {
+          if (totalAmountToGive.gt(0)) {
             nonDiamondData.push({
               memberId: member.id,
               repurchaseIncome: RIncome,
@@ -194,109 +193,74 @@ const repurchasePayout = async () => {
         }
       }
 
-      //  start
       for (let i = 0; i < commissionData.length; i += BATCH_SIZE) {
         const batch = commissionData.slice(i, i + BATCH_SIZE);
 
-        const createPromises = batch.map(async (member) => {
-          await prisma.walletTransaction.createMany({
-            data: [
-              ...(member.TDSAmount > 0
-                ? [
-                    {
-                      memberId: member.memberId,
-                      amount: member.TDSAmount,
-                      type: CREDIT,
-                      transactionDate: new Date(),
-                      status: APPROVED,
-                      walletType: HOLD_WALLET,
-                      notes: `${member.TDSPercent}% TDS Amount Deducted.`,
-                    },
-                  ]
-                : []),
-              {
-                memberId: member.memberId,
-                amount: member.platformChargeAmount,
-                type: CREDIT,
-                transactionDate: new Date(),
-                status: APPROVED,
-                walletType: HOLD_WALLET,
-                notes: `${member.platformChargePercent}% Platform Charge Deducted.`,
-              },
-            ],
-          });
+        // 1️⃣ Insert commissions for DIAMOND members only
+        // if (batch.length > 0) {
+        //   await prisma.repurchaseIncomeCommission.createMany({
+        //     data: batch,
+        //     skipDuplicates: true,
+        //   });
+        // }
 
-          // Update the member's income fields and hold wallet balance
-          await prisma.member.update({
-            where: { id: member.memberId },
+        // start
+        // Create an array of promises for this batch
+        const createPromises = batch.map((member) => {
+          const amount = member.totalAmountToGive;
+
+          return prisma.walletTransaction.create({
             data: {
-              matchingMentorIncomeL1: new Prisma.Decimal(0),
-              matchingMentorIncomeL2: new Prisma.Decimal(0),
-              repurchaseIncome: new Prisma.Decimal(0),
-              repurchaseIncomeL1: new Prisma.Decimal(0),
-              repurchaseIncomeL2: new Prisma.Decimal(0),
-              repurchaseIncomeL3: new Prisma.Decimal(0),
-              repurchaseIncomeL4: new Prisma.Decimal(0),
-              repurchaseIncomeL5: new Prisma.Decimal(0),
-              repurchaseIncomeL6: new Prisma.Decimal(0),
-              repurchaseIncomeL7: new Prisma.Decimal(0),
-              repurchaseIncomeL8: new Prisma.Decimal(0),
-              repurchaseIncomeL9: new Prisma.Decimal(0),
-              repurchaseIncomeL10: new Prisma.Decimal(0),
-              repurchaseCashbackIncome: new Prisma.Decimal(0),
-              repurchaseMentorIncomeL1: new Prisma.Decimal(0),
-              repurchaseMentorIncomeL2: new Prisma.Decimal(0),
-              repurchaseMentorIncomeL3: new Prisma.Decimal(0),
-              holdWalletBalance: {
-                decrement: member.totalAmountBeforeDeduction,
-              },
+              memberId: member.id,
+              amount,
+              type: CREDIT,
+              transactionDate: new Date(),
+              status: PENDING,
+              walletType: HOLD_WALLET,
+              notes: "Transferring Hold Wallet Amount To your Bank.",
               repurchaseIncomeCommission: {
                 create: {
-                  MMI1: member.MMI1,
-                  MMI2: member.MMI2,
-                  repurchaseIncome: member.repurchaseIncome,
-                  repurchaseCashbackIncome: member.repurchaseCashbackIncome,
-                  RMI1: member.RMI1,
-                  RMI2: member.RMI2,
-                  RMI3: member.RMI3,
-                  TDSPercent: member.TDSPercent,
-                  TDSAmount: member.TDSAmount,
-                  platformChargePercent: member.platformChargePercent,
-                  platformChargeAmount: member.platformChargeAmount,
-                  totalAmountBeforeDeduction: member.totalAmountBeforeDeduction,
-                  totalAmountToGive: member.totalAmountToGive,
-                  isPaid: false,
-                  createdAt: new Date(),
-                  // optionally add walletTransactionId if your model supports it
-                  // walletTransactionId: walletTransaction.id,
-                  walletTransaction: {
-                    create: {
-                      // memberId: member.memberId,
-                      amount: member.totalAmountToGive,
-                      type: CREDIT,
-                      transactionDate: new Date(),
-                      status: PENDING,
-                      walletType: HOLD_WALLET,
-                      notes: "Transferring Hold Wallet Amount To your Bank.",
-                    },
-                  },
+                  batch,
+                },
+              },
+              member: {
+                matchingMentorIncomeL1: new Prisma.Decimal(0),
+                matchingMentorIncomeL2: new Prisma.Decimal(0),
+                repurchaseIncome: new Prisma.Decimal(0),
+                repurchaseIncomeL1: new Prisma.Decimal(0),
+                repurchaseIncomeL2: new Prisma.Decimal(0),
+                repurchaseIncomeL3: new Prisma.Decimal(0),
+                repurchaseIncomeL4: new Prisma.Decimal(0),
+                repurchaseIncomeL5: new Prisma.Decimal(0),
+                repurchaseIncomeL6: new Prisma.Decimal(0),
+                repurchaseIncomeL7: new Prisma.Decimal(0),
+                repurchaseIncomeL8: new Prisma.Decimal(0),
+                repurchaseIncomeL9: new Prisma.Decimal(0),
+                repurchaseIncomeL10: new Prisma.Decimal(0),
+                repurchaseCashbackIncome: new Prisma.Decimal(0),
+                repurchaseMentorIncomeL1: new Prisma.Decimal(0),
+                repurchaseMentorIncomeL2: new Prisma.Decimal(0),
+                repurchaseMentorIncomeL3: new Prisma.Decimal(0),
+                holdWalletBalance: {
+                  decrement: totalCommissionAmount,
                 },
               },
             },
           });
         });
 
-        await Promise.all(createPromises); // runs all DB operations in parallel
+        // Execute all creates in parallel
+        await Promise.all(createPromises);
         totalInserted += batch.length;
+
+        // end
 
         logger.info(
           `✅ Diamond members (sufficient repurchase) batch ${
             Math.floor(i / BATCH_SIZE) + 1
-          } inserted`
+          }`
         );
       }
-      //  diamond with 700 repurchase done
-      // end
 
       // 🔹 Insert Non-Diamond commissions
       for (let i = 0; i < nonDiamondData.length; i += BATCH_SIZE) {
