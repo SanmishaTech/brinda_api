@@ -12,8 +12,8 @@ cron.schedule("0 10 * * *", async () => {
   }
 });
 
-// 2nd Schedule: Run at 6:00 PM every day
-cron.schedule("0 18 * * *", async () => {
+// 2nd Schedule: Run at 11:30 PM every day
+cron.schedule("30 23 * * *", async () => {
   try {
     await backupDatabase();
     logger.info("✅ Backup ran at 6:00 PM");
