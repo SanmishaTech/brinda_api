@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { APPROVED } = require("../config/data");
 const prisma = new PrismaClient();
 
 /**
@@ -96,6 +97,117 @@ const repurchasePayoutList = async (req, res) => {
     });
   }
 };
+// const payRepurchaseAmount = async (req, res) => {
+//   const { commissionId } = req.params;
+
+//   try {
+//     const repurchaseIncomeCommission =
+//       await prisma.repurchaseIncomeCommission.findUnique({
+//         where: { id: parseInt(commissionId) },
+//       });
+
+//     if (!repurchaseIncomeCommission) {
+//       return res.status(404).json({
+//         errors: {
+//           message: "Repurchase Commission record does not exist",
+//         },
+//       });
+//     }
+
+//     if (repurchaseIncomeCommission.isPaid) {
+//       return res.status(400).json({
+//         errors: {
+//           message: "Repurchase Commission is already paid",
+//         },
+//       });
+//     }
+
+//     const walletTransactionsToCreate = [
+//       {
+//         amount: repurchaseIncomeCommission.platformChargeAmount,
+//         status: APPROVED,
+//         type: CREDIT,
+//         transactionDate: new Date(),
+//         walletType: HOLD_WALLET,
+//         processedByAdminId: req.user.id,
+//         notes: `Platform charge: ₹${repurchaseIncomeCommission.platformChargeAmount.toFixed(
+//           2
+//         )}. (${
+//           repurchaseIncomeCommission.platformChargePercent
+//         }%) of ₹${repurchaseIncomeCommission.totalAmountBeforeDeduction.toFixed(
+//           2
+//         )}`,
+//       },
+//     ];
+
+//     // Only add TDS transaction if TDSAmount is greater than 0
+//     if (repurchaseIncomeCommission.TDSAmount > 0) {
+//       walletTransactionsToCreate.push({
+//         amount: repurchaseIncomeCommission.TDSAmount,
+//         status: APPROVED,
+//         type: CREDIT,
+//         transactionDate: new Date(),
+//         walletType: HOLD_WALLET,
+//         processedByAdminId: req.user.id,
+//         notes: `TDS charge: ₹${repurchaseIncomeCommission.TDSAmount.toFixed(
+//           2
+//         )}. (${
+//           repurchaseIncomeCommission.TDSPercent
+//         }%) of ₹${repurchaseIncomeCommission.totalAmountBeforeDeduction.toFixed(
+//           2
+//         )}`,
+//       });
+//     }
+
+//     walletTransactionsToCreate.push({
+//       amount: repurchaseIncomeCommission.totalAmountToGive,
+//       status: APPROVED,
+//       type: CREDIT,
+//       transactionDate: new Date(),
+//       walletType: HOLD_WALLET,
+//       processedByAdminId: req.user.id,
+//       notes: `₹${repurchaseIncomeCommission.totalAmountToGive.toFixed(
+//         2
+//       )} Self Repurchase Income payout transferred to your bank.`,
+//     });
+
+//     const updatedIncomeCommission =
+//       await prisma.repurchaseIncomeCommission.update({
+//         where: { id: parseInt(commissionId) },
+//         data: {
+//           isPaid: true,
+//           paidAt: new Date(),
+//           member: {
+//             update: {
+//               repurchaseIncomeEarned: {
+//                 increment: repurchaseIncomeCommission.totalAmountToGive,
+//               },
+//               holdWalletBalance: {
+//                 decrement:
+//                   repurchaseIncomeCommission.totalAmountBeforeDeduction,
+//               },
+//               walletTransactions: {
+//                 create: walletTransactionsToCreate,
+//               },
+//             },
+//           },
+//         },
+//       });
+
+//     return res.status(200).json({
+//       message: "Repurchase Commission paid successfully",
+//     });
+//   } catch (error) {
+//     console.error(" Repurchase Pay Commission Error:", error);
+//     return res.status(500).json({
+//       errors: {
+//         message: "Failed to pay Repurchase commission",
+//         details: error.message,
+//       },
+//     });
+//   }
+// };
+
 const payRepurchaseAmount = async (req, res) => {
   const { commissionId } = req.params;
 
@@ -108,7 +220,7 @@ const payRepurchaseAmount = async (req, res) => {
     if (!repurchaseIncomeCommission) {
       return res.status(404).json({
         errors: {
-          message: "Repurchase Commission record does not exist",
+          message: "Commission record does not exist",
         },
       });
     }
@@ -116,59 +228,10 @@ const payRepurchaseAmount = async (req, res) => {
     if (repurchaseIncomeCommission.isPaid) {
       return res.status(400).json({
         errors: {
-          message: "Repurchase Commission is already paid",
+          message: "Commission is already paid",
         },
       });
     }
-
-    const walletTransactionsToCreate = [
-      {
-        amount: repurchaseIncomeCommission.platformChargeAmount,
-        status: APPROVED,
-        type: CREDIT,
-        transactionDate: new Date(),
-        walletType: HOLD_WALLET,
-        processedByAdminId: req.user.id,
-        notes: `Platform charge: ₹${repurchaseIncomeCommission.platformChargeAmount.toFixed(
-          2
-        )}. (${
-          repurchaseIncomeCommission.platformChargePercent
-        }%) of ₹${repurchaseIncomeCommission.totalAmountBeforeDeduction.toFixed(
-          2
-        )}`,
-      },
-    ];
-
-    // Only add TDS transaction if TDSAmount is greater than 0
-    if (repurchaseIncomeCommission.TDSAmount > 0) {
-      walletTransactionsToCreate.push({
-        amount: repurchaseIncomeCommission.TDSAmount,
-        status: APPROVED,
-        type: CREDIT,
-        transactionDate: new Date(),
-        walletType: HOLD_WALLET,
-        processedByAdminId: req.user.id,
-        notes: `TDS charge: ₹${repurchaseIncomeCommission.TDSAmount.toFixed(
-          2
-        )}. (${
-          repurchaseIncomeCommission.TDSPercent
-        }%) of ₹${repurchaseIncomeCommission.totalAmountBeforeDeduction.toFixed(
-          2
-        )}`,
-      });
-    }
-
-    walletTransactionsToCreate.push({
-      amount: repurchaseIncomeCommission.totalAmountToGive,
-      status: APPROVED,
-      type: CREDIT,
-      transactionDate: new Date(),
-      walletType: HOLD_WALLET,
-      processedByAdminId: req.user.id,
-      notes: `₹${repurchaseIncomeCommission.totalAmountToGive.toFixed(
-        2
-      )} Self Repurchase Income payout transferred to your bank.`,
-    });
 
     const updatedIncomeCommission =
       await prisma.repurchaseIncomeCommission.update({
@@ -181,26 +244,24 @@ const payRepurchaseAmount = async (req, res) => {
               repurchaseIncomeEarned: {
                 increment: repurchaseIncomeCommission.totalAmountToGive,
               },
-              holdWalletBalance: {
-                decrement:
-                  repurchaseIncomeCommission.totalAmountBeforeDeduction,
-              },
-              walletTransactions: {
-                create: walletTransactionsToCreate,
-              },
+            },
+          },
+          walletTransaction: {
+            update: {
+              status: APPROVED,
             },
           },
         },
       });
 
     return res.status(200).json({
-      message: "Repurchase Commission paid successfully",
+      message: "Commission paid successfully",
     });
   } catch (error) {
-    console.error(" Repurchase Pay Commission Error:", error);
+    console.error("Pay Commission Error:", error);
     return res.status(500).json({
       errors: {
-        message: "Failed to pay Repurchase commission",
+        message: "Failed to pay commission",
         details: error.message,
       },
     });

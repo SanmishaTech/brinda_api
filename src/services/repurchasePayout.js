@@ -189,25 +189,23 @@ const repurchasePayout = async () => {
             .sub(platformChargeAmount);
           logger.info(`subtotal = ${subtotal}`);
 
-          if (subtotal.gt(0)) {
-            nonDiamondData.push({
-              memberId: member.id,
-              repurchaseIncome: RIncome,
-              RMI1,
-              RMI2,
-              RMI3,
-              TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
-              TDSAmount: new Prisma.Decimal(TDSAmount),
-              platformChargePercent: new Prisma.Decimal(
-                PLATFORM_CHARGE_PERCENT
-              ),
-              platformChargeAmount: new Prisma.Decimal(platformChargeAmount),
-              totalAmountBeforeDeduction: subtotal,
-              totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
-              isPaid: false,
-              createdAt: new Date(),
-            });
-          }
+          // if (subtotal.gt(0)) {
+          nonDiamondData.push({
+            memberId: member.id,
+            repurchaseIncome: RIncome,
+            RMI1,
+            RMI2,
+            RMI3,
+            TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
+            TDSAmount: new Prisma.Decimal(TDSAmount),
+            platformChargePercent: new Prisma.Decimal(PLATFORM_CHARGE_PERCENT),
+            platformChargeAmount: new Prisma.Decimal(platformChargeAmount),
+            totalAmountBeforeDeduction: subtotal,
+            totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
+            isPaid: false,
+            createdAt: new Date(),
+          });
+          // }
 
           // This is always pushed, regardless of totalAmountToGive
           const amountToAddInWallet = MMI1.add(MMI2).add(RCashback);
@@ -357,15 +355,19 @@ const repurchasePayout = async () => {
                     },
                   ]
                 : []),
-              {
-                memberId: member.memberId,
-                amount: member.platformChargeAmount,
-                type: CREDIT,
-                transactionDate: new Date(),
-                status: APPROVED,
-                walletType: HOLD_WALLET,
-                notes: `${member.platformChargePercent}% Platform Charge Deducted.`,
-              },
+              ...(member.platformChargeAmount > 0
+                ? [
+                    {
+                      memberId: member.memberId,
+                      amount: member.platformChargeAmount,
+                      type: CREDIT,
+                      transactionDate: new Date(),
+                      status: APPROVED,
+                      walletType: HOLD_WALLET,
+                      notes: `${member.platformChargePercent}% Platform Charge Deducted.`,
+                    },
+                  ]
+                : []),
             ],
           });
 
@@ -392,35 +394,41 @@ const repurchasePayout = async () => {
               holdWalletBalance: {
                 decrement: member.totalAmountBeforeDeduction,
               },
-              repurchaseIncomeCommissions: {
-                create: {
-                  repurchaseIncome: member.repurchaseIncome,
-                  RMI1: member.RMI1,
-                  RMI2: member.RMI2,
-                  RMI3: member.RMI3,
-                  TDSPercent: member.TDSPercent,
-                  TDSAmount: member.TDSAmount,
-                  platformChargePercent: member.platformChargePercent,
-                  platformChargeAmount: member.platformChargeAmount,
-                  totalAmountBeforeDeduction: member.totalAmountBeforeDeduction,
-                  totalAmountToGive: member.totalAmountToGive,
-                  isPaid: false,
-                  createdAt: new Date(),
-                  // optionally add walletTransactionId if your model supports it
-                  // walletTransactionId: walletTransaction.id,
-                  walletTransaction: {
-                    create: {
-                      memberId: member.memberId,
-                      amount: member.totalAmountToGive,
-                      type: CREDIT,
-                      transactionDate: new Date(),
-                      status: PENDING,
-                      walletType: HOLD_WALLET,
-                      notes: "Transferring Hold Wallet Amount To your Bank.",
+              ...(member.subtotal > 0
+                ? {
+                    repurchaseIncomeCommissions: {
+                      create: {
+                        repurchaseIncome: member.repurchaseIncome,
+                        RMI1: member.RMI1,
+                        RMI2: member.RMI2,
+                        RMI3: member.RMI3,
+                        TDSPercent: member.TDSPercent,
+                        TDSAmount: member.TDSAmount,
+                        platformChargePercent: member.platformChargePercent,
+                        platformChargeAmount: member.platformChargeAmount,
+                        totalAmountBeforeDeduction:
+                          member.totalAmountBeforeDeduction,
+                        totalAmountToGive: member.totalAmountToGive,
+                        isPaid: false,
+                        createdAt: new Date(),
+                        // optionally add walletTransactionId if your model supports it
+                        // walletTransactionId: walletTransaction.id,
+                        walletTransaction: {
+                          create: {
+                            memberId: member.memberId,
+                            amount: member.totalAmountToGive,
+                            type: CREDIT,
+                            transactionDate: new Date(),
+                            status: PENDING,
+                            walletType: HOLD_WALLET,
+                            notes:
+                              "Transferring Hold Wallet Amount To your Bank.",
+                          },
+                        },
+                      },
                     },
-                  },
-                },
-              },
+                  }
+                : {}),
             },
           });
         });
@@ -497,7 +505,7 @@ const repurchasePayout = async () => {
             );
 
             logger.info(`member = ${member.memberId}`);
-            prisma.member.update({
+            return prisma.member.update({
               where: { id: member.memberId },
               data: {
                 matchingMentorIncomeL1: new Prisma.Decimal(0),
