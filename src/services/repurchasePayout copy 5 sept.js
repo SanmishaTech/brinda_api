@@ -179,7 +179,7 @@ const repurchasePayout = async () => {
           // was here. above part is done
           // Only include RIncome, RMI1, RMI2, RMI3
           const subtotal = RIncome.add(RMI1).add(RMI2).add(RMI3);
-          logger.info("working");
+
           const TDSAmount = subtotal.mul(TDS_PERCENT_USED).div(100);
           const platformChargeAmount = subtotal
             .mul(PLATFORM_CHARGE_PERCENT)
@@ -187,7 +187,6 @@ const repurchasePayout = async () => {
           const totalAmountToGive = subtotal
             .sub(TDSAmount)
             .sub(platformChargeAmount);
-          logger.info(`subtotal = ${subtotal}`);
 
           if (subtotal.gt(0)) {
             nonDiamondData.push({
@@ -211,7 +210,6 @@ const repurchasePayout = async () => {
 
           // This is always pushed, regardless of totalAmountToGive
           const amountToAddInWallet = MMI1.add(MMI2).add(RCashback);
-          logger.info(`amountToAddInWallet = ${amountToAddInWallet}`);
 
           if (amountToAddInWallet.gt(0)) {
             walletUpdateData.push({
@@ -258,7 +256,6 @@ const repurchasePayout = async () => {
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
           await prisma.member.update({
             where: { id: member.memberId },
             data: {
@@ -331,10 +328,9 @@ const repurchasePayout = async () => {
       // end
 
       // 🔹 Insert Non-Diamond commissions
-      logger.info(`nonDiamondData.length = ${nonDiamondData.length}`);
       for (let i = 0; i < nonDiamondData.length; i += BATCH_SIZE) {
         const batch = nonDiamondData.slice(i, i + BATCH_SIZE);
-        logger.info("workingInfo2");
+
         // if (batch.length > 0) {
         //   await prisma.repurchaseIncomeCommission.createMany({
         //     data: batch,
@@ -370,8 +366,6 @@ const repurchasePayout = async () => {
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
-
           await prisma.member.update({
             where: { id: member.memberId },
             data: {
@@ -434,7 +428,7 @@ const repurchasePayout = async () => {
           } inserted`
         );
       }
-      logger.info(`walletUpdateData = ${walletUpdateData.length}`);
+
       for (let i = 0; i < walletUpdateData.length; i += BATCH_SIZE) {
         const batch = walletUpdateData.slice(i, i + BATCH_SIZE);
 
@@ -496,7 +490,6 @@ const repurchasePayout = async () => {
               txn.amount.gt(0)
             );
 
-            logger.info(`member = ${member.memberId}`);
             prisma.member.update({
               where: { id: member.memberId },
               data: {
@@ -650,41 +643,40 @@ const repurchasePayout = async () => {
           //     },
           //   },
           // });
-          // if (RCashback.gt(0)) {
-          // end
-          commissionData.push({
-            memberId: member.id,
-            repurchaseCashbackIncome: RCashback,
-            TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
-            TDSAmount: new Prisma.Decimal(TDSAmount),
-            platformChargePercent: new Prisma.Decimal(PLATFORM_CHARGE_PERCENT),
-            platformChargeAmount: new Prisma.Decimal(platformChargeAmount),
-            totalAmountBeforeDeduction: RCashback,
-            totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
-            isPaid: false,
-            createdAt: new Date(),
-            //
-            MMI1,
-            MMI2,
-            RIncome,
-            RMI1,
-            RMI2,
-            RMI3,
-          });
-          // }
+          if (RCashback.gt(0)) {
+            // end
+            commissionData.push({
+              memberId: member.id,
+              repurchaseCashbackIncome: RCashback,
+              TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
+              TDSAmount: new Prisma.Decimal(TDSAmount),
+              platformChargePercent: new Prisma.Decimal(
+                PLATFORM_CHARGE_PERCENT
+              ),
+              platformChargeAmount: new Prisma.Decimal(platformChargeAmount),
+              totalAmountBeforeDeduction: RCashback,
+              totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
+              isPaid: false,
+              createdAt: new Date(),
+              // member: {
+              //   holdWalletBalance: {
+              //     decrement: new Prisma.Decimal(
+              //       MMI1 + MMI2 + RIncome + RMI1 + RMI2 + RMI3
+              //     ),
+              //   },
+              //   walletTransactions: {
+              //     create: walletTransactions,
+              //   },
+              // },
+            });
+          }
         } else {
-          // if (RCashback.gt(0)) {
-          nonDiamondData.push({
-            memberId: member.id,
-            repurchaseCashbackIncome: RCashback,
-            MMI1,
-            MMI2,
-            RIncome,
-            RMI1,
-            RMI2,
-            RMI3,
-          });
-          // }
+          if (RCashback.gt(0)) {
+            nonDiamondData.push({
+              memberId: member.id,
+              repurchaseCashbackIncome: RCashback,
+            });
+          }
         }
       }
 
@@ -725,8 +717,6 @@ const repurchasePayout = async () => {
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
-
           await prisma.member.update({
             where: { id: member.memberId },
             data: {
@@ -749,52 +739,40 @@ const repurchasePayout = async () => {
               repurchaseMentorIncomeL3: new Prisma.Decimal(0),
               holdWalletBalance: {
                 decrement: new Prisma.Decimal(
-                  parseFloat(member.MMI1) +
-                    parseFloat(member.MMI2) +
-                    parseFloat(member.RIncome) +
-                    parseFloat(member.RMI1) +
-                    parseFloat(member.RMI2) +
-                    parseFloat(member.RMI3) +
-                    parseFloat(member.repurchaseCashbackIncome)
+                  MMI1 + MMI2 + RIncome + RMI1 + RMI2 + RMI3
                 ),
               },
-              ...(member.repurchaseCashbackIncome > 0
-                ? {
-                    repurchaseIncomeCommissions: {
-                      create: {
-                        repurchaseCashbackIncome:
-                          member.repurchaseCashbackIncome,
-                        TDSPercent: new Prisma.Decimal(member.TDSPercent),
-                        TDSAmount: new Prisma.Decimal(member.TDSAmount),
-                        platformChargePercent: new Prisma.Decimal(
-                          member.platformChargePercent
-                        ),
-                        platformChargeAmount: new Prisma.Decimal(
-                          member.platformChargeAmount
-                        ),
-                        totalAmountBeforeDeduction:
-                          member.repurchaseCashbackIncome,
-                        totalAmountToGive: new Prisma.Decimal(
-                          member.totalAmountToGive
-                        ),
-                        isPaid: false,
-                        createdAt: new Date(),
-                        walletTransaction: {
-                          create: {
-                            memberId: member.memberId,
-                            amount: member.totalAmountToGive,
-                            type: CREDIT,
-                            transactionDate: new Date(),
-                            status: PENDING,
-                            walletType: HOLD_WALLET,
-                            notes:
-                              "Transferring Hold Wallet Amount To your Bank.",
-                          },
-                        },
-                      },
+              repurchaseIncomeCommissions: {
+                create: {
+                  // memberId: member.id,
+                  repurchaseCashbackIncome: RCashback,
+                  TDSPercent: new Prisma.Decimal(TDS_PERCENT_USED),
+                  TDSAmount: new Prisma.Decimal(TDSAmount),
+                  platformChargePercent: new Prisma.Decimal(
+                    PLATFORM_CHARGE_PERCENT
+                  ),
+                  platformChargeAmount: new Prisma.Decimal(
+                    platformChargeAmount
+                  ),
+                  totalAmountBeforeDeduction: RCashback,
+                  totalAmountToGive: new Prisma.Decimal(totalAmountToGive),
+                  isPaid: false,
+                  createdAt: new Date(),
+                  // optionally add walletTransactionId if your model supports it
+                  // walletTransactionId: walletTransaction.id,
+                  walletTransaction: {
+                    create: {
+                      memberId: member.memberId,
+                      amount: member.totalAmountToGive,
+                      type: CREDIT,
+                      transactionDate: new Date(),
+                      status: PENDING,
+                      walletType: HOLD_WALLET,
+                      notes: "Transferring Hold Wallet Amount To your Bank.",
                     },
-                  }
-                : {}),
+                  },
+                },
+              },
             },
           });
         });
@@ -845,34 +823,28 @@ const repurchasePayout = async () => {
         const createPromises = batch.map(async (member) => {
           await prisma.walletTransaction.createMany({
             data: [
-              ...(member.repurchaseCashbackIncome > 0
-                ? [
-                    {
-                      memberId: member.memberId,
-                      amount: member.repurchaseCashbackIncome,
-                      type: CREDIT,
-                      transactionDate: new Date(),
-                      status: APPROVED,
-                      walletType: HOLD_WALLET,
-                      notes: `Cashback Income Transferred to Upgrade Wallet.`,
-                    },
-                    {
-                      memberId: member.memberId,
-                      amount: member.repurchaseCashbackIncome,
-                      type: DEBIT,
-                      transactionDate: new Date(),
-                      status: APPROVED,
-                      walletType: UPGRADE_WALLET,
-                      notes: `Cashback Income Received From Hold Wallet.`,
-                    },
-                  ]
-                : []),
+              {
+                memberId: member.memberId,
+                amount: member.repurchaseCashbackIncome,
+                type: CREDIT,
+                transactionDate: new Date(),
+                status: APPROVED,
+                walletType: HOLD_WALLET,
+                notes: `Cashback Income Transferred to Upgrade Wallet.`,
+              },
+              {
+                memberId: member.memberId,
+                amount: member.repurchaseCashbackIncome,
+                type: DEBIT,
+                transactionDate: new Date(),
+                status: APPROVED,
+                walletType: UPGRADE_WALLET,
+                notes: `Cashback Income Received From Hold Wallet.`,
+              },
             ],
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
-
           await prisma.member.update({
             where: { id: member.memberId },
             data: {
@@ -894,21 +866,10 @@ const repurchasePayout = async () => {
               repurchaseMentorIncomeL2: new Prisma.Decimal(0),
               repurchaseMentorIncomeL3: new Prisma.Decimal(0),
               holdWalletBalance: {
-                decrement: new Prisma.Decimal(
-                  parseFloat(member.MMI1) +
-                    parseFloat(member.MMI2) +
-                    parseFloat(member.RIncome) +
-                    parseFloat(member.RMI1) +
-                    parseFloat(member.RMI2) +
-                    parseFloat(member.RMI3) +
-                    parseFloat(member.repurchaseCashbackIncome)
-                ),
+                decrement: new Prisma.Decimal(member.repurchaseCashbackIncome),
               },
-
               upgradeWalletBalance: {
-                increment: new Prisma.Decimal(
-                  parseFloat(member.repurchaseCashbackIncome)
-                ),
+                increment: new Prisma.Decimal(member.repurchaseCashbackIncome),
               },
             },
           });
