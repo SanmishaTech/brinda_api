@@ -114,10 +114,10 @@ const repurchasePayout = async () => {
           HAVING COALESCE(SUM(r.totalAmountWithGst), 0) < ${MINIMUM_REPURCHASE_TOTAL}
         `;
 
-    logger.info(`lowRepurchaseMembers =  ${lowRepurchaseMembers}`);
-    logger.info(
-      `lowRepurchaseMembers length =  ${lowRepurchaseMembers.length}`
-    );
+    // logger.info(`lowRepurchaseMembers =  ${lowRepurchaseMembers}`);
+    // logger.info(
+    //   `lowRepurchaseMembers length =  ${lowRepurchaseMembers.length}`
+    // );
 
     if (filteredMembers.length !== 0) {
       const commissionData = []; // Array to hold commission data for DIAMOND members with sufficient repurchase
@@ -179,7 +179,7 @@ const repurchasePayout = async () => {
           // was here. above part is done
           // Only include RIncome, RMI1, RMI2, RMI3
           const subtotal = RIncome.add(RMI1).add(RMI2).add(RMI3);
-          logger.info("working");
+          // logger.info("working");
           const TDSAmount = subtotal.mul(TDS_PERCENT_USED).div(100);
           const platformChargeAmount = subtotal
             .mul(PLATFORM_CHARGE_PERCENT)
@@ -187,7 +187,7 @@ const repurchasePayout = async () => {
           const totalAmountToGive = subtotal
             .sub(TDSAmount)
             .sub(platformChargeAmount);
-          logger.info(`subtotal = ${subtotal}`);
+          // logger.info(`subtotal = ${subtotal}`);
 
           // if (subtotal.gt(0)) {
           nonDiamondData.push({
@@ -209,7 +209,7 @@ const repurchasePayout = async () => {
 
           // This is always pushed, regardless of totalAmountToGive
           const amountToAddInWallet = MMI1.add(MMI2).add(RCashback);
-          logger.info(`amountToAddInWallet = ${amountToAddInWallet}`);
+          // logger.info(`amountToAddInWallet = ${amountToAddInWallet}`);
 
           if (amountToAddInWallet.gt(0)) {
             walletUpdateData.push({
@@ -256,7 +256,7 @@ const repurchasePayout = async () => {
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
+          // logger.info(`member = ${member.memberId}`);
           await prisma.member.update({
             where: { id: member.memberId },
             data: {
@@ -329,10 +329,10 @@ const repurchasePayout = async () => {
       // end
 
       // 🔹 Insert Non-Diamond commissions
-      logger.info(`nonDiamondData.length = ${nonDiamondData.length}`);
+      // logger.info(`nonDiamondData.length = ${nonDiamondData.length}`);
       for (let i = 0; i < nonDiamondData.length; i += BATCH_SIZE) {
         const batch = nonDiamondData.slice(i, i + BATCH_SIZE);
-        logger.info("workingInfo2");
+        // logger.info("workingInfo2");
         // if (batch.length > 0) {
         //   await prisma.repurchaseIncomeCommission.createMany({
         //     data: batch,
@@ -372,7 +372,7 @@ const repurchasePayout = async () => {
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
+          // logger.info(`member = ${member.memberId}`);
 
           await prisma.member.update({
             where: { id: member.memberId },
@@ -442,7 +442,7 @@ const repurchasePayout = async () => {
           } inserted`
         );
       }
-      logger.info(`walletUpdateData = ${walletUpdateData.length}`);
+      // logger.info(`walletUpdateData = ${walletUpdateData.length}`);
       for (let i = 0; i < walletUpdateData.length; i += BATCH_SIZE) {
         const batch = walletUpdateData.slice(i, i + BATCH_SIZE);
 
@@ -504,7 +504,7 @@ const repurchasePayout = async () => {
               txn.amount.gt(0)
             );
 
-            logger.info(`member = ${member.memberId}`);
+            // logger.info(`member = ${member.memberId}`);
             return prisma.member.update({
               where: { id: member.memberId },
               data: {
@@ -733,7 +733,7 @@ const repurchasePayout = async () => {
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
+          // logger.info(`member = ${member.memberId}`);
 
           await prisma.member.update({
             where: { id: member.memberId },
@@ -879,7 +879,7 @@ const repurchasePayout = async () => {
           });
 
           // Update the member's income fields and hold wallet balance
-          logger.info(`member = ${member.memberId}`);
+          // logger.info(`member = ${member.memberId}`);
 
           await prisma.member.update({
             where: { id: member.memberId },

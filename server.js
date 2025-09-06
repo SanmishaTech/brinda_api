@@ -1,7 +1,7 @@
 const app = require("./src/app");
 // jobs
 const backupJob = require("./src/cron/backupDatabaseJob");
-// const repurchaseJob = require("./src/cron/repurchaseIncomeCommissionJob");
+const repurchaseJob = require("./src/cron/repurchaseIncomeCommissionJob");
 const weeklyCommissionJob = require("./src/cron/weeklyMatchingIncomeCommissionJob"); // 👈 Import the cron job
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

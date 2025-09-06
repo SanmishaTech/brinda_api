@@ -16,8 +16,8 @@ cron.schedule("0 10 * * *", async () => {
 cron.schedule("30 23 * * *", async () => {
   try {
     await backupDatabase();
-    logger.info("✅ Backup ran at 6:00 PM");
+    logger.info("✅ Backup ran at 11:30 PM");
   } catch (err) {
-    logger.error(`❌ Error in 6 PM Backup: ${err}`);
+    logger.error(`❌ Error in 11:30 PM Backup: ${err}`);
   }
 });
