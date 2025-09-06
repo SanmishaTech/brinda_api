@@ -219,7 +219,7 @@ const generateUserProductPurchaseInvoice = async (purchaseId) => {
       state: purchaseData?.state,
     },
     memberDetails: {
-      name: "Brinda Health Care",
+      name: "My Brinda",
       addressLines: [
         "B/03, Pinak CHS, Kelkar Rd, Near Vrindavan Hotel, Opp. Gurudev Hotel Aai Bunglow, Ram Nagar.",
         "Thane, Dombivli East - 421201, IN",
