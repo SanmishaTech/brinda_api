@@ -1,10 +1,10 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const {
   DEBIT,
   APPROVED,
   MATCHING_INCOME_WALLET,
   HOLD_WALLET,
-} = require('../config/data');
+} = require("../config/data");
 const prisma = new PrismaClient();
 
 const calculateCommission = async (parent, updates, rewardDetails) => {

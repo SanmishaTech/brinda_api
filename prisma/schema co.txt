@@ -185,6 +185,8 @@ model WalletTransaction {
   updatedAt          DateTime          @updatedAt
   matchingIncomeCommission       MatchingIncomeCommission?
   repurchaseIncomeCommission     RepurchaseIncomeCommission?
+  rewardCommission     RewardCommission?
+
   @@index([processedByAdminId])   
   @@index([memberId])     
 
@@ -352,6 +354,8 @@ model RewardCommission {
   id                         Int      @id @default(autoincrement())
   memberId                   Int
   member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  walletTransactionId        Int?  @unique 
+  walletTransaction    WalletTransaction?    @relation(fields: [walletTransactionId], references: [id],onDelete: Restrict) 
   TDSPercent   Decimal  @db.Decimal(5, 2) @default(0.00)
   TDSAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
   platformChargePercent   Decimal  @db.Decimal(5, 2) @default(0.00)
@@ -363,4 +367,3 @@ model RewardCommission {
   createdAt                  DateTime @default(now())
   @@map("reward_commissions")
 }
-

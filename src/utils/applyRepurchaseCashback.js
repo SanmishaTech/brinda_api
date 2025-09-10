@@ -16,9 +16,11 @@ const applyRepurchaseCashback = async (member, totalAmountWithGst) => {
     (parseFloat(totalAmountWithGst) * CASHBACK_PERCENT) / 100;
   logger.info(`Calculated updatedAmount: ${updatedAmount}`);
 
-  const cashbackAmount = (updatedAmount * parseFloat(member.percentage)) / 100;
-  logger.info(`Calculated cashbackAmount: ${cashbackAmount}`);
+  // const cashbackAmount = (updatedAmount * parseFloat(member.percentage)) / 100;
+  // logger.info(`Calculated cashbackAmount: ${cashbackAmount}`);
 
+  const cashbackAmount = updatedAmount;
+  // not using member.percentage on cashback on 10 sept 2025 as per new decision
   member = await prisma.member.update({
     where: { id: member.id },
     data: {

@@ -1,14 +1,14 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { z } = require('zod');
-const validateRequest = require('../utils/validateRequest');
-const createError = require('http-errors');
-const dayjs = require('dayjs'); // Import dayjs
-const { numberToWords } = require('../utils/numberToWords');
-const { v4: uuidv4 } = require('uuid');
-const fs = require('fs').promises; // Use promises API
-const path = require('path');
-const { CREDIT, APPROVED, INCREMENT } = require('../config/data');
+const { z } = require("zod");
+const validateRequest = require("../utils/validateRequest");
+const createError = require("http-errors");
+const dayjs = require("dayjs"); // Import dayjs
+const { numberToWords } = require("../utils/numberToWords");
+const { v4: uuidv4 } = require("uuid");
+const fs = require("fs").promises; // Use promises API
+const path = require("path");
+const { CREDIT, APPROVED, INCREMENT } = require("../config/data");
 
 // Get a purchase by ID
 const dashboardInformation = async (req, res) => {
@@ -23,7 +23,7 @@ const dashboardInformation = async (req, res) => {
     });
 
     if (!member) {
-      return res.status(404).json({ errors: { message: 'Member not found' } });
+      return res.status(404).json({ errors: { message: "Member not found" } });
     }
 
     // Calculate the total of totalAmountWithGst from purchases
@@ -58,6 +58,7 @@ const dashboardInformation = async (req, res) => {
       matchingIncomeWalletBalance: member.matchingIncomeWalletBalance,
       upgradeWalletBalance: member.upgradeWalletBalance,
       repurchaseIncomeEarned: member.repurchaseIncomeEarned,
+      rewardIncomeEarned: member.rewardIncomeEarned,
       goldRewardIncome: member.goldRewardIncome,
       goldRewardBalance: member.goldRewardBalance,
       goldRewardLevel: member.goldRewardLevel,
@@ -65,7 +66,7 @@ const dashboardInformation = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       errors: {
-        message: 'Failed to fetch purchase',
+        message: "Failed to fetch purchase",
         details: error.message,
       },
     });
