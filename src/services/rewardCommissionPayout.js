@@ -68,7 +68,7 @@ const rewardCommissionPayout = async () => {
                     transactionDate: new Date(),
                     status: APPROVED,
                     walletType: HOLD_WALLET,
-                    notes: `${TDS_PERCENT_USED}% TDS Amount Deducted.`,
+                    notes: `${TDS_PERCENT_USED}% TDS Amount Deducted on Reward Commission.`,
                   },
                 ]
               : []),
@@ -87,7 +87,7 @@ const rewardCommissionPayout = async () => {
               : []),
           ],
         });
-        console.log(totalAmountToGive);
+        // console.log(totalAmountToGive);
         return prisma.member.update({
           where: { id: member.id },
           data: {

@@ -89,7 +89,7 @@ const matchingIncomePayoutList = async (req, res) => {
 };
 const payMatchingIncomeAmount = async (req, res) => {
   const { commissionId } = req.params;
-
+  const adminId = req.user.id;
   try {
     const matchingIncomeCommission =
       await prisma.matchingIncomeCommission.findUnique({
@@ -128,6 +128,7 @@ const payMatchingIncomeAmount = async (req, res) => {
           walletTransaction: {
             update: {
               status: APPROVED,
+              processedByAdminId: adminId,
             },
           },
         },

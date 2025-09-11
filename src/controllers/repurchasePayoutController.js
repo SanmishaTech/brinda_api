@@ -210,7 +210,7 @@ const repurchasePayoutList = async (req, res) => {
 
 const payRepurchaseAmount = async (req, res) => {
   const { commissionId } = req.params;
-
+  const adminId = req.user.id;
   try {
     const repurchaseIncomeCommission =
       await prisma.repurchaseIncomeCommission.findUnique({
@@ -249,6 +249,7 @@ const payRepurchaseAmount = async (req, res) => {
           walletTransaction: {
             update: {
               status: APPROVED,
+              processedByAdminId: adminId,
             },
           },
         },

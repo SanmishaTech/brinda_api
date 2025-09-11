@@ -117,7 +117,7 @@ const rewardPayoutList = async (req, res) => {
 
 const payRewardAmount = async (req, res) => {
   const { commissionId } = req.params;
-
+  const adminId = req.user.id;
   try {
     const rewardCommission = await prisma.rewardCommission.findUnique({
       where: { id: parseInt(commissionId) },
@@ -154,6 +154,7 @@ const payRewardAmount = async (req, res) => {
         walletTransaction: {
           update: {
             status: APPROVED,
+            processedByAdminId: adminId,
           },
         },
       },
