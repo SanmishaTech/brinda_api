@@ -312,7 +312,7 @@ const updateAdminPurchase = async (req, res) => {
       }
     }
 
-    await updateStock(adminPurchaseDetails);
+    await updateStock();
 
     return res
       .status(201)

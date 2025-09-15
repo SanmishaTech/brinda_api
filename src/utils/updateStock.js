@@ -5,7 +5,7 @@ const updateStock = async () => {
   const stockLedgersData = await prisma.stockLedger.findMany();
 
   for (const detail of stockLedgersData) {
-    const memberId = detail.memberId;
+    const memberId = detail?.memberId ?? null;
     const productId = parseInt(detail.productId);
     const batchNumber = detail.batchNumber;
     const expiryDate = detail.expiryDate;
@@ -18,8 +18,8 @@ const updateStock = async () => {
         expiryDate: expiryDate, // Ensure this is a Date object
       },
     });
-    for (const detail of stockLedgers) {
-      logger.info(`id = ${detail.id}`);
+    for (const data of stockLedgers) {
+      logger.info(`id = ${data.id}`);
     }
 
     // Sum received and issued
@@ -27,19 +27,18 @@ const updateStock = async () => {
       (sum, entry) => sum + entry.received,
       0
     );
-    logger.info(`totalReceived  = ${totalReceived}`);
     const totalIssued = stockLedgers.reduce(
       (sum, entry) => sum + entry.issued,
       0
     );
-    logger.info(`totalissued  = ${totalIssued}`);
 
     const netStock = totalReceived - totalIssued;
-    logger.info(`netStock  = ${netStock}`);
-
+    logger.info(
+      `totalReceived = ${totalReceived}. totalIssued = ${totalIssued}. netStock = ${netStock}`
+    );
     const existingStock = await prisma.stock.findFirst({
       where: {
-        memberId,
+        memberId: memberId,
         productId,
         batchNumber,
         expiryDate,
@@ -61,7 +60,8 @@ const updateStock = async () => {
   const allStocks = await prisma.stock.findMany();
 
   for (const stock of allStocks) {
-    const { productId, batchNumber, expiryDate, id, memberId } = stock;
+    const { productId, batchNumber, expiryDate, id } = stock;
+    const memberId = stock.memberId ?? null;
 
     // Step 2: Check if there's any matching stock ledger
     const matchingLedger = await prisma.stockLedger.findFirst({

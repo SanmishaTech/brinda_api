@@ -53,4 +53,7 @@ module.exports = {
   //adminPurchases
   "stock.read": ["admin", "member"],
   "stock.write": ["admin"],
+  //franchise
+  "franchise.read": ["admin"],
+  "franchise.write": ["admin"],
 };

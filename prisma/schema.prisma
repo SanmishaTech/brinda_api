@@ -133,7 +133,7 @@ model Member {
   repurchaseIncomeEarned       Decimal   @db.Decimal(11, 2)   @default(0.00)
   rewardIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
   //start
-  // isFranchise                Boolean  @default(false)
+  isFranchise                Boolean  @default(false)
   // securityDeposit           Decimal   @db.Decimal(11, 2)   @default(0.00)  //first amount
   // securityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) 
   // franchiseCommission           Decimal   @db.Decimal(11, 2)   @default(0.00)
@@ -148,6 +148,7 @@ model Member {
   rewardCommissions      RewardCommission[] // Relation to memberLog
   Stocks                      Stock[]
   stockLedgers                   StockLedger[]
+  StockTransfers                     StockTransfer[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   @@map("members")
@@ -169,6 +170,7 @@ model Product {
   adminPurchaseDetails                   AdminPurchaseDetail[]
   stockLedgers                   StockLedger[]
   stocks                       Stock[]
+  stockTransferDetails    StockTransferDetail[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -423,8 +425,8 @@ model StockLedger {
   id                   Int       @id @default(autoincrement())
   productId            Int
   product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
-  adminPurchaseId           Int
-  adminPurchase             AdminPurchase  @relation(fields: [adminPurchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
+  adminPurchaseId           Int?
+  adminPurchase             AdminPurchase?  @relation(fields: [adminPurchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
   memberId             Int?
   member               Member?    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
   invoiceNumber          String 
@@ -454,5 +456,33 @@ model Stock {
   updatedAt            DateTime  @updatedAt
   
   @@map("stocks")
+}
+
+// start
+model StockTransfer {
+  id                   Int       @id @default(autoincrement())
+  memberId             Int
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  stockTransferDetails      StockTransferDetail[] // Relation to PurchaseDetail
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("stock_transfers")
+}
+
+model StockTransferDetail {
+  id                   Int       @id @default(autoincrement())
+  stockTransferId           Int
+  stockTransfer             StockTransfer  @relation(fields: [stockTransferId], references: [id],onDelete: Restrict) // Relation to Purchase
+  productId            Int
+  product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
+  quantity             Int
+  batchNumber          String 
+  expiryDate          DateTime
+  invoiceNumber          String? 
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("stock_transfer_details")
 }
 

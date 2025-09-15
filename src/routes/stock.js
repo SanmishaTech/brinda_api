@@ -4,6 +4,7 @@ const {
   getAdminStock,
   getFranchiseStock,
   addFranchiseStock,
+  getAllBatchByProduct,
 } = require("../controllers/stockController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -14,6 +15,52 @@ const acl = require("../middleware/acl");
  *   name: Stock
  *   description: Stock management endpoints
  */
+
+/**
+ * @swagger
+ * /api/stock/product-batches/{productId}:
+ *   get:
+ *     summary: Get all batches of a product from admin stock (no memberId)
+ *     tags: [Stock]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Product ID
+ *     responses:
+ *       200:
+ *         description: List of batches for the product
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   productId:
+ *                     type: integer
+ *                   quantity:
+ *                     type: integer
+ *                   batchNumber:
+ *                     type: string
+ *                   expiryDate:
+ *                     type: string
+ *                     format: date
+ *       500:
+ *         description: Failed to fetch batches
+ */
+router.get(
+  "/product-batches/:productId",
+  auth,
+  acl("stock.read"),
+  getAllBatchByProduct
+);
 
 /**
  * @swagger
@@ -111,7 +158,7 @@ router.get("/franchise", auth, acl("stock.read"), getFranchiseStock);
 
 /**
  * @swagger
- * /api/stock/franchise:
+ * /api/stock/add-franchise-stock:
  *   post:
  *     summary: Transfer stock to franchise
  *     tags: [Stock]
@@ -140,7 +187,12 @@ router.get("/franchise", auth, acl("stock.read"), getFranchiseStock);
  *       500:
  *         description: Failed to transfer franchise stock
  */
-router.post("/franchise", auth, acl("stock.write"), addFranchiseStock);
+router.post(
+  "/add-franchise-stock",
+  auth,
+  acl("stock.write"),
+  addFranchiseStock
+);
 
 module.exports = router;
 //add edit functionality
