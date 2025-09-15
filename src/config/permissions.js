@@ -45,4 +45,12 @@ module.exports = {
 
   "auth.backToAdmin": ["member"],
   "auth.impersonate": ["admin"],
+
+  //adminPurchases
+  "adminPurchases.read": ["admin"],
+  "adminPurchases.write": ["admin"],
+
+  //adminPurchases
+  "stock.read": ["admin", "member"],
+  "stock.write": ["admin"],
 };

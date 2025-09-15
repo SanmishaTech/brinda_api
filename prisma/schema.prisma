@@ -99,7 +99,6 @@ model Member {
   rightSilverBalance Int     @default(0)
   rightGoldBalance Int     @default(0)
   rightDiamondBalance Int     @default(0)
-  // start
   totalAssociateMatched Int     @default(0)
   totalSilverMatched Int     @default(0)
   totalGoldMatched Int     @default(0)
@@ -115,7 +114,6 @@ model Member {
   goldRewardBalance Int     @default(0) //pairs
   goldRewardLevel Int     @default(0)
   goldRewardIncome Decimal   @db.Decimal(11, 2)   @default(0.00)
-  // end
   associateCommissionCount Int     @default(0)
   silverCommissionCount Int     @default(0)
   goldCommissionCount Int     @default(0)
@@ -134,6 +132,12 @@ model Member {
   matchingIncomeEarned       Decimal   @db.Decimal(11, 2)   @default(0.00)
   repurchaseIncomeEarned       Decimal   @db.Decimal(11, 2)   @default(0.00)
   rewardIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
+  //start
+  // isFranchise                Boolean  @default(false)
+  // securityDeposit           Decimal   @db.Decimal(11, 2)   @default(0.00)  //first amount
+  // securityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) 
+  // franchiseCommission           Decimal   @db.Decimal(11, 2)   @default(0.00)
+  // end
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] // Relation to Purchase
   repurchases        Repurchase[] // Relation to Purchase
@@ -142,9 +146,10 @@ model Member {
   repurchaseIncomeCommissions      RepurchaseIncomeCommission[] // Relation to memberLog
   virtualPowers      VirtualPower[] 
   rewardCommissions      RewardCommission[] // Relation to memberLog
+  Stocks                      Stock[]
+  stockLedgers                   StockLedger[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-
   @@map("members")
 }
 
@@ -161,6 +166,9 @@ model Product {
   bvPrice     Decimal?   @db.Decimal(11, 2)
   purchaseDetails PurchaseDetail[] // Relation to PurchaseDetail
   repurchaseDetails RepurchaseDetail[] 
+  adminPurchaseDetails                   AdminPurchaseDetail[]
+  stockLedgers                   StockLedger[]
+  stocks                       Stock[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -367,5 +375,84 @@ model RewardCommission {
   paidAt                     DateTime?
   createdAt                  DateTime @default(now())
   @@map("reward_commissions")
+}
+
+model AdminPurchase {
+  id                   Int       @id @default(autoincrement())
+  invoiceNumber        String   
+  invoiceDate           DateTime?
+  purchaseDate         DateTime?  
+  receivedDate         DateTime?  
+  totalAmountWithoutGst Decimal   @db.Decimal(11, 2)
+  totalAmountWithGst   Decimal   @db.Decimal(11, 2) 
+  totalGstAmount       Decimal   @db.Decimal(11, 2) 
+  adminPurchaseDetails      AdminPurchaseDetail[] // Relation to PurchaseDetail
+  stockLedgers                   StockLedger[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("admin_purchases")
+}
+
+model AdminPurchaseDetail {
+  id                   Int       @id @default(autoincrement())
+  adminPurchaseId           Int
+  adminPurchase             AdminPurchase  @relation(fields: [adminPurchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
+  productId            Int
+  product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
+  quantity             Int
+  rate                 Decimal   @db.Decimal(11, 2) 
+  batchNumber          String 
+  expiryDate          DateTime 
+  netUnitRate                 Decimal   @db.Decimal(11, 2)
+  cgstPercent         Decimal   @db.Decimal(5, 2)   
+  sgstPercent         Decimal   @db.Decimal(5, 2) 
+  igstPercent         Decimal   @db.Decimal(5, 2)   
+  cgstAmount            Decimal   @db.Decimal(11, 2)  
+  sgstAmount            Decimal   @db.Decimal(11, 2)  
+  igstAmount            Decimal   @db.Decimal(11, 2)  
+  amountWithoutGst     Decimal   @db.Decimal(11, 2)
+  amountWithGst        Decimal   @db.Decimal(11, 2)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("admin_purchase_details")
+}
+
+model StockLedger {
+  id                   Int       @id @default(autoincrement())
+  productId            Int
+  product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
+  adminPurchaseId           Int
+  adminPurchase             AdminPurchase  @relation(fields: [adminPurchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
+  memberId             Int?
+  member               Member?    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  invoiceNumber          String 
+  batchNumber          String 
+  expiryDate          DateTime 
+  received Int       
+  issued Int    
+  module     String   // e.g., "Purchase", "Sale", "Return"     
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@map("stock_ledgers")
+}
+
+
+model Stock {
+  id                   Int       @id @default(autoincrement())
+  memberId             Int?
+  member               Member?    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  productId            Int
+  product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
+  invoiceNumber          String 
+  batchNumber          String 
+  expiryDate          DateTime 
+  closing_quantity     Int
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  
+  @@map("stocks")
 }
 

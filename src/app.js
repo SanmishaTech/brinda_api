@@ -14,6 +14,8 @@ const memberRoutes = require("./routes/member");
 const productRoutes = require("./routes/product");
 const walletTransactionRoutes = require("./routes/walletTransaction");
 const purchaseRoutes = require("./routes/purchase");
+const stockRoutes = require("./routes/stock");
+const adminPurchaseRoutes = require("./routes/adminPurchase");
 const repurchaseRoutes = require("./routes/repurchase");
 const dashboardRoutes = require("./routes/dashboard");
 const commissionRoutes = require("./routes/commission");
@@ -53,12 +55,14 @@ app.use("/api/members", memberRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/wallet-transactions", walletTransactionRoutes); // Ensure this route is defined in walletTransactionRoutes
 app.use("/api/purchases", purchaseRoutes);
+app.use("/api/admin-purchases", adminPurchaseRoutes);
 app.use("/api/repurchases", repurchaseRoutes);
 app.use("/api/dashboards", dashboardRoutes);
 app.use("/api/commissions", commissionRoutes);
 app.use("/api/repurchase-payouts", repurchasePayoutRoutes);
 app.use("/api/reward-payouts", rewardPayoutRoutes);
 app.use("/api/rewards", rewardRoutes);
+app.use("/api/stock", stockRoutes);
 app.use("/api/virtual-power", virtualPowerRoutes); // Ensure this route is defined in virtualPower.js
 app.use(swaggerRouter); // Add this line to include Swagger documentation
 
@@ -67,4 +71,3 @@ app.use((req, res, next) => {
 });
 
 module.exports = app;
-//was here. create reward frontend
