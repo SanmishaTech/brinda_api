@@ -485,4 +485,4 @@ model StockTransferDetail {
 
   @@map("stock_transfer_details")
 }
-
+//remove invoiceNumber frm transfer and Add franchise Stock
