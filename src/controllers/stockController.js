@@ -28,7 +28,7 @@ const getAdminStock = async (req, res) => {
 
   try {
     const whereClause = {
-      invoiceNumber: { contains: search },
+      // invoiceNumber: { contains: search },
       NOT: {
         memberId: null,
       },
@@ -72,7 +72,7 @@ const getFranchiseStock = async (req, res) => {
 
   try {
     const whereClause = {
-      invoiceNumber: { contains: search },
+      // invoiceNumber: { contains: search },
       memberId: req.user.member.memberId,
     };
 
@@ -235,7 +235,6 @@ const addFranchiseStock = async (req, res) => {
             quantity: parseInt(detail.quantity),
             batchNumber: detail.batchNumber,
             expiryDate: parseDate(detail.expiryDate),
-            invoiceNumber: detail.invoiceNumber,
           })),
         },
       },
@@ -245,8 +244,7 @@ const addFranchiseStock = async (req, res) => {
     });
 
     for (const detail of StockTransferDetails) {
-      const { productId, quantity, batchNumber, invoiceNumber, expiryDate } =
-        detail;
+      const { productId, quantity, batchNumber, expiryDate } = detail;
 
       await prisma.stockLedger.create({
         data: {
@@ -254,7 +252,6 @@ const addFranchiseStock = async (req, res) => {
           productId: parseInt(productId),
           batchNumber: batchNumber,
           expiryDate: parseDate(expiryDate),
-          invoiceNumber: invoiceNumber,
           issued: parseInt(quantity),
           received: 0,
           module: "Stock Transferred to Franchise",
@@ -264,13 +261,9 @@ const addFranchiseStock = async (req, res) => {
       await prisma.stockLedger.create({
         data: {
           memberId: parseInt(memberId),
-          // member: {
-          //   connect: { id: parseInt(memberId) }, // ✅ Correct relation usage
-          // },
           productId: parseInt(productId),
           batchNumber: batchNumber,
           expiryDate: parseDate(expiryDate),
-          invoiceNumber: invoiceNumber,
           issued: 0,
           received: parseInt(quantity),
           module: "Stock Received from Admin",

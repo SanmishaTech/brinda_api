@@ -344,6 +344,7 @@ const getProfileStatus = async (req, res, next) => {
     res.json({
       status: req.user.member?.status,
       memberUsername: req.user.member?.memberUsername,
+      isFranchise: req.user.member?.isFranchise,
     });
   } catch (error) {
     next(error);

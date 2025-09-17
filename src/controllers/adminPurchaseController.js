@@ -44,7 +44,7 @@ const getAdminPurchases = async (req, res) => {
 
   try {
     const whereClause = {
-      invoiceNumber: { contains: search },
+      // invoiceNumber: { contains: search },
     };
 
     const adminPurchases = await prisma.adminPurchase.findMany({
@@ -131,7 +131,6 @@ const createAdminPurchase = async (req, res) => {
             memberId: null,
             productId: parseInt(detail.productId),
             batchNumber: detail.batchNumber,
-            invoiceNumber: invoiceNumber,
             expiryDate: parseDate(detail.expiryDate),
             module: `Purchase`,
             received: parseInt(detail.quantity),
@@ -174,7 +173,6 @@ const createAdminPurchase = async (req, res) => {
             memberId: null,
             productId: detail.productId,
             batchNumber: detail.batchNumber,
-            invoiceNumber: invoiceNumber,
             expiryDate: detail.expiryDate,
             closing_quantity: detail.received,
           },
@@ -275,7 +273,6 @@ const updateAdminPurchase = async (req, res) => {
             productId: parseInt(detail.productId),
             batchNumber: detail.batchNumber,
             expiryDate: parseDate(detail.expiryDate),
-            invoiceNumber: invoiceNumber,
             received: parseInt(detail.quantity),
             issued: 0,
             module: `Purchase`,

@@ -134,9 +134,14 @@ model Member {
   rewardIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
   //start
   isFranchise                Boolean  @default(false)
-  // securityDeposit           Decimal   @db.Decimal(11, 2)   @default(0.00)  //first amount
-  // securityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) 
-  // franchiseCommission           Decimal   @db.Decimal(11, 2)   @default(0.00)
+  securityDepositAmount           Decimal   @db.Decimal(11, 2)   @default(0.00)  //first amount
+  securityDepositPending        Decimal  @db.Decimal(11, 2)   @default(0.00)
+  securityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
+  franchiseWalletBalance        Decimal  @db.Decimal(11, 2)   @default(0.00) //contains commissions
+  securityDepositPercentage      Decimal   @db.Decimal(5, 2)    @default(3) //10 percent of purchase
+  franchiseIntroductionAmount      Decimal   @db.Decimal(11, 2)    @default(0) //10 percent of purchase
+  repurchaseBillAmount      Decimal   @db.Decimal(11, 2)    @default(0) //10 percent of purchase
+  totalSecurityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
   // end
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] // Relation to Purchase
@@ -429,7 +434,6 @@ model StockLedger {
   adminPurchase             AdminPurchase?  @relation(fields: [adminPurchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
   memberId             Int?
   member               Member?    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  invoiceNumber          String 
   batchNumber          String 
   expiryDate          DateTime 
   received Int       
@@ -448,7 +452,6 @@ model Stock {
   member               Member?    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
   productId            Int
   product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
-  invoiceNumber          String 
   batchNumber          String 
   expiryDate          DateTime 
   closing_quantity     Int
@@ -479,10 +482,15 @@ model StockTransferDetail {
   quantity             Int
   batchNumber          String 
   expiryDate          DateTime
-  invoiceNumber          String? 
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
   @@map("stock_transfer_details")
 }
 //remove invoiceNumber frm transfer and Add franchise Stock
+// can use same branch multiple times fix it
+// for select and everything use branch.id and not branchNumber. 
+// use branchNumber only for display the select options
+
+// even when batchId is unique react still using the quantity 14 when other batch qty is 0.
+// fix this.
