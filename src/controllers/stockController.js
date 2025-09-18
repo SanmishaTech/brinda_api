@@ -269,6 +269,16 @@ const addFranchiseStock = async (req, res) => {
           module: "Stock Received from Admin",
         },
       });
+
+      await prisma.stock.create({
+        data: {
+          memberId: parseInt(memberId),
+          productId: parseInt(productId),
+          batchNumber: batchNumber,
+          expiryDate: parseDate(expiryDate),
+          closing_quantity: parseInt(quantity),
+        },
+      });
     }
 
     await updateStock();

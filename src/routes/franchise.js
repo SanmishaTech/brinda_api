@@ -5,6 +5,7 @@ const {
   makeFranchise,
   AddSecurityDepositAmount,
   FranchiseDashboard,
+  deliverProductsToCustomer,
 } = require("../controllers/franchiseController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -194,6 +195,74 @@ router.post(
   auth,
   acl("franchise.write"),
   AddSecurityDepositAmount
+);
+
+/**
+ * @swagger
+ * /api/franchise/deliver-products:
+ *   post:
+ *     summary: Deliver products to customer using invoice number
+ *     tags: [Franchise]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - invoiceNumber
+ *             properties:
+ *               invoiceNumber:
+ *                 type: string
+ *                 example: INV123456
+ *     responses:
+ *       201:
+ *         description: Products Delivered Successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Products Delivered Successfully.
+ *       400:
+ *         description: Invalid request (e.g. missing invoice, repurchase not supported, out of stock)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: Invalid Invoice Number.
+ *       500:
+ *         description: Server error during delivery
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                       example: Failed to Deliver Products
+ *                     details:
+ *                       type: string
+ *                       example: Internal Server Error details
+ */
+router.post(
+  "/deliver-products",
+  auth,
+  acl("franchise.write"),
+  deliverProductsToCustomer
 );
 
 module.exports = router;

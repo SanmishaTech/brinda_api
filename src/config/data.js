@@ -46,6 +46,7 @@ const TRANSFERRED = "Transferred";
 const APPROVED = "Approved";
 const REJECTED = "Rejected";
 const PENDING = "Pending";
+const DELIVERED = "Delivered";
 
 const INCREMENT = "Increment";
 const DECREMENT = "Decrement";
@@ -125,6 +126,40 @@ const REWARDS_COMMISSIONS = [
   },
 ];
 
+const SECURITY_DEPOSIT_AMOUNT_RANGE_OPTIONS = [
+  {
+    label: "₹1 - ₹49,999",
+    value: "range1",
+    min: 1.0,
+    max: 49999.0,
+    percentage: 6,
+  },
+  {
+    label: "₹50,000 - ₹99,000",
+    value: "range2",
+    min: 50000.0,
+    max: 99000.0,
+    percentage: 10,
+  },
+  {
+    label: "₹1,00,000 - ₹1,99,999",
+    value: "range3",
+    min: 100000.0,
+    max: 199999.0,
+    percentage: 12,
+  },
+  {
+    label: "₹2,00,000 and above",
+    value: "range4",
+    min: 200000.0,
+    max: null, // no upper limit
+    percentage: 14,
+  },
+];
+
+const PURCHASE_BILL_DELIVERY_PERCENT = 6;
+const REPURCHASE_SDR_PERCENT = 15;
+const REPURCHASE_BILL_TO_SPONSOR_PERCENT = 2;
 module.exports = {
   stateOptions,
   GENDER_MALE,
@@ -166,4 +201,9 @@ module.exports = {
   SELF_PLUS_UPLINE,
   REWARDS_COMMISSIONS,
   FRANCHISE_WALLET,
+  DELIVERED,
+  SECURITY_DEPOSIT_AMOUNT_RANGE_OPTIONS,
+  PURCHASE_BILL_DELIVERY_PERCENT,
+  REPURCHASE_BILL_TO_SPONSOR_PERCENT,
+  REPURCHASE_SDR_PERCENT,
 };

@@ -136,16 +136,20 @@ model Member {
   isFranchise                Boolean  @default(false)
   securityDepositAmount           Decimal   @db.Decimal(11, 2)   @default(0.00)  //first amount
   securityDepositPending        Decimal  @db.Decimal(11, 2)   @default(0.00)
+  franchiseCommission           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
   securityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
   franchiseWalletBalance        Decimal  @db.Decimal(11, 2)   @default(0.00) //contains commissions
   securityDepositPercentage      Decimal   @db.Decimal(5, 2)    @default(3) //10 percent of purchase
   franchiseIntroductionAmount      Decimal   @db.Decimal(11, 2)    @default(0) //10 percent of purchase
   repurchaseBillAmount      Decimal   @db.Decimal(11, 2)    @default(0) //10 percent of purchase
   totalSecurityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
+  franchiseIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
   // end
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
-  purchases        Purchase[] // Relation to Purchase
-  repurchases        Repurchase[] // Relation to Purchase
+  purchases        Purchase[] @relation("PurchaseMember")
+  purchaseDeliveriesMade   Purchase[] @relation("DeliveredByMember")
+  repurchases        Repurchase[] @relation("RepurchaseMember")
+  repurchaseDeliveriesMade   Repurchase[] @relation("RepurchaseDeliveredByMember")
   memberLogs        memberLog[] // Relation to memberLog
   matchingIncomeCommissions        MatchingIncomeCommission[] // Relation to memberLog
   repurchaseIncomeCommissions      RepurchaseIncomeCommission[] // Relation to memberLog
@@ -213,8 +217,8 @@ model WalletTransaction {
 model Purchase {
   id                   Int       @id @default(autoincrement())
   memberId             Int
-  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  invoiceNumber        String?   
+  member               Member    @relation("PurchaseMember",fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  invoiceNumber        String   @unique   
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
   purchaseDate         DateTime  @default(now())
@@ -223,6 +227,10 @@ model Purchase {
   totalGstAmount       Decimal   @db.Decimal(11, 2)
   totalProductPV              Decimal   @db.Decimal(11, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
+status String? @default("Pending")
+  deliveredBy           Int?
+  deliveredByMember       Member?    @relation("DeliveredByMember",fields: [deliveredBy], references: [id],onDelete: Restrict) // Relation to Member
+  deliveredAt             DateTime?
   purchaseDetails      PurchaseDetail[] // Relation to PurchaseDetail
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
@@ -249,6 +257,7 @@ model PurchaseDetail {
   amountWithGst        Decimal   @db.Decimal(11, 2)
   pvPerUnit            Decimal   @db.Decimal(11, 2)
   totalPV              Decimal   @db.Decimal(11, 2)
+  batchDetails          String?   //no comma separated
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -259,8 +268,8 @@ model PurchaseDetail {
 model Repurchase {
   id                   Int       @id @default(autoincrement())
   memberId             Int
-  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  invoiceNumber        String?   
+  member               Member    @relation("RepurchaseMember",fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  invoiceNumber        String   @unique    
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
   repurchaseDate         DateTime  @default(now())
@@ -269,6 +278,10 @@ model Repurchase {
   totalGstAmount       Decimal   @db.Decimal(11, 2)
   totalProductBV              Decimal   @db.Decimal(11, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
+status String? @default("Pending")
+  deliveredBy           Int?
+  deliveredByMember       Member?    @relation("RepurchaseDeliveredByMember",fields: [deliveredBy], references: [id],onDelete: Restrict) // Relation to Member
+  deliveredAt             DateTime?
   repurchaseDetails      RepurchaseDetail[] // Relation to PurchaseDetail
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
@@ -295,6 +308,7 @@ model RepurchaseDetail {
   amountWithGst        Decimal   @db.Decimal(11, 2)
   bvPerUnit            Decimal   @db.Decimal(11, 2)
   totalBV              Decimal   @db.Decimal(11, 2)
+  batchDetails          String?   //no comma separated
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -487,10 +501,4 @@ model StockTransferDetail {
 
   @@map("stock_transfer_details")
 }
-//remove invoiceNumber frm transfer and Add franchise Stock
-// can use same branch multiple times fix it
-// for select and everything use branch.id and not branchNumber. 
-// use branchNumber only for display the select options
 
-// even when batchId is unique react still using the quantity 14 when other batch qty is 0.
-// fix this.

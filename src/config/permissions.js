@@ -55,5 +55,5 @@ module.exports = {
   "stock.write": ["admin"],
   //franchise
   "franchise.read": ["admin", "member"],
-  "franchise.write": ["admin"],
+  "franchise.write": ["admin", "member"],
 };

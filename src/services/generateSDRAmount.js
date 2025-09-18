@@ -11,6 +11,7 @@ const {
   FRANCHISE_WALLET,
   DEBIT,
 } = require("../config/data");
+const logger = require("../utils/logger");
 
 const BATCH_SIZE = 300;
 
@@ -25,6 +26,7 @@ const generateSDRAmount = async () => {
         securityDepositReturn: true,
         franchiseWalletBalance: true,
         securityDepositPercentage: true,
+        totalSecurityDepositReturn: true,
       },
       where: {
         isFranchise: true,
@@ -35,11 +37,13 @@ const generateSDRAmount = async () => {
     });
 
     if (members.length === 0) {
-      console.log("No eligible members.");
+      logger.info("No eligible members.");
       return;
     }
 
-    for (member of members) {
+    logger.info(`Found ${members.length} eligible members.`);
+
+    for (const member of members) {
       const amount = parseFloat(member.securityDepositAmount);
       const percentage = parseFloat(member.securityDepositPercentage);
 
@@ -70,7 +74,7 @@ const generateSDRAmount = async () => {
               walletType: FRANCHISE_WALLET,
               status: APPROVED,
               type: DEBIT, // FIXED: Was "DEBIT" — this is income to the influencer
-              notes: `${member.securityDepositPercentage} monthly Security Deposit Return`,
+              notes: `Monthly Security Deposit Return`,
               transactionDate: new Date(),
             },
           },
@@ -85,11 +89,10 @@ const generateSDRAmount = async () => {
             parseFloat(updatedMember.totalSecurityDepositReturn),
         },
       });
-
-      // was here. test tommarwrow
     }
+    logger.info(`\n✅ Finished processing SDR ${members.length} members.`);
   } catch (error) {
-    console.error("Error in generateSDRAmount:", error);
+    logger.error("Error in generateSDRAmount:", error);
   }
 };
 

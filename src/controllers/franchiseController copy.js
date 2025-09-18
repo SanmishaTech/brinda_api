@@ -22,12 +22,8 @@ const {
   DELIVERED,
   SECURITY_DEPOSIT_AMOUNT_RANGE_OPTIONS,
   PURCHASE_BILL_DELIVERY_PERCENT,
-  REPURCHASE_BILL_TO_SPONSOR_PERCENT,
-  REPURCHASE_SDR_PERCENT,
 } = require("../config/data");
 const parseDate = require("../utils/parseDate");
-const checkStockAvailability = require("../utils/checkStockAvailability");
-const processDeliveryAndLedger = require("../utils/processDeliveryAndLedger");
 
 /**
  * Get all members without pagination
@@ -209,191 +205,273 @@ const deliverProductsToCustomer = async (req, res) => {
   const { invoiceNumber } = req.body;
   const memberId = req?.user?.member?.id;
 
-  if (!invoiceNumber) {
-    return res.status(400).json({
-      errors: { message: "Invoice number is required." },
-    });
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
   try {
-    const isRepurchase = invoiceNumber.startsWith("R");
-    const model = isRepurchase ? prisma.repurchase : prisma.purchase;
-    const detailField = isRepurchase ? "repurchaseDetails" : "purchaseDetails";
-    const deliveredField = isRepurchase ? "deliveredBy" : "deliveredBy";
-    const statusField = "status";
-    const deliveredAtField = "deliveredAt";
+    if (!invoiceNumber) {
+      return res.status(400).json({
+        errors: { message: "Invoice number is required." },
+      });
+    }
 
-    const record = await model.findUnique({
-      where: { invoiceNumber },
-      include: {
-        [detailField]: {
-          include: { product: true },
+    if (invoiceNumber.startsWith("R")) {
+      const repurchase = await prisma.repurchase.findUnique({
+        where: { invoiceNumber },
+        include: {
+          repurchaseDetails: {
+            include: { product: true },
+          },
         },
-      },
-    });
-
-    if (!record) {
-      return res.status(400).json({
-        errors: { message: "Invalid Invoice Number." },
       });
-    }
 
-    if (record.status === DELIVERED) {
-      return res.status(400).json({
-        errors: { message: "Products are already Delivered." },
-      });
-    }
+      if (!repurchase) {
+        return res.status(400).json({
+          errors: { message: "Invalid Invoice Number." },
+        });
+      }
 
-    // Step 1: Check Stock
+      if (repurchase.status === DELIVERED) {
+        return res.status(400).json({
+          errors: { message: "Products are already Delivered." },
+        });
+      }
 
-    await checkStockAvailability(record[detailField], memberId, today, res);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    // Step 2: Process Stock Deduction and Ledger
-    await processDeliveryAndLedger(
-      record[detailField],
-      memberId,
-      today,
-      isRepurchase
-    );
-
-    // Step 3: Update main model as Delivered
-    await model.update({
-      where: { id: record.id },
-      data: {
-        status: DELIVERED,
-        deliveredAt: new Date(),
-        deliveredBy: memberId,
-      },
-    });
-
-    await updateStock();
-
-    // Step 4: Commission logic (only for Purchase)
-    if (isRepurchase) {
-      // commission
-      // 1. Get member details (to access securityDepositAmount)
-      const member = req.user.member;
-
-      const depositAmount = parseFloat(member.securityDepositAmount); // Ensure float
-
-      // 2. Find matching range
-      const matchedRange = SECURITY_DEPOSIT_AMOUNT_RANGE_OPTIONS.find(
-        (range) => {
-          const min = parseFloat(range.min);
-          const max = range.max ? parseFloat(range.max) : Infinity;
-          return depositAmount >= min && depositAmount <= max;
-        }
-      );
-
-      // 3. If matched range and repurchase.totalAmountWithGst available
-      if (matchedRange && parseFloat(record.totalAmountWithGst)) {
-        const repurchaseAmount = new Prisma.Decimal(record.totalAmountWithGst);
-        const commissionPercent = matchedRange.percentage;
-
-        const commissionToGive = repurchaseAmount
-          .mul(commissionPercent)
-          .div(100);
-
-        const updatedMember = await prisma.member.update({
-          where: { id: memberId },
-          data: {
-            franchiseCommission: { increment: commissionToGive },
-            franchiseWalletBalance: { increment: commissionToGive },
-            walletTransactions: {
-              create: {
-                amount: commissionToGive,
-                walletType: FRANCHISE_WALLET,
-                status: APPROVED,
-                type: DEBIT, // DEBIT because it's incoming money
-                notes: `Repurchase Commission (${commissionPercent}%) for Invoice ${record.invoiceNumber}`,
-                transactionDate: new Date(),
-              },
+      // ✅ Check stock availability
+      for (const item of repurchase.repurchaseDetails) {
+        const totalAvailableStock = await prisma.stock.aggregate({
+          _sum: {
+            closing_quantity: true,
+          },
+          where: {
+            memberId,
+            productId: item.productId,
+            expiryDate: {
+              gt: today,
+            },
+            closing_quantity: {
+              gt: 0,
             },
           },
         });
-      }
-      // SDR 15%
-      const purchaseAmount = parseFloat(record.totalAmountWithGst);
 
-      let commissionToGive = parseFloat(
-        (parseFloat(purchaseAmount) * parseFloat(REPURCHASE_SDR_PERCENT)) / 100
-      );
-      let updatedMember = await prisma.member.findUnique({
-        where: { id: memberId },
-      });
+        const availableQty = totalAvailableStock._sum.closing_quantity || 0;
 
-      if (
-        parseFloat(commissionToGive) >
-        parseFloat(updatedMember.securityDepositPending)
-      ) {
-        commissionToGive = parseFloat(updatedMember.securityDepositPending);
+        if (availableQty < item.quantity) {
+          return res.status(400).json({
+            errors: {
+              message: `Insufficient stock for product ${item.product.productName}. Required: ${item.quantity}, Available: ${availableQty}`,
+            },
+          });
+        }
       }
 
-      updatedMember = await prisma.member.update({
-        where: { id: updatedMember.id },
-        data: {
-          franchiseWalletBalance: {
-            increment: parseFloat(commissionToGive),
-          },
-          securityDepositReturn: {
-            increment: parseFloat(commissionToGive),
-          },
-          totalSecurityDepositReturn: {
-            increment: parseFloat(commissionToGive),
-          },
-          walletTransactions: {
-            create: {
-              amount: new Prisma.Decimal(commissionToGive),
-              walletType: FRANCHISE_WALLET,
-              status: APPROVED,
-              type: DEBIT, // FIXED: Was "DEBIT" — this is income to the influencer
-              notes: `${REPURCHASE_SDR_PERCENT}% Security Deposit Return from Repurchase Invoice ${record.invoiceNumber}`,
-              transactionDate: new Date(),
+      // ✅ Delivery: update stock, record batch details
+      for (const item of repurchase.repurchaseDetails) {
+        let requiredQty = item.quantity;
+        let batchLog = [];
+
+        // Get non-expired stocks ordered by earliest expiry
+        const stockBatches = await prisma.stock.findMany({
+          where: {
+            memberId,
+            productId: item.productId,
+            expiryDate: {
+              gt: today,
+            },
+            closing_quantity: {
+              gt: 0,
             },
           },
-        },
-      });
-
-      const againUpdatedMember = await prisma.member.update({
-        where: { id: member.id },
-        data: {
-          securityDepositPending:
-            parseFloat(updatedMember.securityDepositAmount) -
-            parseFloat(updatedMember.totalSecurityDepositReturn),
-        },
-      });
-
-      // 2% to sponsor
-      const sponsorCommission = parseFloat(
-        (parseFloat(purchaseAmount) * REPURCHASE_BILL_TO_SPONSOR_PERCENT) / 100
-      );
-
-      await prisma.member.update({
-        where: { id: updatedMember.sponsorId },
-        data: {
-          repurchaseBillAmount: { increment: sponsorCommission },
-          franchiseWalletBalance: { increment: sponsorCommission },
-          walletTransactions: {
-            create: {
-              amount: new Prisma.Decimal(sponsorCommission),
-              walletType: FRANCHISE_WALLET,
-              status: APPROVED,
-              type: DEBIT,
-              notes: `${REPURCHASE_BILL_TO_SPONSOR_PERCENT}% sponsor commission for repurchase invoice ${record.invoiceNumber}`,
-              transactionDate: new Date(),
-            },
+          orderBy: {
+            expiryDate: "asc",
           },
+        });
+
+        for (const stock of stockBatches) {
+          if (requiredQty <= 0) break;
+
+          const deductQty = Math.min(requiredQty, stock.closing_quantity);
+
+          // Create StockLedger entry
+          await prisma.stockLedger.create({
+            data: {
+              productId: stock.productId,
+              memberId: memberId,
+              batchNumber: stock.batchNumber,
+              expiryDate: stock.expiryDate,
+              received: 0,
+              issued: deductQty,
+              module: "Product Delivery", // 🔥 Module name
+            },
+          });
+
+          // Log the batch info
+          batchLog.push({
+            batchNumber: stock.batchNumber,
+            expiryDate: stock.expiryDate,
+            quantityUsed: deductQty,
+          });
+
+          requiredQty -= deductQty;
+        }
+
+        // Update batchDetails field (as JSON)
+        await prisma.repurchaseDetail.update({
+          where: { id: item.id },
+          data: {
+            batchDetails: JSON.stringify(batchLog),
+          },
+        });
+      }
+
+      // ✅ Update Purchase as Delivered
+      const updatedRepurchase = await prisma.repurchase.update({
+        where: { id: repurchase.id },
+        data: {
+          status: DELIVERED,
+          deliveredAt: new Date(),
+          deliveredBy: memberId,
         },
       });
+
+      await updateStock();
+
+      //  repurchase commission start.
     } else {
-      const purchaseAmount = new Prisma.Decimal(record.totalAmountWithGst);
+      const purchase = await prisma.purchase.findUnique({
+        where: { invoiceNumber },
+        include: {
+          purchaseDetails: {
+            include: { product: true },
+          },
+        },
+      });
+
+      if (!purchase) {
+        return res.status(400).json({
+          errors: { message: "Invalid Invoice Number." },
+        });
+      }
+
+      if (purchase.status === DELIVERED) {
+        return res.status(400).json({
+          errors: { message: "Products are already Delivered." },
+        });
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // ✅ Check stock availability
+      for (const item of purchase.purchaseDetails) {
+        const totalAvailableStock = await prisma.stock.aggregate({
+          _sum: {
+            closing_quantity: true,
+          },
+          where: {
+            memberId,
+            productId: item.productId,
+            expiryDate: {
+              gt: today,
+            },
+            closing_quantity: {
+              gt: 0,
+            },
+          },
+        });
+
+        const availableQty = totalAvailableStock._sum.closing_quantity || 0;
+
+        if (availableQty < item.quantity) {
+          return res.status(400).json({
+            errors: {
+              message: `Insufficient stock for product ${item.product.productName}. Required: ${item.quantity}, Available: ${availableQty}`,
+            },
+          });
+        }
+      }
+
+      // ✅ Delivery: update stock, record batch details
+      for (const item of purchase.purchaseDetails) {
+        let requiredQty = item.quantity;
+        let batchLog = [];
+
+        // Get non-expired stocks ordered by earliest expiry
+        const stockBatches = await prisma.stock.findMany({
+          where: {
+            memberId,
+            productId: item.productId,
+            expiryDate: {
+              gt: today,
+            },
+            closing_quantity: {
+              gt: 0,
+            },
+          },
+          orderBy: {
+            expiryDate: "asc",
+          },
+        });
+
+        for (const stock of stockBatches) {
+          if (requiredQty <= 0) break;
+
+          const deductQty = Math.min(requiredQty, stock.closing_quantity);
+
+          // Create StockLedger entry
+          await prisma.stockLedger.create({
+            data: {
+              productId: stock.productId,
+              memberId: memberId,
+              batchNumber: stock.batchNumber,
+              expiryDate: stock.expiryDate,
+              received: 0,
+              issued: deductQty,
+              module: "Product Delivery", // 🔥 Module name
+            },
+          });
+
+          // Log the batch info
+          batchLog.push({
+            batchNumber: stock.batchNumber,
+            expiryDate: stock.expiryDate,
+            quantityUsed: deductQty,
+          });
+
+          requiredQty -= deductQty;
+        }
+
+        // Update batchDetails field (as JSON)
+        await prisma.purchaseDetail.update({
+          where: { id: item.id },
+          data: {
+            batchDetails: JSON.stringify(batchLog),
+          },
+        });
+      }
+
+      // ✅ Update Purchase as Delivered
+      const updatedPurchase = await prisma.purchase.update({
+        where: { id: purchase.id },
+        data: {
+          status: DELIVERED,
+          deliveredAt: new Date(),
+          deliveredBy: memberId,
+        },
+      });
+
+      await updateStock();
+
+      // commission start.
+
+      const purchaseAmount = new Prisma.Decimal(
+        updatedPurchase.totalAmountWithGst
+      );
       const commissionToGive =
         purchaseAmount * (PURCHASE_BILL_DELIVERY_PERCENT / 100);
 
-      await prisma.member.update({
+      const updatedMember = await prisma.member.update({
         where: { id: memberId },
         data: {
           franchiseCommission: { increment: commissionToGive },
@@ -403,8 +481,8 @@ const deliverProductsToCustomer = async (req, res) => {
               amount: new Prisma.Decimal(commissionToGive),
               walletType: FRANCHISE_WALLET,
               status: APPROVED,
-              type: DEBIT,
-              notes: `Franchise Commission For Invoice ${record.invoiceNumber}`,
+              type: DEBIT, // FIXED: Was "DEBIT" — this is income to the influencer
+              notes: `Franchise Commission For Invoice ${updatedPurchase.invoiceNumber}`,
               transactionDate: new Date(),
             },
           },
@@ -416,6 +494,7 @@ const deliverProductsToCustomer = async (req, res) => {
       message: "Products Delivered Successfully.",
     });
   } catch (error) {
+    console.error("Error delivering products:", error);
     return res.status(500).json({
       errors: {
         message: "Failed to Deliver Products",
