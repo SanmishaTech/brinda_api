@@ -184,6 +184,20 @@ const AddSecurityDepositAmount = async (req, res) => {
 const FranchiseDashboard = async (req, res) => {
   const member = req.user.member;
 
+  const purchases = await prisma.purchase.findMany({
+    where: { status: DELIVERED, deliveredBy: member.id },
+    include: {
+      member: true,
+    },
+  });
+
+  const repurchases = await prisma.repurchase.findMany({
+    where: { status: DELIVERED, deliveredBy: member.id },
+    include: {
+      member: true,
+    },
+  });
+
   try {
     return res.status(200).json({
       securityDepositAmount: member.securityDepositAmount,
@@ -196,6 +210,8 @@ const FranchiseDashboard = async (req, res) => {
       franchiseIntroductionAmount: member.franchiseIntroductionAmount,
       repurchaseBillAmount: member.repurchaseBillAmount,
       totalSecurityDepositReturn: member.totalSecurityDepositReturn,
+      purchases: purchases,
+      repurchases: repurchases,
     });
   } catch (error) {
     console.error(error); // Always log the full error for debugging

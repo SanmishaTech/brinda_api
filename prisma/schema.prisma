@@ -153,6 +153,7 @@ model Member {
   memberLogs        memberLog[] // Relation to memberLog
   matchingIncomeCommissions        MatchingIncomeCommission[] // Relation to memberLog
   repurchaseIncomeCommissions      RepurchaseIncomeCommission[] // Relation to memberLog
+  franchiseIncomeCommissions      FranchiseIncomeCommission[] 
   virtualPowers      VirtualPower[] 
   rewardCommissions      RewardCommission[] // Relation to memberLog
   Stocks                      Stock[]
@@ -205,11 +206,11 @@ model WalletTransaction {
   updatedAt          DateTime          @updatedAt
   matchingIncomeCommission       MatchingIncomeCommission?
   repurchaseIncomeCommission     RepurchaseIncomeCommission?
+  franchiseIncomeCommission     FranchiseIncomeCommission?
   rewardCommission     RewardCommission?
 
   @@index([processedByAdminId])   
   @@index([memberId])     
-
   @@map("wallet_transactions")
 }
 
@@ -502,3 +503,24 @@ model StockTransferDetail {
   @@map("stock_transfer_details")
 }
 
+model FranchiseIncomeCommission {
+  id                         Int      @id @default(autoincrement())
+  memberId                   Int
+  walletTransactionId        Int?  @unique 
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  walletTransaction    WalletTransaction?    @relation(fields: [walletTransactionId], references: [id],onDelete: Restrict) 
+  franchiseCommission   Decimal  @db.Decimal(11, 2)  @default(0.00)
+  securityDepositReturn   Decimal  @db.Decimal(11, 2)  @default(0.00)
+  franchiseIntroductionAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  repurchaseBillAmountToSponsor   Decimal  @db.Decimal(11, 2) @default(0.00)
+  TDSPercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  TDSAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  platformChargePercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  platformChargeAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountBeforeDeduction  Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountToGive  Decimal  @db.Decimal(11, 2) @default(0.00)
+  isPaid                     Boolean  @default(false)
+  paidAt                     DateTime?
+  createdAt                  DateTime @default(now())
+  @@map("franchise_income_commissions")
+}

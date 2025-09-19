@@ -380,6 +380,7 @@ const DownloadRepurchaseInvoice = async (req, res, next) => {
     const repurchase = await prisma.repurchase.findUnique({
       where: { id: parseInt(repurchaseId, 10) },
       select: {
+        deliveredBy: true,
         member: {
           select: {
             id: true,
@@ -388,13 +389,25 @@ const DownloadRepurchaseInvoice = async (req, res, next) => {
       },
     });
 
-    if (!repurchase || req.user.member.id !== repurchase.member.id) {
+    if (
+      !repurchase ||
+      (req.user.member.id !== repurchase.member.id &&
+        req.user.member.id !== repurchase.deliveredBy)
+    ) {
       return res.status(403).json({
         errors: {
           message: "You do not have permission to access this invoice",
         },
       });
     }
+
+    // if (!repurchase || req.user.member.id !== repurchase.member.id) {
+    //   return res.status(403).json({
+    //     errors: {
+    //       message: "You do not have permission to access this invoice",
+    //     },
+    //   });
+    // }
 
     // Check if file exists
     try {

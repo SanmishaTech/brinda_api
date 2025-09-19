@@ -189,7 +189,7 @@ const createPurchase = async (req, res) => {
     });
 
     purchaseTask({
-      type: 'purchase',
+      type: "purchase",
       user: req.user,
       totalAmountWithoutGst,
       totalAmountWithGst,
@@ -394,6 +394,7 @@ const DownloadPurchaseInvoice = async (req, res, next) => {
     const purchase = await prisma.purchase.findUnique({
       where: { id: parseInt(purchaseId, 10) },
       select: {
+        deliveredBy: true,
         member: {
           select: {
             id: true,
@@ -402,7 +403,11 @@ const DownloadPurchaseInvoice = async (req, res, next) => {
       },
     });
 
-    if (!purchase || req.user.member.id !== purchase.member.id) {
+    if (
+      !purchase ||
+      (req.user.member.id !== purchase.member.id &&
+        req.user.member.id !== purchase.deliveredBy)
+    ) {
       return res.status(403).json({
         errors: {
           message: "You do not have permission to access this invoice",

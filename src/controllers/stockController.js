@@ -29,13 +29,11 @@ const getAdminStock = async (req, res) => {
   try {
     const whereClause = {
       // invoiceNumber: { contains: search },
-      NOT: {
-        memberId: null,
-      },
     };
 
     const adminStocks = await prisma.stock.findMany({
       where: whereClause,
+      include: { product: true, member: true },
       skip,
       take: limit,
       orderBy: { [sortBy]: sortOrder },
@@ -44,6 +42,7 @@ const getAdminStock = async (req, res) => {
     const totalAdminStock = await prisma.stock.count({
       where: whereClause,
     });
+
     const totalPages = Math.ceil(totalAdminStock / limit);
 
     res.json({
@@ -73,26 +72,29 @@ const getFranchiseStock = async (req, res) => {
   try {
     const whereClause = {
       // invoiceNumber: { contains: search },
-      memberId: req.user.member.memberId,
+      memberId: req.user.member.id,
     };
 
-    const adminStocks = await prisma.stock.findMany({
+    const franchiseStocks = await prisma.stock.findMany({
       where: whereClause,
+      include: {
+        product: true,
+      },
       skip,
       take: limit,
       orderBy: { [sortBy]: sortOrder },
     });
 
-    const totalAdminStock = await prisma.stock.count({
+    const totalFranchiseStock = await prisma.stock.count({
       where: whereClause,
     });
-    const totalPages = Math.ceil(totalAdminStock / limit);
+    const totalPages = Math.ceil(totalFranchiseStock / limit);
 
     res.json({
-      adminStocks,
+      franchiseStocks,
       page,
       totalPages,
-      totalAdminStock,
+      totalFranchiseStock,
     });
   } catch (error) {
     return res.status(500).json({
