@@ -271,16 +271,37 @@ const addFranchiseStock = async (req, res) => {
           module: "Stock Received from Admin",
         },
       });
-
-      await prisma.stock.create({
-        data: {
+      //  issue
+      // await prisma.stock.create({
+      //   data: {
+      //     memberId: parseInt(memberId),
+      //     productId: parseInt(productId),
+      //     batchNumber: batchNumber,
+      //     expiryDate: parseDate(expiryDate),
+      //     closing_quantity: parseInt(quantity),
+      //   },
+      // });
+      // issue
+      const existingStock = await prisma.stock.findFirst({
+        where: {
           memberId: parseInt(memberId),
           productId: parseInt(productId),
           batchNumber: batchNumber,
           expiryDate: parseDate(expiryDate),
-          closing_quantity: parseInt(quantity),
         },
       });
+
+      if (!existingStock) {
+        await prisma.stock.create({
+          data: {
+            memberId: parseInt(memberId),
+            productId: parseInt(productId),
+            batchNumber: batchNumber,
+            expiryDate: parseDate(expiryDate),
+            closing_quantity: parseInt(quantity),
+          },
+        });
+      }
     }
 
     await updateStock();
