@@ -1,5 +1,5 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const {
   INACTIVE,
   MINIMUM_MATCHING_COMMISSION_LIMIT,

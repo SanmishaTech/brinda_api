@@ -1,6 +1,6 @@
 // background/updatePVWorker.js
 const { PrismaClient, Prisma } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../src/config/db");
 const { updatePVBalance } = require("../src/utils/updatePVBalance");
 const {
   CREDIT,

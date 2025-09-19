@@ -6,7 +6,7 @@ const {
 const logger = require("./logger");
 const { APPROVED, DEBIT, HOLD_WALLET } = require("../config/data");
 
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 const isMentorEligibleByLevel = async (memberId, level) => {
   logger.info(

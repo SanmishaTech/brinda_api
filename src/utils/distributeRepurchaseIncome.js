@@ -8,7 +8,7 @@ const {
 } = require("../config/data");
 const logger = require("./logger");
 
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 const hasMinDirectReferrals = async (memberId, minCount = 3) => {
   const count = await prisma.member.count({

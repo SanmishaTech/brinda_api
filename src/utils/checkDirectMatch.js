@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const { LEFT, RIGHT, TOP } = require("../config/data");
 
 const checkDirectMatch = async (member) => {

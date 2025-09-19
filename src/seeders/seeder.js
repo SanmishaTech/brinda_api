@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const { TOP, DIAMOND, INACTIVE } = require("../config/data");
 const { MEMBER, ADMIN } = require("../config/roles");
 require("dotenv").config();
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 async function seed() {
   try {

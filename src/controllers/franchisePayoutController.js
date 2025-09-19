@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const { APPROVED } = require("../config/data");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 /**
  * Get all members with pagination, sorting, and search

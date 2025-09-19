@@ -1,5 +1,5 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const { updateCount } = require("./updateCount");
 const {
   INCREMENT,

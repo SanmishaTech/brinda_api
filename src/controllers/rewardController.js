@@ -1,5 +1,5 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const { z } = require("zod");
 const { REWARDS_COMMISSIONS, APPROVED } = require("../config/data");
 // Get all products with pagination, sorting, and search

@@ -1,5 +1,5 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const {
   TDS_PERCENT,
   PLATFORM_CHARGE_PERCENT,

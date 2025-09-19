@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const dayjs = require("dayjs");
 const { z } = require("zod");
 const validateRequest = require("../utils/validateRequest");

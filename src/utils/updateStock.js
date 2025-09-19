@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const logger = require("./logger");
 const updateStock = async () => {
   const stockLedgersData = await prisma.stockLedger.findMany();
@@ -18,9 +18,9 @@ const updateStock = async () => {
         expiryDate: expiryDate, // Ensure this is a Date object
       },
     });
-    for (const data of stockLedgers) {
-      logger.info(`id = ${data.id}`);
-    }
+    // for (const data of stockLedgers) {
+    //   logger.info(`id = ${data.id}`);
+    // }
 
     // Sum received and issued
     const totalReceived = stockLedgers.reduce(
@@ -33,9 +33,9 @@ const updateStock = async () => {
     );
 
     const netStock = totalReceived - totalIssued;
-    logger.info(
-      `totalReceived = ${totalReceived}. totalIssued = ${totalIssued}. netStock = ${netStock}`
-    );
+    // logger.info(
+    //   `totalReceived = ${totalReceived}. totalIssued = ${totalIssued}. netStock = ${netStock}`
+    // );
     const existingStock = await prisma.stock.findFirst({
       where: {
         memberId: memberId,

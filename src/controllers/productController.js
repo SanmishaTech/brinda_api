@@ -1,6 +1,6 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
 const validateRequest = require("../utils/validateRequest");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const { z } = require("zod");
 // Get all products with pagination, sorting, and search
 const getProducts = async (req, res, next) => {

@@ -1,13 +1,13 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
-const prisma = new PrismaClient();
-const { z } = require('zod');
-const validateRequest = require('./validateRequest');
-const createError = require('http-errors');
-const dayjs = require('dayjs');
-const utc = require('dayjs/plugin/utc');
+const { PrismaClient, Prisma } = require("@prisma/client");
+const prisma = require("../config/db");
+const { z } = require("zod");
+const validateRequest = require("./validateRequest");
+const createError = require("http-errors");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
-const logger = require('./logger'); // Assuming you have a logger utility
-const today = dayjs().utc().startOf('day').toDate();
+const logger = require("./logger"); // Assuming you have a logger utility
+const today = dayjs().utc().startOf("day").toDate();
 const {
   CREDIT,
   APPROVED,
@@ -28,7 +28,7 @@ const {
   MATCHING_INCOME_WALLET,
   TOP,
   INACTIVE,
-} = require('../config/data');
+} = require("../config/data");
 
 const addVirtualPower = async (data) => {
   const { memberId, statusType, powerPosition, powerCount, powerType } = data;
@@ -56,81 +56,81 @@ const addVirtualPower = async (data) => {
 
     if (statusType === ASSOCIATE && currentPosition === LEFT) {
       // logger.info("Matched ASSOCIATE / LEFT");
-      columnName = 'leftAssociateBalance';
-      oppositeColumnName = 'rightAssociateBalance';
-      totalStatusBalance = 'totalLeftAssociateBalance';
-      commissionCount = 'associateCommissionCount';
-      commissionDate = 'associateCommissionDate';
+      columnName = "leftAssociateBalance";
+      oppositeColumnName = "rightAssociateBalance";
+      totalStatusBalance = "totalLeftAssociateBalance";
+      commissionCount = "associateCommissionCount";
+      commissionDate = "associateCommissionDate";
       commissionAmount = ASSOCIATE_COMMISSION;
-      totalStatusMatched = 'totalAssociateMatched';
+      totalStatusMatched = "totalAssociateMatched";
     } else if (statusType === ASSOCIATE && currentPosition === RIGHT) {
       // logger.info("Matched ASSOCIATE / RIGHT");
-      columnName = 'rightAssociateBalance';
-      oppositeColumnName = 'leftAssociateBalance';
-      totalStatusBalance = 'totalRightAssociateBalance';
-      commissionCount = 'associateCommissionCount';
-      commissionDate = 'associateCommissionDate';
+      columnName = "rightAssociateBalance";
+      oppositeColumnName = "leftAssociateBalance";
+      totalStatusBalance = "totalRightAssociateBalance";
+      commissionCount = "associateCommissionCount";
+      commissionDate = "associateCommissionDate";
       commissionAmount = ASSOCIATE_COMMISSION;
-      totalStatusMatched = 'totalAssociateMatched';
+      totalStatusMatched = "totalAssociateMatched";
     } else if (statusType === SILVER && currentPosition === LEFT) {
       // logger.info("Matched SILVER / LEFT");
-      columnName = 'leftSilverBalance';
-      oppositeColumnName = 'rightSilverBalance';
-      totalStatusBalance = 'totalLeftSilverBalance';
-      commissionCount = 'silverCommissionCount';
-      commissionDate = 'silverCommissionDate';
+      columnName = "leftSilverBalance";
+      oppositeColumnName = "rightSilverBalance";
+      totalStatusBalance = "totalLeftSilverBalance";
+      commissionCount = "silverCommissionCount";
+      commissionDate = "silverCommissionDate";
       commissionAmount = SILVER_COMMISSION;
-      totalStatusMatched = 'totalSilverMatched';
+      totalStatusMatched = "totalSilverMatched";
     } else if (statusType === SILVER && currentPosition === RIGHT) {
       // logger.info("Matched SILVER / RIGHT");
-      columnName = 'rightSilverBalance';
-      oppositeColumnName = 'leftSilverBalance';
-      totalStatusBalance = 'totalRightSilverBalance';
-      commissionCount = 'silverCommissionCount';
-      commissionDate = 'silverCommissionDate';
+      columnName = "rightSilverBalance";
+      oppositeColumnName = "leftSilverBalance";
+      totalStatusBalance = "totalRightSilverBalance";
+      commissionCount = "silverCommissionCount";
+      commissionDate = "silverCommissionDate";
       commissionAmount = SILVER_COMMISSION;
-      totalStatusMatched = 'totalSilverMatched';
+      totalStatusMatched = "totalSilverMatched";
     } else if (statusType === GOLD && currentPosition === LEFT) {
       // logger.info("Matched GOLD / LEFT");
-      columnName = 'leftGoldBalance';
-      oppositeColumnName = 'rightGoldBalance';
-      totalStatusBalance = 'totalLeftGoldBalance';
-      commissionCount = 'goldCommissionCount';
-      commissionDate = 'silverCommissionDate';
+      columnName = "leftGoldBalance";
+      oppositeColumnName = "rightGoldBalance";
+      totalStatusBalance = "totalLeftGoldBalance";
+      commissionCount = "goldCommissionCount";
+      commissionDate = "silverCommissionDate";
       commissionAmount = GOLD_COMMISSION;
-      totalStatusMatched = 'totalGoldMatched';
+      totalStatusMatched = "totalGoldMatched";
     } else if (statusType === GOLD && currentPosition === RIGHT) {
       // logger.info("Matched GOLD / RIGHT");
-      columnName = 'rightGoldBalance';
-      oppositeColumnName = 'leftGoldBalance';
-      totalStatusBalance = 'totalRightGoldBalance';
-      commissionCount = 'goldCommissionCount';
-      commissionDate = 'goldCommissionDate';
+      columnName = "rightGoldBalance";
+      oppositeColumnName = "leftGoldBalance";
+      totalStatusBalance = "totalRightGoldBalance";
+      commissionCount = "goldCommissionCount";
+      commissionDate = "goldCommissionDate";
       commissionAmount = GOLD_COMMISSION;
-      totalStatusMatched = 'totalGoldMatched';
+      totalStatusMatched = "totalGoldMatched";
     } else if (statusType === DIAMOND && currentPosition === LEFT) {
       // logger.info("Matched DIAMOND / LEFT");
-      columnName = 'leftDiamondBalance';
-      oppositeColumnName = 'rightDiamondBalance';
-      totalStatusBalance = 'totalLeftDiamondBalance';
-      commissionCount = 'diamondCommissionCount';
-      commissionDate = 'diamondCommissionDate';
+      columnName = "leftDiamondBalance";
+      oppositeColumnName = "rightDiamondBalance";
+      totalStatusBalance = "totalLeftDiamondBalance";
+      commissionCount = "diamondCommissionCount";
+      commissionDate = "diamondCommissionDate";
       commissionAmount = DIAMOND_COMMISSION;
-      totalStatusMatched = 'totalDiamondMatched';
+      totalStatusMatched = "totalDiamondMatched";
     } else if (statusType === DIAMOND && currentPosition === RIGHT) {
       // logger.info("Matched DIAMOND / RIGHT");
-      columnName = 'rightDiamondBalance';
-      oppositeColumnName = 'leftDiamondBalance';
-      totalStatusBalance = 'totalRightDiamondBalance';
-      commissionCount = 'diamondCommissionCount';
-      commissionDate = 'diamondCommissionDate';
+      columnName = "rightDiamondBalance";
+      oppositeColumnName = "leftDiamondBalance";
+      totalStatusBalance = "totalRightDiamondBalance";
+      commissionCount = "diamondCommissionCount";
+      commissionDate = "diamondCommissionDate";
       commissionAmount = DIAMOND_COMMISSION;
-      totalStatusMatched = 'totalDiamondMatched';
+      totalStatusMatched = "totalDiamondMatched";
     } else {
       // logger.info("Invalid statusType or powerPosition");
       return res
         .status(400)
-        .json({ errors: { message: 'Invalid statusType or powerPosition' } });
+        .json({ errors: { message: "Invalid statusType or powerPosition" } });
     }
 
     // logger.info(`Incrementing power on column: ${columnName}`);
@@ -216,7 +216,7 @@ const addVirtualPower = async (data) => {
 
       const isSameCommissionDay =
         member[commissionDate] &&
-        dayjs(member[commissionDate]).utc().isSame(today, 'day');
+        dayjs(member[commissionDate]).utc().isSame(today, "day");
 
       if (isSameCommissionDay) {
         // logger.info("Same commission day");

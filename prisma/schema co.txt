@@ -136,19 +136,24 @@ model Member {
   isFranchise                Boolean  @default(false)
   securityDepositAmount           Decimal   @db.Decimal(11, 2)   @default(0.00)  //first amount
   securityDepositPending        Decimal  @db.Decimal(11, 2)   @default(0.00)
+  franchiseCommission           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
   securityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
   franchiseWalletBalance        Decimal  @db.Decimal(11, 2)   @default(0.00) //contains commissions
   securityDepositPercentage      Decimal   @db.Decimal(5, 2)    @default(3) //10 percent of purchase
   franchiseIntroductionAmount      Decimal   @db.Decimal(11, 2)    @default(0) //10 percent of purchase
   repurchaseBillAmount      Decimal   @db.Decimal(11, 2)    @default(0) //10 percent of purchase
   totalSecurityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
+  franchiseIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
   // end
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
-  purchases        Purchase[] // Relation to Purchase
-  repurchases        Repurchase[] // Relation to Purchase
+  purchases        Purchase[] @relation("PurchaseMember")
+  purchaseDeliveriesMade   Purchase[] @relation("DeliveredByMember")
+  repurchases        Repurchase[] @relation("RepurchaseMember")
+  repurchaseDeliveriesMade   Repurchase[] @relation("RepurchaseDeliveredByMember")
   memberLogs        memberLog[] // Relation to memberLog
   matchingIncomeCommissions        MatchingIncomeCommission[] // Relation to memberLog
   repurchaseIncomeCommissions      RepurchaseIncomeCommission[] // Relation to memberLog
+  franchiseIncomeCommissions      FranchiseIncomeCommission[] 
   virtualPowers      VirtualPower[] 
   rewardCommissions      RewardCommission[] // Relation to memberLog
   Stocks                      Stock[]
@@ -201,11 +206,11 @@ model WalletTransaction {
   updatedAt          DateTime          @updatedAt
   matchingIncomeCommission       MatchingIncomeCommission?
   repurchaseIncomeCommission     RepurchaseIncomeCommission?
+  franchiseIncomeCommission     FranchiseIncomeCommission?
   rewardCommission     RewardCommission?
 
   @@index([processedByAdminId])   
   @@index([memberId])     
-
   @@map("wallet_transactions")
 }
 
@@ -213,8 +218,8 @@ model WalletTransaction {
 model Purchase {
   id                   Int       @id @default(autoincrement())
   memberId             Int
-  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  invoiceNumber        String?   
+  member               Member    @relation("PurchaseMember",fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  invoiceNumber        String   @unique   
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
   purchaseDate         DateTime  @default(now())
@@ -223,6 +228,10 @@ model Purchase {
   totalGstAmount       Decimal   @db.Decimal(11, 2)
   totalProductPV              Decimal   @db.Decimal(11, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
+status String? @default("Pending")
+  deliveredBy           Int?
+  deliveredByMember       Member?    @relation("DeliveredByMember",fields: [deliveredBy], references: [id],onDelete: Restrict) // Relation to Member
+  deliveredAt             DateTime?
   purchaseDetails      PurchaseDetail[] // Relation to PurchaseDetail
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
@@ -249,6 +258,7 @@ model PurchaseDetail {
   amountWithGst        Decimal   @db.Decimal(11, 2)
   pvPerUnit            Decimal   @db.Decimal(11, 2)
   totalPV              Decimal   @db.Decimal(11, 2)
+  batchDetails          String?   //no comma separated
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -259,8 +269,8 @@ model PurchaseDetail {
 model Repurchase {
   id                   Int       @id @default(autoincrement())
   memberId             Int
-  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
-  invoiceNumber        String?   
+  member               Member    @relation("RepurchaseMember",fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  invoiceNumber        String   @unique    
   invoiceDate           DateTime?
   invoicePath           String?           @db.Text
   repurchaseDate         DateTime  @default(now())
@@ -269,6 +279,10 @@ model Repurchase {
   totalGstAmount       Decimal   @db.Decimal(11, 2)
   totalProductBV              Decimal   @db.Decimal(11, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
+status String? @default("Pending")
+  deliveredBy           Int?
+  deliveredByMember       Member?    @relation("RepurchaseDeliveredByMember",fields: [deliveredBy], references: [id],onDelete: Restrict) // Relation to Member
+  deliveredAt             DateTime?
   repurchaseDetails      RepurchaseDetail[] // Relation to PurchaseDetail
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
@@ -295,6 +309,7 @@ model RepurchaseDetail {
   amountWithGst        Decimal   @db.Decimal(11, 2)
   bvPerUnit            Decimal   @db.Decimal(11, 2)
   totalBV              Decimal   @db.Decimal(11, 2)
+  batchDetails          String?   //no comma separated
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -486,4 +501,26 @@ model StockTransferDetail {
   updatedAt            DateTime  @updatedAt
 
   @@map("stock_transfer_details")
+}
+
+model FranchiseIncomeCommission {
+  id                         Int      @id @default(autoincrement())
+  memberId                   Int
+  walletTransactionId        Int?  @unique 
+  member               Member    @relation(fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member
+  walletTransaction    WalletTransaction?    @relation(fields: [walletTransactionId], references: [id],onDelete: Restrict) 
+  franchiseCommission   Decimal  @db.Decimal(11, 2)  @default(0.00)
+  securityDepositReturn   Decimal  @db.Decimal(11, 2)  @default(0.00)
+  franchiseIntroductionAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  repurchaseBillAmountToSponsor   Decimal  @db.Decimal(11, 2) @default(0.00)
+  TDSPercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  TDSAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  platformChargePercent   Decimal  @db.Decimal(5, 2) @default(0.00)
+  platformChargeAmount   Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountBeforeDeduction  Decimal  @db.Decimal(11, 2) @default(0.00)
+  totalAmountToGive  Decimal  @db.Decimal(11, 2) @default(0.00)
+  isPaid                     Boolean  @default(false)
+  paidAt                     DateTime?
+  createdAt                  DateTime @default(now())
+  @@map("franchise_income_commissions")
 }

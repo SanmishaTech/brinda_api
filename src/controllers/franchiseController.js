@@ -1,5 +1,5 @@
 const { PrismaClient, Prisma } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 const { z } = require("zod");
 const validateRequest = require("../utils/validateRequest");
 const dayjs = require("dayjs"); // Import dayjs
@@ -116,7 +116,7 @@ const makeFranchise = async (req, res) => {
             walletType: FRANCHISE_WALLET,
             status: APPROVED,
             type: DEBIT, // FIXED: Was "DEBIT" — this is income to the influencer
-            notes: `5% of Security Deposit from Franchise ${member.memberUsername}`,
+            notes: `5% Commission from Franchise Introduction ${member.memberUsername}`,
             transactionDate: new Date(),
           },
         },
@@ -231,6 +231,12 @@ const deliverProductsToCustomer = async (req, res) => {
     });
   }
 
+  if (!req.user.member.isFranchise) {
+    return res.status(400).json({
+      errors: { message: "You Are Not A Franchise." },
+    });
+  }
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -265,7 +271,16 @@ const deliverProductsToCustomer = async (req, res) => {
 
     // Step 1: Check Stock
 
-    await checkStockAvailability(record[detailField], memberId, today, res);
+    const stockCheckResult = await checkStockAvailability(
+      record[detailField],
+      memberId,
+      today
+    );
+    if (stockCheckResult.error) {
+      return res.status(400).json({
+        errors: { message: stockCheckResult.error },
+      });
+    }
 
     // Step 2: Process Stock Deduction and Ledger
     await processDeliveryAndLedger(

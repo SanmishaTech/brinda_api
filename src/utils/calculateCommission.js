@@ -5,7 +5,7 @@ const {
   MATCHING_INCOME_WALLET,
   HOLD_WALLET,
 } = require("../config/data");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 const calculateCommission = async (parent, updates, rewardDetails) => {
   const percentage = parseFloat(parent.percentage);

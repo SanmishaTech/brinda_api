@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
-const checkStockAvailability = async (details, memberId, today, res) => {
+const checkStockAvailability = async (details, memberId, today) => {
   for (const item of details) {
     const totalAvailableStock = await prisma.stock.aggregate({
       _sum: {
@@ -18,13 +18,12 @@ const checkStockAvailability = async (details, memberId, today, res) => {
     const availableQty = totalAvailableStock._sum.closing_quantity || 0;
 
     if (availableQty < item.quantity) {
-      return res.status(400).json({
-        errors: {
-          message: `Insufficient stock for product ${item.product.productName}. Required: ${item.quantity}, Available: ${availableQty}`,
-        },
-      });
+      return {
+        error: `Insufficient stock for product ${item.product.productName}. Required: ${item.quantity}, Available: ${availableQty}`,
+      };
     }
   }
+  return { success: true };
 };
 
 module.exports = checkStockAvailability;

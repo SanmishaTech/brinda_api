@@ -5,7 +5,7 @@ const {
   APPROVED,
   MATCHING_INCOME_WALLET,
 } = require("../config/data");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 /**
  * Get all members with pagination, sorting, and search

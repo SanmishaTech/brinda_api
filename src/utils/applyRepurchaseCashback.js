@@ -7,7 +7,7 @@ const {
   HOLD_WALLET,
 } = require("../config/data");
 const logger = require("./logger");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 const applyRepurchaseCashback = async (member, totalAmountWithGst) => {
   logger.info(`Starting cashback calculation for member ID: ${member.id}`);

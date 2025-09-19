@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 // const { late } = require("zod");
 // const { transform } = require("zod/v4");
-const prisma = new PrismaClient();
+const prisma = require("../config/db");
 
 /**
  * Finds the last downline member in a chain based on sponsorId and position.
@@ -27,7 +27,7 @@ const findParent = async (sponsorId, position) => {
       },
     });
 
-    if(latestParent) {
+    if (latestParent) {
       parent = latestParent;
     }
   } while (latestParent);
