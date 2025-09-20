@@ -243,15 +243,19 @@ const repurchasePayout = async () => {
                     },
                   ]
                 : []),
-              {
-                memberId: member.memberId,
-                amount: member.platformChargeAmount,
-                type: CREDIT,
-                transactionDate: new Date(),
-                status: APPROVED,
-                walletType: HOLD_WALLET,
-                notes: `${member.platformChargePercent}% Platform Charge Deducted.`,
-              },
+              ...(parseFloat(member.platformChargeAmount) > 0
+                ? [
+                    {
+                      memberId: member.memberId,
+                      amount: member.platformChargeAmount,
+                      type: CREDIT,
+                      transactionDate: new Date(),
+                      status: APPROVED,
+                      walletType: HOLD_WALLET,
+                      notes: `${member.platformChargePercent}% Platform Charge Deducted.`,
+                    },
+                  ]
+                : []),
             ],
           });
 
@@ -720,15 +724,19 @@ const repurchasePayout = async () => {
                     },
                   ]
                 : []),
-              {
-                memberId: member.memberId,
-                amount: member.platformChargeAmount,
-                type: CREDIT,
-                transactionDate: new Date(),
-                status: APPROVED,
-                walletType: HOLD_WALLET,
-                notes: `${member.platformChargePercent}% Platform Charge Deducted.`,
-              },
+              ...(parseFloat(member.platformChargeAmount) > 0
+                ? [
+                    {
+                      memberId: member.memberId,
+                      amount: member.platformChargeAmount,
+                      type: CREDIT,
+                      transactionDate: new Date(),
+                      status: APPROVED,
+                      walletType: HOLD_WALLET,
+                      notes: `${member.platformChargePercent}% Platform Charge Deducted.`,
+                    },
+                  ]
+                : []),
             ],
           });
 

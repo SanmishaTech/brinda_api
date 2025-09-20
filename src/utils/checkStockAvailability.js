@@ -10,7 +10,7 @@ const checkStockAvailability = async (details, memberId, today) => {
       where: {
         memberId,
         productId: item.productId,
-        expiryDate: { gt: today },
+        expiryDate: { gte: today },
         closing_quantity: { gt: 0 },
       },
     });

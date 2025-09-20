@@ -37,6 +37,7 @@ process.on("message", async (data) => {
         totalGstAmount: new Prisma.Decimal(totalGstAmount),
         totalProductBV: new Prisma.Decimal(totalProductBV),
         state: user.member.memberState,
+        invoiceNumber: "TEMP",
         repurchaseDetails: {
           create: repurchaseDetails.map((detail) => ({
             productId: parseInt(detail.productId),

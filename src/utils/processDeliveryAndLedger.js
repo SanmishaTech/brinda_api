@@ -15,7 +15,7 @@ const processDeliveryAndLedger = async (
       where: {
         memberId,
         productId: item.productId,
-        expiryDate: { gt: today },
+        expiryDate: { gte: today },
         closing_quantity: { gt: 0 },
       },
       orderBy: { expiryDate: "asc" },

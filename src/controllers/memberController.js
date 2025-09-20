@@ -316,6 +316,27 @@ const getMemberLogs = async (req, res) => {
     });
   }
 };
+
+const getLatestStatusLog = async (memberId) => {
+  if (!memberId) return null;
+  return await prisma.memberLog.findFirst({
+    where: {
+      memberId,
+      message: {
+        startsWith: "Member status updated to",
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      message: true,
+      createdAt: true,
+    },
+  });
+};
+
 const myGenealogy = async (req, res, next) => {
   try {
     const { memberId } = req.params;
@@ -501,7 +522,35 @@ const myGenealogy = async (req, res, next) => {
         })
       : null;
 
-    res.json({
+    const [
+      rootMemberLog,
+      leftMemberLog,
+      leftsLeftMemberLog,
+      leftsRightMemberLog,
+      rightMemberLog,
+      rightsLeftMemberLog,
+      rightsRightMemberLog,
+    ] = await Promise.all([
+      getLatestStatusLog(rootMember?.id),
+      getLatestStatusLog(leftMember?.id),
+      getLatestStatusLog(leftsLeftMember?.id),
+      getLatestStatusLog(leftsRightMember?.id),
+      getLatestStatusLog(rightMember?.id),
+      getLatestStatusLog(rightsLeftMember?.id),
+      getLatestStatusLog(rightsRightMember?.id),
+    ]);
+    if (rootMember) rootMember.latestStatusLog = rootMemberLog;
+    if (leftMember) leftMember.latestStatusLog = leftMemberLog;
+    if (leftsLeftMember) leftsLeftMember.latestStatusLog = leftsLeftMemberLog;
+    if (leftsRightMember)
+      leftsRightMember.latestStatusLog = leftsRightMemberLog;
+    if (rightMember) rightMember.latestStatusLog = rightMemberLog;
+    if (rightsLeftMember)
+      rightsLeftMember.latestStatusLog = rightsLeftMemberLog;
+    if (rightsRightMember)
+      rightsRightMember.latestStatusLog = rightsRightMemberLog;
+
+    return res.json({
       rootMember,
       leftMember,
       leftsLeftMember,

@@ -376,14 +376,18 @@ const deliverProductsToCustomer = async (req, res) => {
             increment: parseFloat(commissionToGive),
           },
           walletTransactions: {
-            create: {
-              amount: new Prisma.Decimal(commissionToGive),
-              walletType: FRANCHISE_WALLET,
-              status: APPROVED,
-              type: DEBIT, // FIXED: Was "DEBIT" — this is income to the influencer
-              notes: `${REPURCHASE_SDR_PERCENT}% Security Deposit Return from Repurchase Invoice ${record.invoiceNumber}`,
-              transactionDate: new Date(),
-            },
+            ...(parseFloat(commissionToGive) > 0
+              ? {
+                  create: {
+                    amount: new Prisma.Decimal(commissionToGive),
+                    walletType: FRANCHISE_WALLET,
+                    status: APPROVED,
+                    type: DEBIT,
+                    notes: `${REPURCHASE_SDR_PERCENT}% Security Deposit Return from Repurchase Invoice ${record.invoiceNumber}`,
+                    transactionDate: new Date(),
+                  },
+                }
+              : {}),
           },
         },
       });

@@ -5,7 +5,7 @@ const repurchaseJob = require("./src/cron/repurchaseIncomeCommissionJob");
 const rewardCommissionJob = require("./src/cron/rewardCommissionJob");
 const weeklyCommissionJob = require("./src/cron/weeklyMatchingIncomeCommissionJob"); // 👈 Import the cron job
 const SDRCommissionJob = require("./src/cron/SDRCommission");
-// const franchiseCommissionJob = require("./src/cron/franchiseCommissionJob");
+const franchiseCommissionJob = require("./src/cron/franchiseCommissionJob");
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

@@ -1,13 +1,13 @@
-const { PrismaClient, Prisma } = require('@prisma/client');
+const { PrismaClient, Prisma } = require("@prisma/client");
 const prisma = require("../config/db");
-const { z } = require('zod');
-const validateRequest = require('./validateRequest');
-const createError = require('http-errors');
-const dayjs = require('dayjs');
-const utc = require('dayjs/plugin/utc');
+const { z } = require("zod");
+const validateRequest = require("./validateRequest");
+const createError = require("http-errors");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
-const logger = require('./logger'); // Assuming you have a logger utility
-const today = dayjs().utc().startOf('day').toDate();
+const logger = require("./logger"); // Assuming you have a logger utility
+const today = dayjs().utc().startOf("day").toDate();
 const {
   CREDIT,
   APPROVED,
@@ -28,12 +28,12 @@ const {
   MATCHING_INCOME_WALLET,
   TOP,
   FUND_WALLET,
-} = require('../config/data');
-const { updatePVBalance } = require('./updatePVBalance');
+} = require("../config/data");
+const { updatePVBalance } = require("./updatePVBalance");
 
 const {
   generateUserProductPurchaseInvoice,
-} = require('../controllers/purchaseController');
+} = require("../controllers/purchaseController");
 
 const handlePurchase = async (data) => {
   const {
@@ -56,6 +56,7 @@ const handlePurchase = async (data) => {
       totalGstAmount: new Prisma.Decimal(totalGstAmount),
       totalProductPV: new Prisma.Decimal(totalProductPV),
       state: user.member.memberState,
+      invoiceNumber: "TEMP",
       purchaseDetails: {
         create: purchaseDetails.map((detail) => ({
           productId: parseInt(detail.productId),
@@ -85,7 +86,7 @@ const handlePurchase = async (data) => {
       memberId: user.member.id,
       message: `Products  Purchased (${invoiceNumber})`,
       pv: new Prisma.Decimal(totalProductPV),
-      bv: '0.00',
+      bv: "0.00",
     },
   });
 

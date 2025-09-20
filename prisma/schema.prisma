@@ -524,3 +524,13 @@ model FranchiseIncomeCommission {
   createdAt                  DateTime @default(now())
   @@map("franchise_income_commissions")
 }
+// IN PURCHASE AND REPURCHASE ERROR:INVOICE NUMBER MISSING.
+//STOCK WORKING PROPERLY.
+//ADD FRANCHISE STOCK WORKING PROPERLY
+//TEST MONTHLY SDR GENERATION  AND FRANCHISE PAYOUT AND 0 TO 200000 REPURCHASE RANGE CONDITION
+//TEST ENTIRE SOFTWARE AGAIN
+// error in purchase and repurchase cause in table now invoice number is unique and not null.
+
+// Test SDR mondhtly commison and payout.
+
+// add searching, export excel, dates in geneology

@@ -5,8 +5,8 @@ const {
 } = require("../services/franchiseCommissionPayout");
 
 // Schedule the task to run at 1:30 AM on the 1st day of every month
-cron.schedule("* * * * *", async () => {
-  // cron.schedule("30 1 1 * *", async () => {
+// cron.schedule("* * * * *", async () => {
+  cron.schedule("30 1 1 * *", async () => {
   try {
     await franchiseCommissionPayout(); // Your custom function
     logger.info(
