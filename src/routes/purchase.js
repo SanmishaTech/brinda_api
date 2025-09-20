@@ -5,6 +5,7 @@ const {
   createPurchase,
   getPurchaseById,
   DownloadPurchaseInvoice,
+  getPurchaseRecords,
 } = require("../controllers/purchaseController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -110,7 +111,7 @@ const acl = require("../middleware/acl");
  *       500:
  *         description: Failed to fetch purchases
  */
-router.get("/", auth, acl("purchases.read"), getPurchases);
+router.get("/", auth, acl("purchases.read"), getPurchaseRecords);
 
 /**
  * @swagger

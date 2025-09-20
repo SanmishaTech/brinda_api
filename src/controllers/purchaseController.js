@@ -7,6 +7,8 @@ const dayjs = require("dayjs"); // Import dayjs
 const { numberToWords } = require("../utils/numberToWords");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs").promises; // Use promises API
+const ExcelJS = require("exceljs");
+
 const path = require("path");
 const {
   CREDIT,
@@ -438,10 +440,361 @@ const DownloadPurchaseInvoice = async (req, res, next) => {
   }
 };
 
+// === Helper: Format date as "DD/MM/YYYY"
+const formatDate = (date) => {
+  if (!date) return "N/A";
+  const d = new Date(date);
+  return d.toLocaleDateString("en-GB");
+};
+
+// === Helper: Format date with time
+const formatDateTime = (date) => {
+  if (!date) return "N/A";
+  return new Date(date).toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+};
+
+// === Helper: Format file name
+const getFileName = (prefix) => {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2, "0");
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const yyyy = now.getFullYear();
+  return `${prefix}_${dd}_${mm}_${yyyy}.xlsx`;
+};
+
+// ===========================================
+// ✅ GET PURCHASES WITH EXPORT
+// ===========================================
+const getPurchaseRecords = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  const exportToExcel = req.query.export === "true";
+
+  // const whereClause = {
+  //   invoiceNumber: { contains: search },
+  // };
+  const whereClause = search
+    ? {
+        OR: [
+          { invoiceNumber: { contains: search } },
+          { status: { contains: search } },
+          { member: { memberName: { contains: search } } }, // relation field
+          { deliveredByMember: { memberName: { contains: search } } },
+        ],
+      }
+    : {};
+
+  try {
+    const purchases = await prisma.purchase.findMany({
+      where: whereClause,
+      include: { member: true, deliveredByMember: true },
+      skip: exportToExcel ? undefined : skip,
+      take: exportToExcel ? undefined : limit,
+      orderBy: exportToExcel ? undefined : { [sortBy]: sortOrder },
+      include: {
+        purchaseDetails: {
+          include: {
+            product: true,
+          },
+        },
+        member: true,
+        deliveredByMember: true,
+      },
+    });
+
+    if (exportToExcel) {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Purchases");
+
+      worksheet.columns = [
+        { header: "Purchase ID", key: "purchaseId", width: 10 },
+        { header: "Invoice Number", key: "invoiceNumber", width: 20 },
+        { header: "Invoice Date", key: "invoiceDate", width: 20 },
+        { header: "Purchase Date", key: "purchaseDate", width: 20 },
+        {
+          header: "Total Amount (No GST)",
+          key: "totalAmountWithoutGst",
+          width: 20,
+        },
+        { header: "Total GST", key: "totalGstAmount", width: 15 },
+        {
+          header: "Total Amount (With GST)",
+          key: "totalAmountWithGst",
+          width: 20,
+        },
+        { header: "Total PV", key: "totalProductPV", width: 15 },
+        { header: "Status", key: "status", width: 15 },
+        { header: "State", key: "state", width: 15 },
+        { header: "Delivered By", key: "deliveredBy", width: 20 },
+        { header: "Delivered At", key: "deliveredAt", width: 20 },
+        { header: "Created At", key: "createdAt", width: 25 },
+        { header: "Updated At", key: "updatedAt", width: 25 },
+
+        { header: "Detail ID", key: "detailId", width: 10 },
+        { header: "Product Name", key: "productName", width: 20 },
+        { header: "Quantity", key: "quantity", width: 10 },
+        { header: "Rate", key: "rate", width: 10 },
+        { header: "Net Unit Rate", key: "netUnitRate", width: 15 },
+        { header: "CGST %", key: "cgstPercent", width: 10 },
+        { header: "SGST %", key: "sgstPercent", width: 10 },
+        { header: "IGST %", key: "igstPercent", width: 10 },
+        { header: "CGST Amount", key: "cgstAmount", width: 15 },
+        { header: "SGST Amount", key: "sgstAmount", width: 15 },
+        { header: "IGST Amount", key: "igstAmount", width: 15 },
+        { header: "Amount Without GST", key: "amountWithoutGst", width: 20 },
+        { header: "Amount With GST", key: "amountWithGst", width: 20 },
+        { header: "PV Per Unit", key: "pvPerUnit", width: 15 },
+        { header: "Total PV", key: "totalPV", width: 15 },
+        { header: "Batch Details", key: "batchDetails", width: 25 },
+        { header: "Detail Created At", key: "detailCreatedAt", width: 25 },
+        { header: "Detail Updated At", key: "detailUpdatedAt", width: 25 },
+      ];
+
+      worksheet.getRow(1).font = { bold: true };
+
+      purchases.forEach((purchase) => {
+        purchase.purchaseDetails.forEach((detail) => {
+          worksheet.addRow({
+            purchaseId: purchase.id,
+            invoiceNumber: purchase.invoiceNumber,
+            invoiceDate: formatDate(purchase.invoiceDate),
+            purchaseDate: formatDate(purchase.purchaseDate),
+            totalAmountWithoutGst: parseFloat(purchase.totalAmountWithoutGst),
+            totalGstAmount: parseFloat(purchase.totalGstAmount),
+            totalAmountWithGst: parseFloat(purchase.totalAmountWithGst),
+            totalProductPV: parseFloat(purchase.totalProductPV),
+            status: purchase.status,
+            state: purchase.state,
+            deliveredBy: purchase.deliveredByMember?.memberName || "",
+            deliveredAt: formatDate(purchase.deliveredAt),
+            createdAt: formatDateTime(purchase.createdAt),
+            updatedAt: formatDateTime(purchase.updatedAt),
+
+            detailId: detail.id,
+            productName: detail.product?.productName || "N/A",
+            quantity: detail.quantity,
+            rate: parseFloat(detail.rate),
+            netUnitRate: parseFloat(detail.netUnitRate),
+            cgstPercent: parseFloat(detail.cgstPercent),
+            sgstPercent: parseFloat(detail.sgstPercent),
+            igstPercent: parseFloat(detail.igstPercent),
+            cgstAmount: parseFloat(detail.cgstAmount),
+            sgstAmount: parseFloat(detail.sgstAmount),
+            igstAmount: parseFloat(detail.igstAmount),
+            amountWithoutGst: parseFloat(detail.amountWithoutGst),
+            amountWithGst: parseFloat(detail.amountWithGst),
+            pvPerUnit: parseFloat(detail.pvPerUnit),
+            totalPV: detail.totalPV,
+            batchDetails: detail.batchDetails || "",
+            detailCreatedAt: formatDateTime(detail.createdAt),
+            detailUpdatedAt: formatDateTime(detail.updatedAt),
+          });
+        });
+        worksheet.addRow({});
+      });
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${getFileName("Purchase")}`
+      );
+
+      await workbook.xlsx.write(res);
+      return res.end();
+    }
+
+    const totalPurchases = await prisma.purchase.count({ where: whereClause });
+    const totalPages = Math.ceil(totalPurchases / limit);
+
+    res.json({ purchases, page, totalPages, totalPurchases });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      errors: { message: "Failed to fetch purchases", details: error.message },
+    });
+  }
+};
+
+const getRepurchaseRecords = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  const exportToExcel = req.query.export === "true";
+
+  const whereClause = search
+    ? {
+        OR: [
+          { invoiceNumber: { contains: search } },
+          { status: { contains: search } },
+          { member: { memberName: { contains: search } } }, // relation field
+          { deliveredByMember: { memberName: { contains: search } } },
+        ],
+      }
+    : {};
+
+  try {
+    const repurchases = await prisma.repurchase.findMany({
+      where: whereClause,
+      include: {
+        repurchaseDetails: {
+          include: { product: true },
+        },
+        member: true,
+        deliveredByMember: true,
+      },
+      skip: exportToExcel ? undefined : skip,
+      take: exportToExcel ? undefined : limit,
+      orderBy: exportToExcel ? undefined : { [sortBy]: sortOrder },
+    });
+
+    // Excel export
+    if (exportToExcel) {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Repurchases");
+
+      worksheet.columns = [
+        { header: "Repurchase ID", key: "repurchaseId", width: 10 },
+        { header: "Invoice Number", key: "invoiceNumber", width: 20 },
+        { header: "Invoice Date", key: "invoiceDate", width: 20 },
+        { header: "Repurchase Date", key: "repurchaseDate", width: 20 },
+        {
+          header: "Total Amount (No GST)",
+          key: "totalAmountWithoutGst",
+          width: 20,
+        },
+        { header: "Total GST", key: "totalGstAmount", width: 15 },
+        {
+          header: "Total Amount (With GST)",
+          key: "totalAmountWithGst",
+          width: 20,
+        },
+        { header: "Total BV", key: "totalProductBV", width: 15 },
+        { header: "Status", key: "status", width: 15 },
+        { header: "State", key: "state", width: 15 },
+        { header: "Member Name", key: "memberName", width: 20 },
+        { header: "Delivered By", key: "deliveredBy", width: 20 },
+        { header: "Delivered At", key: "deliveredAt", width: 20 },
+        { header: "Created At", key: "createdAt", width: 25 },
+        { header: "Updated At", key: "updatedAt", width: 25 },
+
+        { header: "Detail ID", key: "detailId", width: 10 },
+        { header: "Product Name", key: "productName", width: 20 },
+        { header: "Quantity", key: "quantity", width: 10 },
+        { header: "Rate", key: "rate", width: 10 },
+        { header: "Net Unit Rate", key: "netUnitRate", width: 15 },
+        { header: "CGST %", key: "cgstPercent", width: 10 },
+        { header: "SGST %", key: "sgstPercent", width: 10 },
+        { header: "IGST %", key: "igstPercent", width: 10 },
+        { header: "CGST Amount", key: "cgstAmount", width: 15 },
+        { header: "SGST Amount", key: "sgstAmount", width: 15 },
+        { header: "IGST Amount", key: "igstAmount", width: 15 },
+        { header: "Amount Without GST", key: "amountWithoutGst", width: 20 },
+        { header: "Amount With GST", key: "amountWithGst", width: 20 },
+        { header: "BV Per Unit", key: "bvPerUnit", width: 15 },
+        { header: "Total BV", key: "totalBV", width: 15 },
+        { header: "Batch Details", key: "batchDetails", width: 25 },
+        { header: "Detail Created At", key: "detailCreatedAt", width: 25 },
+        { header: "Detail Updated At", key: "detailUpdatedAt", width: 25 },
+      ];
+
+      worksheet.getRow(1).font = { bold: true };
+
+      repurchases.forEach((repurchase) => {
+        repurchase.repurchaseDetails.forEach((detail) => {
+          worksheet.addRow({
+            repurchaseId: repurchase.id,
+            invoiceNumber: repurchase.invoiceNumber,
+            invoiceDate: formatDate(repurchase.invoiceDate),
+            repurchaseDate: formatDate(repurchase.repurchaseDate),
+            totalAmountWithoutGst: parseFloat(repurchase.totalAmountWithoutGst),
+            totalGstAmount: parseFloat(repurchase.totalGstAmount),
+            totalAmountWithGst: parseFloat(repurchase.totalAmountWithGst),
+            totalProductBV: parseFloat(repurchase.totalProductBV),
+            status: repurchase.status,
+            state: repurchase.state,
+            memberName: repurchase.member?.memberName || "",
+            deliveredBy: repurchase.deliveredByMember?.memberName || "",
+            deliveredAt: formatDate(repurchase.deliveredAt),
+            createdAt: formatDateTime(repurchase.createdAt),
+            updatedAt: formatDateTime(repurchase.updatedAt),
+
+            detailId: detail.id,
+            productName: detail.product?.productName || "N/A",
+            quantity: parseFloat(detail.quantity),
+            rate: parseFloat(detail.rate),
+            netUnitRate: parseFloat(detail.netUnitRate),
+            cgstPercent: parseFloat(detail.cgstPercent),
+            sgstPercent: parseFloat(detail.sgstPercent),
+            igstPercent: parseFloat(detail.igstPercent),
+            cgstAmount: parseFloat(detail.cgstAmount),
+            sgstAmount: parseFloat(detail.sgstAmount),
+            igstAmount: parseFloat(detail.igstAmount),
+            amountWithoutGst: parseFloat(detail.amountWithoutGst),
+            amountWithGst: parseFloat(detail.amountWithGst),
+            bvPerUnit: parseFloat(detail.bvPerUnit),
+            totalBV: parseFloat(detail.totalBV),
+            batchDetails: detail.batchDetails || "",
+            detailCreatedAt: formatDateTime(detail.createdAt),
+            detailUpdatedAt: formatDateTime(detail.updatedAt),
+          });
+        });
+        worksheet.addRow({});
+      });
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${getFileName("Repurchase")}`
+      );
+
+      await workbook.xlsx.write(res);
+      return res.end();
+    }
+
+    const totalRepurchases = await prisma.repurchase.count({
+      where: whereClause,
+    });
+    const totalPages = Math.ceil(totalRepurchases / limit);
+
+    res.json({ repurchases, page, totalPages, totalRepurchases });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      errors: {
+        message: "Failed to fetch repurchases",
+        details: error.message,
+      },
+    });
+  }
+};
+
 module.exports = {
   getPurchases,
+  getRepurchaseRecords,
   createPurchase,
   getPurchaseById,
   generateUserProductPurchaseInvoice,
   DownloadPurchaseInvoice,
+  getPurchaseRecords,
 };

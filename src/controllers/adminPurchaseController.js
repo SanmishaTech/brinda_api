@@ -16,6 +16,7 @@ const {
 } = require("../config/data");
 const parseDate = require("../utils/parseDate");
 const { updateStock } = require("../utils/updateStock");
+const ExcelJS = require("exceljs");
 
 const decimalString = (fieldName, maxDigits, decimalPlaces) =>
   z
@@ -34,29 +35,188 @@ const decimalString = (fieldName, maxDigits, decimalPlaces) =>
     );
 
 // Get all purchases with pagination, sorting, and search
+// const getAdminPurchases = async (req, res) => {
+//   const page = parseInt(req.query.page) || 1;
+//   const limit = parseInt(req.query.limit) || 10;
+//   const skip = (page - 1) * limit;
+//   const search = req.query.search || "";
+//   const sortBy = req.query.sortBy || "id";
+//   const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+
+//   try {
+//     const whereClause = {
+//       // invoiceNumber: { contains: search },
+//     };
+
+//     const adminPurchases = await prisma.adminPurchase.findMany({
+//       where: whereClause,
+//       skip,
+//       take: limit,
+//       orderBy: { [sortBy]: sortOrder },
+//       include: {
+//         adminPurchaseDetails: true, // Include admin purchase details
+//       },
+//     });
+
+//     const totalAdminPurchases = await prisma.adminPurchase.count({
+//       where: whereClause,
+//     });
+//     const totalPages = Math.ceil(totalAdminPurchases / limit);
+
+//     res.json({
+//       adminPurchases,
+//       page,
+//       totalPages,
+//       totalAdminPurchases,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       errors: {
+//         message: "Failed to fetch admin purchases",
+//         details: error.message,
+//       },
+//     });
+//   }
+// };
+
 const getAdminPurchases = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
-  const search = req.query.search || "";
   const sortBy = req.query.sortBy || "id";
   const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  const exportToExcel = req.query.export === "true";
+  const search = req.query.search || "";
+
+  const whereClause = {
+    // Add filters if needed
+    invoiceNumber: { contains: search },
+  };
 
   try {
-    const whereClause = {
-      // invoiceNumber: { contains: search },
-    };
-
     const adminPurchases = await prisma.adminPurchase.findMany({
       where: whereClause,
-      skip,
-      take: limit,
-      orderBy: { [sortBy]: sortOrder },
+      skip: exportToExcel ? undefined : skip,
+      take: exportToExcel ? undefined : limit,
+      orderBy: exportToExcel ? undefined : { [sortBy]: sortOrder },
       include: {
-        adminPurchaseDetails: true, // Include admin purchase details
+        adminPurchaseDetails: {
+          include: {
+            product: true, // Get productName
+          },
+        },
       },
     });
 
+    if (exportToExcel) {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Admin Purchases");
+
+      // Headers for every field from both models
+      worksheet.columns = [
+        { header: "Purchase ID", key: "purchaseId", width: 10 },
+        { header: "Invoice Number", key: "invoiceNumber", width: 20 },
+        { header: "Invoice Date", key: "invoiceDate", width: 20 },
+        { header: "Purchase Date", key: "purchaseDate", width: 20 },
+        { header: "Received Date", key: "receivedDate", width: 20 },
+        {
+          header: "Total Amount Without GST",
+          key: "totalAmountWithoutGst",
+          width: 20,
+        },
+        { header: "Total GST Amount", key: "totalGstAmount", width: 20 },
+        {
+          header: "Total Amount With GST",
+          key: "totalAmountWithGst",
+          width: 20,
+        },
+        { header: "Purchase Created At", key: "purchaseCreatedAt", width: 25 },
+        { header: "Purchase Updated At", key: "purchaseUpdatedAt", width: 25 },
+
+        { header: "Detail ID", key: "detailId", width: 10 },
+        { header: "Product Name", key: "productName", width: 20 },
+        { header: "Batch Number", key: "batchNumber", width: 15 },
+        { header: "Quantity", key: "quantity", width: 10 },
+        { header: "Rate", key: "rate", width: 10 },
+        { header: "Net Unit Rate", key: "netUnitRate", width: 15 },
+        { header: "CGST %", key: "cgstPercent", width: 10 },
+        { header: "SGST %", key: "sgstPercent", width: 10 },
+        { header: "IGST %", key: "igstPercent", width: 10 },
+        { header: "CGST Amount", key: "cgstAmount", width: 15 },
+        { header: "SGST Amount", key: "sgstAmount", width: 15 },
+        { header: "IGST Amount", key: "igstAmount", width: 15 },
+        { header: "Amount Without GST", key: "amountWithoutGst", width: 20 },
+        { header: "Amount With GST", key: "amountWithGst", width: 20 },
+        { header: "Expiry Date (MM/YYYY)", key: "expiryDate", width: 18 },
+        { header: "Detail Created At", key: "detailCreatedAt", width: 25 },
+        { header: "Detail Updated At", key: "detailUpdatedAt", width: 25 },
+      ];
+
+      // Style header
+      worksheet.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } };
+      worksheet.getRow(1).fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF305496" }, // dark blue
+      };
+
+      // Data rows
+      adminPurchases.forEach((purchase) => {
+        purchase.adminPurchaseDetails.forEach((detail) => {
+          worksheet.addRow({
+            purchaseId: purchase.id,
+            invoiceNumber: purchase.invoiceNumber,
+            invoiceDate: formatFullDate(purchase.invoiceDate),
+            purchaseDate: formatFullDate(purchase.purchaseDate),
+            receivedDate: formatFullDate(purchase.receivedDate),
+            totalAmountWithoutGst: parseFloat(
+              purchase.totalAmountWithoutGst
+            ).toFixed(2),
+            totalGstAmount: parseFloat(purchase.totalGstAmount).toFixed(2),
+            totalAmountWithGst: parseFloat(purchase.totalAmountWithGst).toFixed(
+              2
+            ),
+            purchaseCreatedAt: formatFullDateTime(purchase.createdAt),
+            purchaseUpdatedAt: formatFullDateTime(purchase.updatedAt),
+
+            detailId: detail.id,
+            productName: detail.product?.productName || "N/A",
+            batchNumber: detail.batchNumber,
+            quantity: detail.quantity,
+            rate: parseFloat(detail.rate).toFixed(2),
+            netUnitRate: parseFloat(detail.netUnitRate).toFixed(2),
+            cgstPercent: parseFloat(detail.cgstPercent).toFixed(2),
+            sgstPercent: parseFloat(detail.sgstPercent).toFixed(2),
+            igstPercent: parseFloat(detail.igstPercent).toFixed(2),
+            cgstAmount: parseFloat(detail.cgstAmount).toFixed(2),
+            sgstAmount: parseFloat(detail.sgstAmount).toFixed(2),
+            igstAmount: parseFloat(detail.igstAmount).toFixed(2),
+            amountWithoutGst: parseFloat(detail.amountWithoutGst).toFixed(2),
+            amountWithGst: parseFloat(detail.amountWithGst).toFixed(2),
+            expiryDate: formatMonthYear(detail.expiryDate),
+            detailCreatedAt: formatFullDateTime(detail.createdAt),
+            detailUpdatedAt: formatFullDateTime(detail.updatedAt),
+          });
+        });
+
+        worksheet.addRow({}); // Add spacing row
+      });
+
+      // Send file
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=admin_purchases.xlsx"
+      );
+
+      await workbook.xlsx.write(res);
+      return res.end();
+    }
+
+    // Normal JSON for frontend
     const totalAdminPurchases = await prisma.adminPurchase.count({
       where: whereClause,
     });
@@ -76,6 +236,36 @@ const getAdminPurchases = async (req, res) => {
       },
     });
   }
+};
+
+// === 📅 Helpers ===
+
+// Formats as "DD/MM/YYYY"
+const formatFullDate = (date) => {
+  if (!date) return "N/A";
+  const d = new Date(date);
+  return d.toLocaleDateString("en-GB");
+};
+
+// Formats as "DD/MM/YYYY hh:mm:ss AM/PM"
+const formatFullDateTime = (date) => {
+  if (!date) return "N/A";
+  return new Date(date).toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+};
+
+// Formats as "MM/YYYY"
+const formatMonthYear = (date) => {
+  if (!date) return "N/A";
+  const d = new Date(date);
+  return `${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 };
 
 // Create a new admin purchase

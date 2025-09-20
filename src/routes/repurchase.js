@@ -6,6 +6,7 @@ const {
   getRepurchaseById,
   DownloadRepurchaseInvoice,
 } = require("../controllers/repurchaseController");
+const { getRepurchaseRecords } = require("../controllers/purchaseController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
 
@@ -110,7 +111,7 @@ const acl = require("../middleware/acl");
  *       500:
  *         description: Failed to fetch repurchases
  */
-router.get("/", auth, acl("repurchases.read"), getRepurchases);
+router.get("/", auth, acl("repurchases.read"), getRepurchaseRecords);
 
 /**
  * @swagger
