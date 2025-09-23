@@ -8,7 +8,7 @@ const {
 } = require("../config/data");
 const logger = require("./logger");
 const prisma = require("../config/db");
-
+const calculateLoan = require("./calculateLoan");
 const applyRepurchaseCashback = async (member, totalAmountWithGst) => {
   logger.info(`Starting cashback calculation for member ID: ${member.id}`);
 
@@ -40,6 +40,14 @@ const applyRepurchaseCashback = async (member, totalAmountWithGst) => {
       },
     },
   });
+  if (parseFloat(cashbackAmount) > 0) {
+    member = await calculateLoan(
+      cashbackAmount,
+      member,
+      HOLD_WALLET,
+      "CASHBACK"
+    );
+  }
 
   logger.info(
     `Successfully updated member wallet balance for member ID: ${member.id}`

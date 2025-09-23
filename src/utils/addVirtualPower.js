@@ -8,6 +8,7 @@ const utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
 const logger = require("./logger"); // Assuming you have a logger utility
 const today = dayjs().utc().startOf("day").toDate();
+const calculateLoan = require("./calculateLoan");
 const {
   CREDIT,
   APPROVED,
@@ -191,6 +192,14 @@ const addVirtualPower = async (data) => {
               }),
           },
         });
+
+        let virtualAmt = (ASSOCIATE_COMMISSION * member.percentage) / 100;
+        member = await calculateLoan(
+          virtualAmt,
+          member,
+          MATCHING_INCOME_WALLET,
+          "VIRTUAL_POWER"
+        );
         updates = {};
         minBalance = Math.min(member[columnName], member[oppositeColumnName]);
         // here
@@ -304,13 +313,22 @@ const addVirtualPower = async (data) => {
           }),
         },
       });
+
+      console.log("working1");
+
+      member = await calculateLoan(
+        matchingIncomeIncrement,
+        member,
+        MATCHING_INCOME_WALLET,
+        "VIRTUAL_POWER"
+      );
     }
 
     if (powerType === SELF) {
       logger.info(`Self power.`);
       break;
     }
-
+    console.log("working2");
     // end
 
     parentId = member.parentId;

@@ -7,7 +7,7 @@ const {
   HOLD_WALLET,
 } = require("../config/data");
 const logger = require("./logger");
-
+const calculateLoan = require("./calculateLoan");
 const prisma = require("../config/db");
 
 const hasMinDirectReferrals = async (memberId, minCount = 3) => {
@@ -119,7 +119,7 @@ const distributeRepurchaseIncome = async (startingMember, totalProductBV) => {
       );
 
       if (actualCommission > 0) {
-        await prisma.member.update({
+        let memberData = await prisma.member.update({
           where: { id: sponsor.id },
           data: {
             repurchaseIncome: {
@@ -143,6 +143,12 @@ const distributeRepurchaseIncome = async (startingMember, totalProductBV) => {
             },
           },
         });
+        memberData = await calculateLoan(
+          actualCommission,
+          memberData,
+          HOLD_WALLET,
+          `repurchaseIncomeL${level}`
+        );
       }
 
       // Store for mentor commission if level is 1–3

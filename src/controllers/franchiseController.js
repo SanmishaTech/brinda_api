@@ -9,6 +9,7 @@ const fs = require("fs").promises; // Use promises API
 const path = require("path");
 const { updateStock } = require("../utils/updateStock");
 const logger = require("../utils/logger");
+const calculateLoan = require("../utils/calculateLoan");
 const {
   DIAMOND,
   UPGRADE_WALLET,
@@ -101,7 +102,7 @@ const makeFranchise = async (req, res) => {
     });
 
     // Update influencer's wallet and log the transaction
-    await prisma.member.update({
+    const influencerData = await prisma.member.update({
       where: { id: influencer.id },
       data: {
         franchiseWalletBalance: {
@@ -122,6 +123,17 @@ const makeFranchise = async (req, res) => {
         },
       },
     });
+
+    let influencerAmount = depositAmount * 0.05;
+
+    if (influencerAmount > 0) {
+      parent = await calculateLoan(
+        influencerAmount,
+        influencerData,
+        FRANCHISE_WALLET,
+        "INFLUENCER"
+      );
+    }
 
     return res.status(201).json({ message: "Franchise created successfully" });
   } catch (error) {
@@ -328,23 +340,32 @@ const deliverProductsToCustomer = async (req, res) => {
           .mul(commissionPercent)
           .div(100);
 
-        const updatedMember = await prisma.member.update({
-          where: { id: memberId },
-          data: {
-            franchiseCommission: { increment: commissionToGive },
-            franchiseWalletBalance: { increment: commissionToGive },
-            walletTransactions: {
-              create: {
-                amount: commissionToGive,
-                walletType: FRANCHISE_WALLET,
-                status: APPROVED,
-                type: DEBIT, // DEBIT because it's incoming money
-                notes: `Repurchase Commission (${commissionPercent}%) for Invoice ${record.invoiceNumber}`,
-                transactionDate: new Date(),
+        if (parseFloat(commissionToGive) > 0) {
+          let updatedMember = await prisma.member.update({
+            where: { id: memberId },
+            data: {
+              franchiseCommission: { increment: commissionToGive },
+              franchiseWalletBalance: { increment: commissionToGive },
+              walletTransactions: {
+                create: {
+                  amount: commissionToGive,
+                  walletType: FRANCHISE_WALLET,
+                  status: APPROVED,
+                  type: DEBIT, // DEBIT because it's incoming money
+                  notes: `Repurchase Commission (${commissionPercent}%) for Invoice ${record.invoiceNumber}`,
+                  transactionDate: new Date(),
+                },
               },
             },
-          },
-        });
+          });
+
+          updatedMember = await calculateLoan(
+            commissionToGive,
+            updatedMember,
+            FRANCHISE_WALLET,
+            "REPURCHASE_DELIVERY_COMMISSION"
+          );
+        }
       }
       // SDR 15%
       const purchaseAmount = parseFloat(record.totalAmountWithGst);
@@ -392,6 +413,13 @@ const deliverProductsToCustomer = async (req, res) => {
         },
       });
 
+      updatedMember = await calculateLoan(
+        commissionToGive,
+        updatedMember,
+        FRANCHISE_WALLET,
+        "REPURCHASE_SDR"
+      );
+
       const againUpdatedMember = await prisma.member.update({
         where: { id: member.id },
         data: {
@@ -406,45 +434,63 @@ const deliverProductsToCustomer = async (req, res) => {
         (parseFloat(purchaseAmount) * REPURCHASE_BILL_TO_SPONSOR_PERCENT) / 100
       );
 
-      await prisma.member.update({
-        where: { id: updatedMember.sponsorId },
-        data: {
-          repurchaseBillAmount: { increment: sponsorCommission },
-          franchiseWalletBalance: { increment: sponsorCommission },
-          walletTransactions: {
-            create: {
-              amount: new Prisma.Decimal(sponsorCommission),
-              walletType: FRANCHISE_WALLET,
-              status: APPROVED,
-              type: DEBIT,
-              notes: `${REPURCHASE_BILL_TO_SPONSOR_PERCENT}% sponsor commission for repurchase invoice ${record.invoiceNumber}`,
-              transactionDate: new Date(),
+      if (parseFloat(sponsorCommission) > 0) {
+        const sponsorData = await prisma.member.update({
+          where: { id: updatedMember.sponsorId },
+          data: {
+            repurchaseBillAmount: { increment: sponsorCommission },
+            franchiseWalletBalance: { increment: sponsorCommission },
+            walletTransactions: {
+              create: {
+                amount: new Prisma.Decimal(sponsorCommission),
+                walletType: FRANCHISE_WALLET,
+                status: APPROVED,
+                type: DEBIT,
+                notes: `${REPURCHASE_BILL_TO_SPONSOR_PERCENT}% sponsor commission for repurchase invoice ${record.invoiceNumber}`,
+                transactionDate: new Date(),
+              },
             },
           },
-        },
-      });
+        });
+
+        sponsorData = await calculateLoan(
+          sponsorCommission,
+          sponsorData,
+          FRANCHISE_WALLET,
+          "SPONSOR_COMMISSION"
+        );
+      }
     } else {
       const purchaseAmount = new Prisma.Decimal(record.totalAmountWithGst);
       const commissionToGive =
         purchaseAmount * (PURCHASE_BILL_DELIVERY_PERCENT / 100);
 
-      await prisma.member.update({
-        where: { id: memberId },
-        data: {
-          franchiseCommission: { increment: commissionToGive },
-          franchiseWalletBalance: { increment: commissionToGive },
-          walletTransactions: {
-            create: {
-              amount: new Prisma.Decimal(commissionToGive),
-              walletType: FRANCHISE_WALLET,
-              status: APPROVED,
-              type: DEBIT,
-              notes: `Franchise Commission For Invoice ${record.invoiceNumber}`,
-              transactionDate: new Date(),
+      if (parseFloat(commissionToGive) > 0) {
+        const memberData = await prisma.member.update({
+          where: { id: memberId },
+          data: {
+            franchiseCommission: { increment: commissionToGive },
+            franchiseWalletBalance: { increment: commissionToGive },
+            walletTransactions: {
+              create: {
+                amount: new Prisma.Decimal(commissionToGive),
+                walletType: FRANCHISE_WALLET,
+                status: APPROVED,
+                type: DEBIT,
+                notes: `Franchise Commission For Invoice ${record.invoiceNumber}`,
+                transactionDate: new Date(),
+              },
             },
           },
-        },
-      });
+        });
+
+        await calculateLoan(
+          commissionToGive,
+          memberData,
+          FRANCHISE_WALLET,
+          "PURCHASE_DELIVERY_COMMISSION"
+        );
+      }
     }
 
     return res.status(201).json({
@@ -465,5 +511,5 @@ module.exports = {
   makeFranchise,
   AddSecurityDepositAmount,
   FranchiseDashboard,
-  deliverProductsToCustomer,
+  deliverProductsToCustomer, //was here. 1)update this function. 2) check all changes. 3) if more than 2 wallet then manage it. u are oly sending 1 walletType like HOLD_WALLET.
 };

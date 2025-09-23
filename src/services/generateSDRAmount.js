@@ -12,22 +12,12 @@ const {
   DEBIT,
 } = require("../config/data");
 const logger = require("../utils/logger");
-
+const calculateLoan = require("../utils/calculateLoan");
 const BATCH_SIZE = 300;
 
 const generateSDRAmount = async () => {
   try {
     const members = await prisma.member.findMany({
-      select: {
-        id: true,
-        isFranchise: true,
-        securityDepositAmount: true,
-        securityDepositPending: true,
-        securityDepositReturn: true,
-        franchiseWalletBalance: true,
-        securityDepositPercentage: true,
-        totalSecurityDepositReturn: true,
-      },
       where: {
         isFranchise: true,
         securityDepositPending: {
@@ -56,7 +46,7 @@ const generateSDRAmount = async () => {
         commissionToGive = parseFloat(member.securityDepositPending);
       }
 
-      const updatedMember = await prisma.member.update({
+      let updatedMember = await prisma.member.update({
         where: { id: member.id },
         data: {
           franchiseWalletBalance: {
@@ -80,6 +70,15 @@ const generateSDRAmount = async () => {
           },
         },
       });
+
+      if (parseFloat(commissionToGive) > 0) {
+        updatedMember = await calculateLoan(
+          commissionToGive,
+          updatedMember,
+          FRANCHISE_WALLET,
+          "GENERATE_SDR"
+        );
+      }
 
       const againUpdatedMember = await prisma.member.update({
         where: { id: member.id },

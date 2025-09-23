@@ -24,6 +24,7 @@ const franchisePayoutRoutes = require("./routes/franchisePayout");
 const rewardPayoutRoutes = require("./routes/rewardPayout");
 const virtualPowerRoutes = require("./routes/virtualPower");
 const franchiseRoutes = require("./routes/franchise");
+const loanRoutes = require("./routes/loan");
 const rewardRoutes = require("./routes/reward");
 const swaggerRouter = require("./swagger");
 const path = require("path");
@@ -67,6 +68,7 @@ app.use("/api/reward-payouts", rewardPayoutRoutes);
 app.use("/api/rewards", rewardRoutes);
 app.use("/api/stock", stockRoutes);
 app.use("/api/franchise", franchiseRoutes);
+app.use("/api/loan", loanRoutes);
 app.use("/api/virtual-power", virtualPowerRoutes); // Ensure this route is defined in virtualPower.js
 app.use(swaggerRouter); // Add this line to include Swagger documentation
 

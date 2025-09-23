@@ -145,6 +145,10 @@ model Member {
   totalSecurityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
   franchiseIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
   // end
+  totalLoanGiven           Decimal   @db.Decimal(11, 2)   @default(0.00)
+  totalLoanPending           Decimal   @db.Decimal(11, 2)   @default(0.00)
+  totalLoanCollected         Decimal   @db.Decimal(11, 2)   @default(0.00)
+  loanPercentage         Decimal   @db.Decimal(11, 2)   @default(0.00)
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] @relation("PurchaseMember")
   purchaseDeliveriesMade   Purchase[] @relation("DeliveredByMember")
@@ -534,3 +538,5 @@ model FranchiseIncomeCommission {
 // Test SDR mondhtly commison and payout.
 
 // add searching, export excel, dates in geneology
+
+// aa

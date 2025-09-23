@@ -9,7 +9,7 @@ const {
   APPROVED,
   DEBIT,
 } = require("../config/data");
-
+const calculateLoan = require("./calculateLoan");
 const checkMatchingMentorIncomeL2 = async (parent, value) => {
   const L1SponsorId = parent?.sponsor?.id;
   if (!L1SponsorId) {
@@ -71,7 +71,7 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
     }
     // end
     if (commissionToGive > 0) {
-      await prisma.member.update({
+      let memberData = await prisma.member.update({
         where: { id: L2Sponsor.id },
         data: {
           matchingMentorIncomeL2: { increment: commissionToGive },
@@ -88,6 +88,13 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
           },
         },
       });
+
+      memberData = await calculateLoan(
+        commissionToGive,
+        memberData,
+        HOLD_WALLET,
+        "MMI_L2"
+      );
     }
 
     return;
@@ -215,7 +222,7 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
       commissionToGive = 0;
     }
     // end
-    await prisma.member.update({
+    let memberData = await prisma.member.update({
       where: { id: L2Sponsor.id },
       data: {
         isMatchingMentorL2: true,
@@ -235,6 +242,14 @@ const checkMatchingMentorIncomeL2 = async (parent, value) => {
         }),
       },
     });
+    if (parseFloat(commissionToGive) > 0) {
+      memberData = await calculateLoan(
+        commissionToGive,
+        memberData,
+        HOLD_WALLET,
+        "MMI_L2"
+      );
+    }
     return;
   }
 

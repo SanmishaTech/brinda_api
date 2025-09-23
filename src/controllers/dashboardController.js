@@ -64,6 +64,10 @@ const dashboardInformation = async (req, res) => {
       goldRewardLevel: member.goldRewardLevel,
       franchiseIncomeEarned: member.franchiseIncomeEarned,
       franchiseWalletBalance: member.franchiseWalletBalance,
+      totalLoanGiven: member.totalLoanGiven,
+      totalLoanPending: member.totalLoanPending,
+      totalLoanCollected: member.totalLoanCollected,
+      loanPercentage: member.loanPercentage,
     });
   } catch (error) {
     res.status(500).json({

@@ -56,4 +56,7 @@ module.exports = {
   //franchise
   "franchise.read": ["admin", "member"],
   "franchise.write": ["admin", "member"],
+
+  //loan
+  "loan.write": ["admin", "member"],
 };

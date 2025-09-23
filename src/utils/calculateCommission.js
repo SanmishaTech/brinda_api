@@ -6,7 +6,7 @@ const {
   HOLD_WALLET,
 } = require("../config/data");
 const prisma = require("../config/db");
-
+const calculateLoan = require("./calculateLoan");
 const calculateCommission = async (parent, updates, rewardDetails) => {
   const percentage = parseFloat(parent.percentage);
   const walletTransactions = [];
@@ -128,6 +128,27 @@ const calculateCommission = async (parent, updates, rewardDetails) => {
       parent: true,
     },
   });
+
+  const matchingCommission =
+    updates.matchingIncomeWalletBalance?.increment ?? 0;
+  if (matchingCommission > 0) {
+    parent = await calculateLoan(
+      matchingCommission,
+      parent,
+      MATCHING_INCOME_WALLET,
+      "MATCHING_COMMISSION"
+    );
+  }
+
+  const holdWalletAmount = updates.holdWalletBalance?.increment ?? 0;
+  if (holdWalletAmount > 0) {
+    parent = await calculateLoan(
+      holdWalletAmount,
+      parent,
+      HOLD_WALLET,
+      "REWARD_COMMISSION"
+    );
+  }
 
   return parent;
 };

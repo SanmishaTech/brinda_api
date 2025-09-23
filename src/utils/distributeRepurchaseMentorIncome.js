@@ -5,7 +5,7 @@ const {
 } = require("./distributeRepurchaseIncome");
 const logger = require("./logger");
 const { APPROVED, DEBIT, HOLD_WALLET } = require("../config/data");
-
+const calculateLoan = require("./calculateLoan");
 const prisma = require("../config/db");
 
 const isMentorEligibleByLevel = async (memberId, level) => {
@@ -142,10 +142,17 @@ const distributeRepurchaseMentorIncome = async (mentorCandidates = []) => {
     }
 
     if (Object.keys(updateData).length > 0) {
-      await prisma.member.update({
+      let memberData = await prisma.member.update({
         where: { id: sponsorId },
         data: updateData,
       });
+
+      memberData = await calculateLoan(
+        actualMentorCommission,
+        memberData,
+        HOLD_WALLET,
+        `repurchaseMentorIncomeL${level}`
+      );
     } else {
       logger.info(`No valid fields to update for sponsor ${sponsorId}`);
     }
