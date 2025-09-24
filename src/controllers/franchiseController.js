@@ -233,6 +233,7 @@ const FranchiseDashboard = async (req, res) => {
     });
   }
 };
+
 const deliverProductsToCustomer = async (req, res) => {
   const { invoiceNumber } = req.body;
   const memberId = req?.user?.member?.id;
@@ -435,7 +436,7 @@ const deliverProductsToCustomer = async (req, res) => {
       );
 
       if (parseFloat(sponsorCommission) > 0) {
-        const sponsorData = await prisma.member.update({
+        let sponsorData = await prisma.member.update({
           where: { id: updatedMember.sponsorId },
           data: {
             repurchaseBillAmount: { increment: sponsorCommission },

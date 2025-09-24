@@ -113,7 +113,6 @@ const calculateLoan = async (commission, member, walletType, module) => {
       decrement: loanAmount,
     };
   }
-  // tested till here.
 
   if (module === "GENERATE_SDR") {
     data.franchiseWalletBalance = {
