@@ -48,6 +48,14 @@ const calculateLoan = async (commission, member, walletType, module) => {
     };
   }
 
+  if (module === "PURCHASE_CASHBACK") {
+    data.matchingIncomeWalletBalance = {
+      decrement: loanAmount,
+    };
+    data.collectedPurchaseAmount = {
+      decrement: loanAmount,
+    };
+  }
   if (module === "REWARD_COMMISSION") {
     data.holdWalletBalance = {
       decrement: loanAmount,

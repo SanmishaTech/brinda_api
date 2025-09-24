@@ -21,8 +21,8 @@ const weeklyMatchingPayout = async () => {
         status: {
           not: INACTIVE,
         },
-        isDirectMatch: true,
-        is2_1Pass: true,
+        // isDirectMatch: true,
+        // is2_1Pass: true,
         matchingIncomeWalletBalance: {
           gte: new Prisma.Decimal(MINIMUM_MATCHING_COMMISSION_LIMIT),
         },

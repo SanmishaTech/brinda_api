@@ -49,9 +49,20 @@ const AddLoanAmount = async (req, res) => {
     await prisma.member.update({
       where: { id: parsedMemberId },
       data: {
+        walletBalance: { increment: parsedLoanAmount },
         totalLoanGiven: totalLoanGiven,
         totalLoanPending: totalLoanPending,
         loanPercentage: parsedLoanPercentage,
+        walletTransactions: {
+          create: {
+            amount: parsedLoanAmount,
+            walletType: FUND_WALLET,
+            status: APPROVED,
+            type: DEBIT,
+            notes: "Loan Amount Added In Fund Wallet.",
+            transactionDate: new Date(),
+          },
+        },
       },
     });
 

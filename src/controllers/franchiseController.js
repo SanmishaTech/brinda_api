@@ -414,12 +414,14 @@ const deliverProductsToCustomer = async (req, res) => {
         },
       });
 
-      updatedMember = await calculateLoan(
-        commissionToGive,
-        updatedMember,
-        FRANCHISE_WALLET,
-        "REPURCHASE_SDR"
-      );
+      if (parseFloat(commissionToGive) > 0) {
+        updatedMember = await calculateLoan(
+          commissionToGive,
+          updatedMember,
+          FRANCHISE_WALLET,
+          "REPURCHASE_SDR"
+        );
+      }
 
       const againUpdatedMember = await prisma.member.update({
         where: { id: member.id },

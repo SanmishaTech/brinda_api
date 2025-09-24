@@ -132,7 +132,6 @@ model Member {
   matchingIncomeEarned       Decimal   @db.Decimal(11, 2)   @default(0.00)
   repurchaseIncomeEarned       Decimal   @db.Decimal(11, 2)   @default(0.00)
   rewardIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
-  //start
   isFranchise                Boolean  @default(false)
   securityDepositAmount           Decimal   @db.Decimal(11, 2)   @default(0.00)  //first amount
   securityDepositPending        Decimal  @db.Decimal(11, 2)   @default(0.00)
@@ -144,11 +143,15 @@ model Member {
   repurchaseBillAmount      Decimal   @db.Decimal(11, 2)    @default(0) //10 percent of purchase
   totalSecurityDepositReturn           Decimal   @db.Decimal(11, 2)   @default(0.00) // variable to hold sdr
   franchiseIncomeEarned           Decimal   @db.Decimal(11, 2)   @default(0.00)
-  // end
+  //new
   totalLoanGiven           Decimal   @db.Decimal(11, 2)   @default(0.00)
   totalLoanPending           Decimal   @db.Decimal(11, 2)   @default(0.00)
   totalLoanCollected         Decimal   @db.Decimal(11, 2)   @default(0.00)
   loanPercentage         Decimal   @db.Decimal(11, 2)   @default(0.00)
+  totalPurchaseAmount               Decimal   @db.Decimal(11, 2)   @default(0.00)
+  pendingPurchaseAmount            Decimal   @db.Decimal(11, 2)   @default(0.00)
+  collectedPurchaseAmount   Decimal   @db.Decimal(11, 2)   @default(0.00)
+//new
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] @relation("PurchaseMember")
   purchaseDeliveriesMade   Purchase[] @relation("DeliveredByMember")
@@ -232,7 +235,7 @@ model Purchase {
   totalGstAmount       Decimal   @db.Decimal(11, 2)
   totalProductPV              Decimal   @db.Decimal(11, 2)
   state                 String   // e.g., "Pending", "Completed", "Cancelled"
-status String? @default("Pending")
+  status String? @default("Pending")
   deliveredBy           Int?
   deliveredByMember       Member?    @relation("DeliveredByMember",fields: [deliveredBy], references: [id],onDelete: Restrict) // Relation to Member
   deliveredAt             DateTime?
@@ -528,15 +531,26 @@ model FranchiseIncomeCommission {
   createdAt                  DateTime @default(now())
   @@map("franchise_income_commissions")
 }
-// IN PURCHASE AND REPURCHASE ERROR:INVOICE NUMBER MISSING.
-//STOCK WORKING PROPERLY.
-//ADD FRANCHISE STOCK WORKING PROPERLY
-//TEST MONTHLY SDR GENERATION  AND FRANCHISE PAYOUT AND 0 TO 200000 REPURCHASE RANGE CONDITION
-//TEST ENTIRE SOFTWARE AGAIN
-// error in purchase and repurchase cause in table now invoice number is unique and not null.
 
-// Test SDR mondhtly commison and payout.
 
-// add searching, export excel, dates in geneology
+// UPDATE members m
+// JOIN (
+//     SELECT 
+//         memberId,
+//         SUM(totalAmountWithGst) AS purchaseTotal
+//     FROM purchases
+//     GROUP BY memberId
+// ) p ON m.id = p.memberId
+// SET 
+//     m.totalPurchaseAmount = p.purchaseTotal,
+//     m.pendingPurchaseAmount = p.purchaseTotal;
 
-// aa
+
+// give cashback only when status get updated.
+// commission not on total purchaseAmount but on current Purchased Amount.
+
+// if member buy 550 and dont become associate then that amount will get hold.
+// then again when he buy 500 rs product and become associate then sopnsor get comission of
+//  550+500 .
+
+// add loanAmount in franchise wallet.

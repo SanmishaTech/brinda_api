@@ -34,6 +34,7 @@ const { updatePVBalance } = require("./updatePVBalance");
 const {
   generateUserProductPurchaseInvoice,
 } = require("../controllers/purchaseController");
+const distributePurchaseCashback = require("./distributePurchaseCashback");
 
 const handlePurchase = async (data) => {
   const {
@@ -91,6 +92,8 @@ const handlePurchase = async (data) => {
   });
 
   member = await updatePVBalance(INCREMENT, totalProductPV, user.member.id);
+
+  await distributePurchaseCashback(totalAmountWithGst, user.member.id);
 
   const transaction = await prisma.walletTransaction.create({
     data: {

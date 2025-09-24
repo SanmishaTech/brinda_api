@@ -68,6 +68,10 @@ const dashboardInformation = async (req, res) => {
       totalLoanPending: member.totalLoanPending,
       totalLoanCollected: member.totalLoanCollected,
       loanPercentage: member.loanPercentage,
+
+      totalPurchaseAmount: member.totalPurchaseAmount,
+      pendingPurchaseAmount: member.pendingPurchaseAmount,
+      collectedPurchaseAmount: member.collectedPurchaseAmount,
     });
   } catch (error) {
     res.status(500).json({
