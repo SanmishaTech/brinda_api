@@ -151,12 +151,16 @@ model Member {
   totalPurchaseAmount               Decimal   @db.Decimal(11, 2)   @default(0.00)
   pendingPurchaseAmount            Decimal   @db.Decimal(11, 2)   @default(0.00)
   collectedPurchaseAmount   Decimal   @db.Decimal(11, 2)   @default(0.00)
+  totalFreePurchaseCount   Int       @default(0)
 //new
   walletTransactions WalletTransaction[] // Relation to WalletTransaction
   purchases        Purchase[] @relation("PurchaseMember")
+  freePurchases        FreePurchase[] @relation("FreePurchaseMember")
+
   purchaseDeliveriesMade   Purchase[] @relation("DeliveredByMember")
   repurchases        Repurchase[] @relation("RepurchaseMember")
   repurchaseDeliveriesMade   Repurchase[] @relation("RepurchaseDeliveredByMember")
+  freePurchaseDeliveriesMade   FreePurchase[] @relation("FreePurchaseDeliveredByMember")
   memberLogs        memberLog[] // Relation to memberLog
   matchingIncomeCommissions        MatchingIncomeCommission[] // Relation to memberLog
   repurchaseIncomeCommissions      RepurchaseIncomeCommission[] // Relation to memberLog
@@ -188,6 +192,8 @@ model Product {
   stockLedgers                   StockLedger[]
   stocks                       Stock[]
   stockTransferDetails    StockTransferDetail[]
+  freeProducts    FreeProduct[]
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -265,7 +271,7 @@ model PurchaseDetail {
   amountWithGst        Decimal   @db.Decimal(11, 2)
   pvPerUnit            Decimal   @db.Decimal(11, 2)
   totalPV              Decimal   @db.Decimal(11, 2)
-  batchDetails          String?   //no comma separated
+  batchDetails          String? @db.Text
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -316,7 +322,7 @@ model RepurchaseDetail {
   amountWithGst        Decimal   @db.Decimal(11, 2)
   bvPerUnit            Decimal   @db.Decimal(11, 2)
   totalBV              Decimal   @db.Decimal(11, 2)
-  batchDetails          String?   //no comma separated
+  batchDetails          String? @db.Text
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -532,6 +538,48 @@ model FranchiseIncomeCommission {
   @@map("franchise_income_commissions")
 }
 
+// new
+model FreeProduct {
+  id                   Int       @id @default(autoincrement())
+  productId            Int
+  product              Product   @relation(fields: [productId], references: [id],onDelete: Restrict) // Relation to Product
+  quantity              Int
+  freePurchaseDetails        FreePurchaseDetail[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  @@map("free_products")
+}
+
+model FreePurchase {
+  id                   Int       @id @default(autoincrement())
+  memberId             Int
+  member               Member    @relation("FreePurchaseMember",fields: [memberId], references: [id],onDelete: Restrict) // Relation to Member 
+  invoiceNumber        String   @unique   
+  invoiceDate           DateTime?
+  invoicePath           String?           @db.Text
+  purchaseDate         DateTime  @default(now())
+  status                 String @default("Pending")
+  deliveredBy           Int?
+  deliveredByMember       Member?    @relation("FreePurchaseDeliveredByMember",fields: [deliveredBy], references: [id],onDelete: Restrict) // Relation to Member
+  deliveredAt             DateTime?
+  freePurchaseDetails        FreePurchaseDetail[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  @@map("free_purchases")
+}
+
+model FreePurchaseDetail {
+  id                   Int       @id @default(autoincrement())
+  freePurchaseId           Int
+  freePurchase             FreePurchase  @relation(fields: [freePurchaseId], references: [id],onDelete: Restrict) // Relation to Purchase
+  freeProductId            Int
+  freeProduct            FreeProduct   @relation(fields: [freeProductId], references: [id],onDelete: Restrict) // Relation to Product
+  quantity             Int
+  batchDetails          String? @db.Text
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  @@map("free_purchase_details")
+}
 
 // UPDATE members m
 // JOIN (
@@ -544,13 +592,3 @@ model FranchiseIncomeCommission {
 // SET 
 //     m.totalPurchaseAmount = p.purchaseTotal,
 //     m.pendingPurchaseAmount = p.purchaseTotal;
-
-
-// give cashback only when status get updated.
-// commission not on total purchaseAmount but on current Purchased Amount.
-
-// if member buy 550 and dont become associate then that amount will get hold.
-// then again when he buy 500 rs product and become associate then sopnsor get comission of
-//  550+500 .
-
-// add loanAmount in franchise wallet.

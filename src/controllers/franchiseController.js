@@ -210,6 +210,13 @@ const FranchiseDashboard = async (req, res) => {
     },
   });
 
+  const freePurchases = await prisma.freePurchase.findMany({
+    where: { status: DELIVERED, deliveredBy: member.id },
+    include: {
+      member: true,
+    },
+  });
+
   try {
     return res.status(200).json({
       securityDepositAmount: member.securityDepositAmount,
@@ -224,6 +231,7 @@ const FranchiseDashboard = async (req, res) => {
       totalSecurityDepositReturn: member.totalSecurityDepositReturn,
       purchases: purchases,
       repurchases: repurchases,
+      freePurchases: freePurchases,
     });
   } catch (error) {
     console.error(error); // Always log the full error for debugging
@@ -255,17 +263,27 @@ const deliverProductsToCustomer = async (req, res) => {
 
   try {
     const isRepurchase = invoiceNumber.startsWith("R");
-    const model = isRepurchase ? prisma.repurchase : prisma.purchase;
-    const detailField = isRepurchase ? "repurchaseDetails" : "purchaseDetails";
-    const deliveredField = isRepurchase ? "deliveredBy" : "deliveredBy";
-    const statusField = "status";
-    const deliveredAtField = "deliveredAt";
+    const isFreePurchase = invoiceNumber.startsWith("F");
+
+    const model = isFreePurchase
+      ? prisma.freePurchase
+      : isRepurchase
+      ? prisma.repurchase
+      : prisma.purchase;
+
+    const detailField = isFreePurchase
+      ? "freePurchaseDetails"
+      : isRepurchase
+      ? "repurchaseDetails"
+      : "purchaseDetails";
 
     const record = await model.findUnique({
       where: { invoiceNumber },
       include: {
         [detailField]: {
-          include: { product: true },
+          include: isFreePurchase
+            ? { freeProduct: { include: { product: true } } }
+            : { product: true },
         },
       },
     });
@@ -289,6 +307,7 @@ const deliverProductsToCustomer = async (req, res) => {
       memberId,
       today
     );
+
     if (stockCheckResult.error) {
       return res.status(400).json({
         errors: { message: stockCheckResult.error },
@@ -463,6 +482,10 @@ const deliverProductsToCustomer = async (req, res) => {
           "SPONSOR_COMMISSION"
         );
       }
+    } else if (isFreePurchase) {
+      return res.status(201).json({
+        message: "Products Delivered Successfully.",
+      });
     } else {
       const purchaseAmount = new Prisma.Decimal(record.totalAmountWithGst);
       const commissionToGive =

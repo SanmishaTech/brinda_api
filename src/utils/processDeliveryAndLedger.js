@@ -5,16 +5,17 @@ const processDeliveryAndLedger = async (
   details,
   memberId,
   today,
-  isRepurchase = false
+  isRepurchase
 ) => {
   for (const item of details) {
     let requiredQty = item.quantity;
     let batchLog = [];
-
+    const isFree = !!item.freeProduct;
+    const productId = isFree ? item.freeProduct.productId : item.productId;
     const stockBatches = await prisma.stock.findMany({
       where: {
         memberId,
-        productId: item.productId,
+        productId,
         expiryDate: { gte: today },
         closing_quantity: { gt: 0 },
       },
@@ -47,16 +48,26 @@ const processDeliveryAndLedger = async (
       requiredQty -= deductQty;
     }
 
-    const detailModel = isRepurchase
-      ? prisma.repurchaseDetail
-      : prisma.purchaseDetail;
+    // Decide which model to update
+    if (isFree) {
+      await prisma.freePurchaseDetail.update({
+        where: { id: item.id },
+        data: {
+          batchDetails: JSON.stringify(batchLog),
+        },
+      });
+    } else {
+      const detailModel = isRepurchase
+        ? prisma.repurchaseDetail
+        : prisma.purchaseDetail;
 
-    await detailModel.update({
-      where: { id: item.id },
-      data: {
-        batchDetails: JSON.stringify(batchLog),
-      },
-    });
+      await detailModel.update({
+        where: { id: item.id },
+        data: {
+          batchDetails: JSON.stringify(batchLog),
+        },
+      });
+    }
   }
 };
 module.exports = processDeliveryAndLedger;

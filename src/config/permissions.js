@@ -59,4 +59,12 @@ module.exports = {
 
   //loan
   "loan.write": ["admin", "member"],
+
+  // free-products
+  "free-products.read": ["admin", "member"],
+  "free-products.write": ["admin", "member"],
+
+  // free-purchases
+  "free-purchases.read": ["admin", "member"],
+  "free-purchases.write": ["admin", "member"],
 };

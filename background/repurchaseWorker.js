@@ -59,6 +59,22 @@ process.on("message", async (data) => {
       },
     });
 
+    if (parseFloat(totalAmountWithGst) >= 1500) {
+      await prisma.member.update({
+        where: { id: user.member.id },
+        data: {
+          totalFreePurchaseCount: { increment: 2 },
+        },
+      });
+    } else if (parseFloat(totalAmountWithGst) >= 1000) {
+      await prisma.member.update({
+        where: { id: user.member.id },
+        data: {
+          totalFreePurchaseCount: { increment: 1 },
+        },
+      });
+    }
+
     const invoiceNumber = await generateUserProductRepurchaseInvoice(
       newRepurchase.id
     );
