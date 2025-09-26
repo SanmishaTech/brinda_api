@@ -456,7 +456,7 @@ const deliverProductsToCustomer = async (req, res) => {
         (parseFloat(purchaseAmount) * REPURCHASE_BILL_TO_SPONSOR_PERCENT) / 100
       );
 
-      if (parseFloat(sponsorCommission) > 0) {
+      if (parseFloat(sponsorCommission) > 0 && updatedMember?.sponsorId) {
         let sponsorData = await prisma.member.update({
           where: { id: updatedMember.sponsorId },
           data: {

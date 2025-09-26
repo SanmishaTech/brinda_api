@@ -592,3 +592,4 @@ model FreePurchaseDetail {
 // SET 
 //     m.totalPurchaseAmount = p.purchaseTotal,
 //     m.pendingPurchaseAmount = p.purchaseTotal;
+
