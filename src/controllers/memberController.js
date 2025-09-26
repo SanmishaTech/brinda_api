@@ -3,7 +3,7 @@ const validateRequest = require("../utils/validateRequest");
 const prisma = require("../config/db");
 const { z } = require("zod");
 const { LEFT, RIGHT, PENDING } = require("../config/data");
-
+const parseDate = require("../utils/parseDate");
 /**
  * Get all members with pagination, sorting, and search
  */
@@ -162,11 +162,39 @@ const updateMember = async (req, res) => {
         .min(6, "Password must be at least 6 characters.")
         .max(100, "Password must not exceed 100 characters."),
       percentage: decimalString("Percentage", 5, 2),
+      aadharNumber: z
+        .string()
+        .max(12, "Aadhar number must be 12 digits.")
+        .refine((val) => val === "" || /^[2-9]{1}[0-9]{11}$/.test(val), {
+          message:
+            "Aadhar number must be exactly 12 digits and cannot start with 0 or 1.",
+        })
+        .optional(),
+      bankIfscCode: z
+        .string()
+        .refine((val) => val === "" || /^[A-Z]{4}0[A-Z0-9]{6}$/.test(val), {
+          message: "Invalid IFSC code format. Example: SBIN0001234",
+        }),
+      panNumber: z
+        .string()
+        .refine((val) => val === "" || /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(val), {
+          message: "Invalid PAN number format. Example: ABCDE1234F",
+        })
+        .optional(),
+      bankAccountNumber: z
+        .string()
+        .refine((val) => val === "" || /^[0-9]{9,18}$/.test(val), {
+          message:
+            "Invalid bank account number format. Must be between 9 and 18 digits.",
+        })
+        .optional(),
       securityDepositPercentage: decimalString(
         "securityDepositPercentage",
         5,
         2
       ),
+      bankAccountType: z.string().optional(),
+      bankName: z.string().optional(),
     })
     .superRefine(async (data, ctx) => {
       const { id } = req.params;
@@ -183,6 +211,70 @@ const updateMember = async (req, res) => {
           ctx.addIssue({
             path: ["email"],
             message: `Email ${data.email} already exists.`,
+          });
+        }
+      }
+
+      if (data.bankAccountNumber) {
+        const existingMemberBank = await prisma.member.findFirst({
+          where: {
+            bankAccountNumber: data.bankAccountNumber,
+          },
+          select: { id: true },
+        });
+
+        if (existingMemberBank && existingMemberBank.id !== parseInt(id)) {
+          ctx.addIssue({
+            path: ["bankAccountNumber"],
+            message: `Number ${data.bankAccountNumber} already exists.`,
+          });
+        }
+      }
+
+      if (data.panNumber) {
+        const existingMemberPan = await prisma.member.findFirst({
+          where: {
+            panNumber: data.panNumber,
+          },
+          select: { id: true },
+        });
+
+        if (existingMemberPan && existingMemberPan.id !== parseInt(id)) {
+          ctx.addIssue({
+            path: ["panNumber"],
+            message: `Pan Number ${data.panNumber} already exists.`,
+          });
+        }
+      }
+
+      if (data.bankIfscCode) {
+        const existingMemberIFSC = await prisma.member.findFirst({
+          where: {
+            bankIfscCode: data.bankIfscCode,
+          },
+          select: { id: true },
+        });
+
+        if (existingMemberIFSC && existingMemberIFSC.id !== parseInt(id)) {
+          ctx.addIssue({
+            path: ["bankIfscCode"],
+            message: `IFSC ${data.bankIfscCode} already exists.`,
+          });
+        }
+      }
+
+      if (data.aadharNumber) {
+        const existingMemberAadhar = await prisma.member.findFirst({
+          where: {
+            aadharNumber: data.aadharNumber,
+          },
+          select: { id: true },
+        });
+
+        if (existingMemberAadhar && existingMemberAadhar.id !== parseInt(id)) {
+          ctx.addIssue({
+            path: ["aadharNumber"],
+            message: `Aadhaar Number ${data.aadharNumber} already exists.`,
           });
         }
       }
@@ -214,6 +306,18 @@ const updateMember = async (req, res) => {
     password,
     percentage,
     securityDepositPercentage,
+    bankAccountType,
+    bankName,
+    aadharNumber,
+    bankIfscCode,
+    panNumber,
+    bankAccountNumber,
+    memberGender,
+    memberDob,
+    memberAddress,
+    memberPincode,
+    memberState,
+    tPin,
   } = req.body;
 
   try {
@@ -227,6 +331,18 @@ const updateMember = async (req, res) => {
         securityDepositPercentage: new Prisma.Decimal(
           securityDepositPercentage
         ),
+        bankAccountType: bankAccountType,
+        bankName,
+        aadharNumber,
+        bankIfscCode,
+        panNumber,
+        bankAccountNumber,
+        memberGender,
+        memberDob: parseDate(memberDob),
+        memberAddress,
+        memberPincode: parseInt(memberPincode),
+        memberState,
+        tPin,
         user: {
           update: {
             name,

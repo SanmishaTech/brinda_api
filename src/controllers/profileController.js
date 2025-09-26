@@ -158,6 +158,19 @@ const updateUserProfile = async (req, res, next) => {
             "Aadhar number must be exactly 12 digits and cannot start with 0 or 1.",
         })
         .optional(),
+
+      bankAccountNumber: z
+        .string()
+        .refine((val) => val === "" || /^[0-9]{9,18}$/.test(val), {
+          message:
+            "Invalid bank account number format. Must be between 9 and 18 digits.",
+        })
+        .optional(),
+      bankIfscCode: z
+        .string()
+        .refine((val) => val === "" || /^[A-Z]{4}0[A-Z0-9]{6}$/.test(val), {
+          message: "Invalid IFSC code format. Example: SBIN0001234",
+        }),
     })
     .superRefine(async (data, ctx) => {
       const usrId = req.user.member.id; // Assuming `req.user` contains the authenticated user's data
@@ -198,6 +211,39 @@ const updateUserProfile = async (req, res, next) => {
           });
         }
       }
+
+      if (data.bankAccountNumber) {
+        const existingMemberBank = await prisma.member.findFirst({
+          where: {
+            bankAccountNumber: data.bankAccountNumber,
+          },
+          select: { id: true },
+        });
+
+        if (existingMemberBank && existingMemberBank.id !== parseInt(usrId)) {
+          ctx.addIssue({
+            path: ["bankAccountNumber"],
+            message: `Number ${data.bankAccountNumber} already exists.`,
+          });
+        }
+      }
+
+      if (data.bankIfscCode) {
+        const existingMemberIFSC = await prisma.member.findFirst({
+          where: {
+            bankIfscCode: data.bankIfscCode,
+          },
+          select: { id: true },
+        });
+
+        if (existingMemberIFSC && existingMemberIFSC.id !== parseInt(usrId)) {
+          ctx.addIssue({
+            path: ["bankIfscCode"],
+            message: `IFSC ${data.bankIfscCode} already exists.`,
+          });
+        }
+      }
+
       if (data.panNumber) {
         const existingPanNumber = await prisma.member.findFirst({
           where: {
