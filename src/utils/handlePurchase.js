@@ -35,6 +35,7 @@ const {
   generateUserProductPurchaseInvoice,
 } = require("../controllers/purchaseController");
 const distributePurchaseCashback = require("./distributePurchaseCashback");
+const { purchaseBackup } = require("./purchaseBackup");
 
 const handlePurchase = async (data) => {
   const {
@@ -47,6 +48,8 @@ const handlePurchase = async (data) => {
     walletType,
   } = data;
   logger.info(`Purchase task for MemberId: ${user.member.id}`);
+
+  await purchaseBackup();
 
   const newPurchase = await prisma.purchase.create({
     data: {
@@ -91,7 +94,7 @@ const handlePurchase = async (data) => {
     },
   });
 
-  member = await updatePVBalance(INCREMENT, totalProductPV, user.member.id);
+  await updatePVBalance(INCREMENT, totalProductPV, user.member.id);
 
   await distributePurchaseCashback(totalAmountWithGst, user.member.id);
 

@@ -33,10 +33,11 @@ process.on('message', async (data) => {
     process.send(`data of type ${type} completed successfully.`);
     process.exit(0); // Done
   } catch (error) {
-    logger.error(`Error in worker for data type ${data.type}: ${error}`);
+    logger.error(
+      `Error in worker for data type ${data.type}: ${error?.stack || error}`
+    );
     process.exit(1);
   } finally {
     await prisma.$disconnect();
-    process.exit(0);
   }
 });

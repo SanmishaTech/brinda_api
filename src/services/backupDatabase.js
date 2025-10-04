@@ -44,6 +44,40 @@ const getFormattedDate = () => {
   )}_${now.getFullYear()}_${pad(now.getHours())}_${pad(now.getMinutes())}`;
 };
 
+const cleanupOldBackups = () => {
+  const maxBackupAgeDays = 10;
+  const cutoff = Date.now() - maxBackupAgeDays * 24 * 60 * 60 * 1000;
+
+  try {
+    const files = fs.readdirSync(BACKUP_DIR);
+    files.forEach((file) => {
+      if (!file.endsWith(".sql")) return;
+
+      // Match: mybrinda_db-backup-03_10_2025_13_38.sql
+      const match = file.match(
+        /backup-(\d{2})_(\d{2})_(\d{4})_(\d{2})_(\d{2})\.sql$/
+      );
+      if (!match) {
+        logger.warn(
+          `⚠️ Filename does not match expected backup format: ${file}`
+        );
+        return;
+      }
+
+      const [, day, month, year, hour, minute] = match.map(Number);
+      const fileDate = new Date(year, month - 1, day, hour, minute);
+
+      if (fileDate.getTime() < cutoff) {
+        const filePath = path.join(BACKUP_DIR, file);
+        fs.unlinkSync(filePath);
+        logger.info(`🗑️ Deleted old backup file: ${file}`);
+      }
+    });
+  } catch (err) {
+    logger.error(`❌ Error during cleanup of old backups: ${err.message}`);
+  }
+};
+
 const backupDatabase = () => {
   const fileName = `${DB_NAME}-backup-${getFormattedDate()}.sql`;
   const filePath = path.join(BACKUP_DIR, fileName);
@@ -60,6 +94,9 @@ const backupDatabase = () => {
       logger.warn(`⚠️ Stderr: ${stderr}`);
     }
     logger.info(`✅ Backup completed: ${fileName}`);
+
+    // After backup, cleanup old backups
+    cleanupOldBackups();
   });
 };
 

@@ -68,7 +68,7 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
       commissionToGive = 0;
     }
     // end
-    const sponsor = await prisma.member.update({
+    let sponsorData = await prisma.member.update({
       where: { id: parent.sponsor.id },
       data: {
         isMatchingMentorL1: true,
@@ -89,9 +89,9 @@ const checkMatchingMentorIncomeL1 = async (parent, value) => {
       },
     });
     if (commissionToGive > 0) {
-      sponsor = await calculateLoan(
+      sponsorData = await calculateLoan(
         commissionToGive,
-        sponsor,
+        sponsorData,
         HOLD_WALLET,
         "MMI_L1"
       );
