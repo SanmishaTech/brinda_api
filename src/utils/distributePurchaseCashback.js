@@ -6,6 +6,7 @@ const {
   CREDIT,
   INACTIVE,
   MATCHING_INCOME_WALLET,
+  PURCHASE_CASHBACK_PERCENT,
 } = require("../config/data");
 const calculateLoan = require("./calculateLoan");
 const logger = require("./logger");
@@ -56,28 +57,7 @@ const distributePurchaseCashback = async (purchaseAmount, memberId) => {
     return member;
   }
 
-  const sponsorReferralCount = await prisma.member.count({
-    where: {
-      sponsorId: member.sponsorId,
-      status: { not: INACTIVE }, // 👈 string literal
-    },
-  });
-
-  if (sponsorReferralCount === 0) {
-    return member;
-  }
-
-  let percentage = new Prisma.Decimal(0);
-
-  if (sponsorReferralCount === 1) {
-    percentage = new Prisma.Decimal(10);
-  } else if (sponsorReferralCount === 2) {
-    percentage = new Prisma.Decimal(20);
-  } else if (sponsorReferralCount === 3) {
-    percentage = new Prisma.Decimal(30);
-  } else if (sponsorReferralCount >= 4) {
-    percentage = new Prisma.Decimal(40);
-  }
+  let percentage = new Prisma.Decimal(PURCHASE_CASHBACK_PERCENT);
 
   // Skip if either commission or pending loan is zero
   if (parsedPurchaseAmount.isZero()) {
