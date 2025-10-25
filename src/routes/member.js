@@ -9,6 +9,7 @@ const {
   myGenealogy,
   myDirectReferralList,
   getMembersWithPendingTransactions,
+  getMemberWalletList,
 } = require("../controllers/memberController");
 const auth = require("../middleware/auth");
 const acl = require("../middleware/acl");
@@ -273,6 +274,35 @@ router.get(
  *         description: Failed to fetch members
  */
 router.get("/all", auth, acl("members.read"), getAllMembers);
+
+/**
+ * @swagger
+ * /api/members/walletList:
+ *   get:
+ *     summary: Get all members without pagination, sorting, and search
+ *     tags: [Members]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all members
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   memberName:
+ *                     type: string
+ *                   memberUsername:
+ *                     type: string
+ *       500:
+ *         description: Failed to fetch members
+ */
+router.get("/walletList", auth, acl("members.read"), getMemberWalletList);
 
 /**
  * @swagger

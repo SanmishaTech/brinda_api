@@ -4,6 +4,8 @@ const prisma = require("../config/db");
 const { z } = require("zod");
 const { LEFT, RIGHT, PENDING } = require("../config/data");
 const parseDate = require("../utils/parseDate");
+const ExcelJS = require("exceljs");
+
 /**
  * Get all members with pagination, sorting, and search
  */
@@ -897,6 +899,113 @@ const getMembersWithPendingTransactions = async (req, res) => {
   }
 };
 
+// ===========================================
+// ✅ GET Members WITH EXPORT
+// ===========================================
+
+const getMemberWalletList = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+  const sortBy = req.query.sortBy || "id";
+  const sortOrder = req.query.sortOrder === "desc" ? "desc" : "asc";
+  const exportToExcel = req.query.export === "true";
+
+  const walletCondition = {
+    OR: [
+      { walletBalance: { not: 0 } },
+      { matchingIncomeWalletBalance: { not: 0 } },
+      { upgradeWalletBalance: { not: 0 } },
+      { holdWalletBalance: { not: 0 } },
+      { franchiseWalletBalance: { not: 0 } },
+    ],
+  };
+
+  const searchCondition = search
+    ? {
+        OR: [
+          { memberUsername: { contains: search } },
+          { memberName: { contains: search } },
+        ],
+      }
+    : {};
+
+  const whereClause = {
+    AND: [walletCondition, searchCondition],
+  };
+
+  try {
+    const members = await prisma.member.findMany({
+      where: whereClause,
+      skip: exportToExcel ? undefined : skip,
+      take: exportToExcel ? undefined : limit,
+      orderBy: exportToExcel ? undefined : { [sortBy]: sortOrder },
+    });
+
+    if (exportToExcel) {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Member Wallet Balances");
+
+      worksheet.columns = [
+        { header: "Member Name", key: "memberName", width: 25 },
+        { header: "Member Username", key: "memberUsername", width: 20 },
+        { header: "Fund Wallet", key: "walletBalance", width: 20 },
+        {
+          header: "Matching Income Wallet",
+          key: "matchingIncomeWalletBalance",
+          width: 25,
+        },
+        { header: "Upgrade Wallet", key: "upgradeWalletBalance", width: 20 },
+        { header: "Hold Wallet", key: "holdWalletBalance", width: 20 },
+        {
+          header: "Franchise Wallet",
+          key: "franchiseWalletBalance",
+          width: 25,
+        },
+      ];
+
+      worksheet.getRow(1).font = { bold: true };
+
+      members.forEach((member) => {
+        worksheet.addRow({
+          memberName: member.memberName,
+          memberUsername: member.memberUsername,
+          walletBalance: parseFloat(member.walletBalance),
+          matchingIncomeWalletBalance: parseFloat(
+            member.matchingIncomeWalletBalance
+          ),
+          upgradeWalletBalance: parseFloat(member.upgradeWalletBalance),
+          holdWalletBalance: parseFloat(member.holdWalletBalance),
+          franchiseWalletBalance: parseFloat(member.franchiseWalletBalance),
+        });
+      });
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=MemberWalletExport.xlsx`
+      );
+
+      await workbook.xlsx.write(res);
+      return res.end();
+    }
+
+    const totalMembers = await prisma.member.count({ where: whereClause });
+    const totalPages = Math.ceil(totalMembers / limit);
+
+    res.json({ members, page, totalPages, totalMembers });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      errors: { message: "Failed to fetch members", details: error.message },
+    });
+  }
+};
+
 module.exports = {
   getMembers,
   getMemberById,
@@ -906,4 +1015,5 @@ module.exports = {
   myGenealogy,
   myDirectReferralList,
   getMembersWithPendingTransactions,
+  getMemberWalletList,
 };
