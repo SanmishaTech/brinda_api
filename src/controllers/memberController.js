@@ -249,21 +249,21 @@ const updateMember = async (req, res) => {
         }
       }
 
-      if (data.bankIfscCode) {
-        const existingMemberIFSC = await prisma.member.findFirst({
-          where: {
-            bankIfscCode: data.bankIfscCode,
-          },
-          select: { id: true },
-        });
+      // if (data.bankIfscCode) {
+      //   const existingMemberIFSC = await prisma.member.findFirst({
+      //     where: {
+      //       bankIfscCode: data.bankIfscCode,
+      //     },
+      //     select: { id: true },
+      //   });
 
-        if (existingMemberIFSC && existingMemberIFSC.id !== parseInt(id)) {
-          ctx.addIssue({
-            path: ["bankIfscCode"],
-            message: `IFSC ${data.bankIfscCode} already exists.`,
-          });
-        }
-      }
+      //   if (existingMemberIFSC && existingMemberIFSC.id !== parseInt(id)) {
+      //     ctx.addIssue({
+      //       path: ["bankIfscCode"],
+      //       message: `IFSC ${data.bankIfscCode} already exists.`,
+      //     });
+      //   }
+      // }
 
       if (data.aadharNumber) {
         const existingMemberAadhar = await prisma.member.findFirst({
