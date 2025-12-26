@@ -96,7 +96,8 @@ const handlePurchase = async (data) => {
 
   await updatePVBalance(INCREMENT, totalProductPV, user.member.id);
 
-  await distributePurchaseCashback(totalAmountWithGst, user.member.id);
+  // commented code on 25 DEC 2025 since no longer required.
+  // await distributePurchaseCashback(totalAmountWithGst, user.member.id);
 
   const transaction = await prisma.walletTransaction.create({
     data: {

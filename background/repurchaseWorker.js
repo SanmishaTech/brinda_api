@@ -106,7 +106,8 @@ process.on("message", async (data) => {
     });
 
     // repurchase logic start
-    member = await applyRepurchaseCashback(member, totalAmountWithGst);
+    // commented cashback as per new decision on 15 DEC 2025
+    // member = await applyRepurchaseCashback(member, totalAmountWithGst);
     const mentorCandidates = await distributeRepurchaseIncome(
       member,
       totalProductBV

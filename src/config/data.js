@@ -136,10 +136,10 @@ const SECURITY_DEPOSIT_AMOUNT_RANGE_OPTIONS = [
     percentage: 6,
   },
   {
-    label: "₹50,000 - ₹99,000",
+    label: "₹50,000 - ₹99,999",
     value: "range2",
     min: 50000.0,
-    max: 99000.0,
+    max: 99999.0,
     percentage: 10,
   },
   {
