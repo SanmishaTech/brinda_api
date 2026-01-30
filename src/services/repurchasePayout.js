@@ -60,7 +60,6 @@ const repurchasePayout = async () => {
         AND r.createdAt >= ${startOfPrevMonth}
         AND r.createdAt < ${startOfCurrMonth}
       WHERE m.status != ${INACTIVE}
-         AND m.status != ${ASSOCIATE}
         AND m.isDirectMatch = TRUE
         AND m.is2_1Pass = TRUE
       GROUP BY m.id
@@ -107,7 +106,7 @@ const repurchasePayout = async () => {
           LEFT JOIN repurchases r ON r.memberId = m.id
             AND r.createdAt >= ${startOfPrevMonth}
             AND r.createdAt < ${startOfCurrMonth}
-          WHERE m.status NOT IN (${INACTIVE}, ${ASSOCIATE})
+          WHERE m.status NOT IN (${INACTIVE}) 
             AND m.isDirectMatch = TRUE
             AND m.is2_1Pass = TRUE
           GROUP BY m.id

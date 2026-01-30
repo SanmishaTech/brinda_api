@@ -228,21 +228,21 @@ const updateUserProfile = async (req, res, next) => {
         }
       }
 
-      if (data.bankIfscCode) {
-        const existingMemberIFSC = await prisma.member.findFirst({
-          where: {
-            bankIfscCode: data.bankIfscCode,
-          },
-          select: { id: true },
-        });
+      // if (data.bankIfscCode) {
+      //   const existingMemberIFSC = await prisma.member.findFirst({
+      //     where: {
+      //       bankIfscCode: data.bankIfscCode,
+      //     },
+      //     select: { id: true },
+      //   });
 
-        if (existingMemberIFSC && existingMemberIFSC.id !== parseInt(usrId)) {
-          ctx.addIssue({
-            path: ["bankIfscCode"],
-            message: `IFSC ${data.bankIfscCode} already exists.`,
-          });
-        }
-      }
+      //   if (existingMemberIFSC && existingMemberIFSC.id !== parseInt(usrId)) {
+      //     ctx.addIssue({
+      //       path: ["bankIfscCode"],
+      //       message: `IFSC ${data.bankIfscCode} already exists.`,
+      //     });
+      //   }
+      // }
 
       if (data.panNumber) {
         const existingPanNumber = await prisma.member.findFirst({

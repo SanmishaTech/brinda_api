@@ -93,12 +93,11 @@ const getRepurchases = async (req, res) => {
 // Create a new purchase
 const createRepurchase = async (req, res) => {
   if (
-    req.user.member.status === INACTIVE ||
-    req.user.member.status === ASSOCIATE
+    req.user.member.status === INACTIVE
   ) {
     return res.status(403).json({
       errors: {
-        message: "You’ll be able to repurchase once you reach Silver status",
+        message: "You’ll be able to repurchase once you reach ASSOCIATE status",
       },
     });
   }
