@@ -97,7 +97,7 @@ const addVirtualPower = async (data) => {
       oppositeColumnName = "rightGoldBalance";
       totalStatusBalance = "totalLeftGoldBalance";
       commissionCount = "goldCommissionCount";
-      commissionDate = "silverCommissionDate";
+      commissionDate = "goldCommissionDate";
       commissionAmount = GOLD_COMMISSION;
       totalStatusMatched = "totalGoldMatched";
     } else if (statusType === GOLD && currentPosition === RIGHT) {

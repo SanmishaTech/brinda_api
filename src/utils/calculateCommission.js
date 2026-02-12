@@ -108,7 +108,7 @@ const calculateCommission = async (parent, updates, rewardDetails) => {
       type: DEBIT,
       transactionDate: new Date(),
       walletType: HOLD_WALLET,
-      notes: `Gold Matching Reward`,
+      notes: `Silver Matching Reward`,
     });
   }
 

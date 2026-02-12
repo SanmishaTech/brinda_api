@@ -24,6 +24,44 @@ const {
 } = require('./checkMatchingMentorIncomeL2');
 const { calculateCommission } = require('./calculateCommission');
 
+ const applyGoldRewardProgress = ({
+   parent,
+   updates,
+   rewardDetails,
+   addedPairs,
+   is2_1Pass,
+ }) => {
+   if (parent.goldRewardLevel >= 17) return;
+
+   if (is2_1Pass) {
+     updates.goldRewardBalance = {
+       increment: addedPairs,
+     };
+   } else {
+     updates.goldRewardBalance = addedPairs;
+   }
+
+   const nextRewardLevel = REWARDS_COMMISSIONS.find(
+     (r) => r.rewardLevel === parent.goldRewardLevel + 1
+   );
+
+   if (!nextRewardLevel) return;
+
+   const meetsTarget = is2_1Pass
+     ? parseFloat(parent.goldRewardBalance + addedPairs) >=
+       parseFloat(nextRewardLevel.pair)
+     : parseFloat(addedPairs) >= parseFloat(nextRewardLevel.pair);
+
+   if (!meetsTarget) return;
+
+   rewardDetails.isRewardLevelReached = true;
+   rewardDetails.amount = nextRewardLevel.amount;
+   updates.goldRewardBalance = 0;
+   updates.goldRewardLevel = {
+     increment: 1,
+   };
+ };
+
 const check2_1Pass = async (member) => {
   let currentMember = member;
   while (currentMember && currentMember.positionToParent !== TOP) {
@@ -231,6 +269,13 @@ const check2_1Pass = async (member) => {
                 updates.totalSilverMatched = {
                   increment: availableCommissionCount,
                 };
+                applyGoldRewardProgress({
+                  parent,
+                  updates,
+                  rewardDetails,
+                  addedPairs: availableCommissionCount,
+                  is2_1Pass: true,
+                });
               } else {
                 matchingIncomeWalletBalance +=
                   minSilverBalance * SILVER_COMMISSION;
@@ -241,6 +286,13 @@ const check2_1Pass = async (member) => {
                 updates.totalSilverMatched = {
                   increment: minSilverBalance,
                 };
+                applyGoldRewardProgress({
+                  parent,
+                  updates,
+                  rewardDetails,
+                  addedPairs: minSilverBalance,
+                  is2_1Pass: true,
+                });
               }
             }
           } else {
@@ -253,6 +305,13 @@ const check2_1Pass = async (member) => {
               updates.totalSilverMatched = {
                 increment: minSilverBalance,
               };
+              applyGoldRewardProgress({
+                parent,
+                updates,
+                rewardDetails,
+                addedPairs: minSilverBalance,
+                is2_1Pass: true,
+              });
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
@@ -260,6 +319,13 @@ const check2_1Pass = async (member) => {
               updates.totalSilverMatched = {
                 increment: MAX_COMMISSIONS_PER_DAY,
               };
+              applyGoldRewardProgress({
+                parent,
+                updates,
+                rewardDetails,
+                addedPairs: MAX_COMMISSIONS_PER_DAY,
+                is2_1Pass: true,
+              });
             }
           }
         } else if (parent.status === GOLD) {
@@ -324,6 +390,13 @@ const check2_1Pass = async (member) => {
                 updates.totalSilverMatched = {
                   increment: availableCommissionCount,
                 };
+                applyGoldRewardProgress({
+                  parent,
+                  updates,
+                  rewardDetails,
+                  addedPairs: availableCommissionCount,
+                  is2_1Pass: true,
+                });
               } else {
                 matchingIncomeWalletBalance +=
                   minSilverBalance * SILVER_COMMISSION;
@@ -334,6 +407,13 @@ const check2_1Pass = async (member) => {
                 updates.totalSilverMatched = {
                   increment: minSilverBalance,
                 };
+                applyGoldRewardProgress({
+                  parent,
+                  updates,
+                  rewardDetails,
+                  addedPairs: minSilverBalance,
+                  is2_1Pass: true,
+                });
               }
             }
           } else {
@@ -346,6 +426,13 @@ const check2_1Pass = async (member) => {
               updates.totalSilverMatched = {
                 increment: minSilverBalance,
               };
+              applyGoldRewardProgress({
+                parent,
+                updates,
+                rewardDetails,
+                addedPairs: minSilverBalance,
+                is2_1Pass: true,
+              });
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
@@ -353,6 +440,13 @@ const check2_1Pass = async (member) => {
               updates.totalSilverMatched = {
                 increment: MAX_COMMISSIONS_PER_DAY,
               };
+              applyGoldRewardProgress({
+                parent,
+                updates,
+                rewardDetails,
+                addedPairs: MAX_COMMISSIONS_PER_DAY,
+                is2_1Pass: true,
+              });
             }
           }
           // FOR GOLD
@@ -370,33 +464,6 @@ const check2_1Pass = async (member) => {
                 updates.totalGoldMatched = {
                   increment: availableCommissionCount,
                 };
-                // start
-                if (parent.goldRewardLevel < 17) {
-                  updates.goldRewardBalance = {
-                    increment: availableCommissionCount,
-                  };
-                  // Find the current reward level config
-                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                  );
-
-                  if (nextRewardLevel) {
-                    if (
-                      parseFloat(
-                        parent.goldRewardBalance + availableCommissionCount
-                      ) >= parseFloat(nextRewardLevel.pair)
-                    ) {
-                      // Reset reward balance
-                      rewardDetails.isRewardLevelReached = true;
-                      rewardDetails.amount = nextRewardLevel.amount;
-                      updates.goldRewardBalance = 0;
-                      updates.goldRewardLevel = {
-                        increment: 1,
-                      };
-                    }
-                  }
-                }
-                // end
               } else {
                 matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
@@ -406,32 +473,6 @@ const check2_1Pass = async (member) => {
                 updates.totalGoldMatched = {
                   increment: minGoldBalance,
                 };
-                // start
-                if (parent.goldRewardLevel < 17) {
-                  updates.goldRewardBalance = {
-                    increment: minGoldBalance,
-                  };
-                  // Find the current reward level config
-                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                  );
-
-                  if (nextRewardLevel) {
-                    if (
-                      parseFloat(parent.goldRewardBalance + minGoldBalance) >=
-                      parseFloat(nextRewardLevel.pair)
-                    ) {
-                      // Reset reward balance
-                      rewardDetails.isRewardLevelReached = true;
-                      rewardDetails.amount = nextRewardLevel.amount;
-                      updates.goldRewardBalance = 0;
-                      updates.goldRewardLevel = {
-                        increment: 1,
-                      };
-                    }
-                  }
-                }
-                // end
               }
             }
           } else {
@@ -443,32 +484,6 @@ const check2_1Pass = async (member) => {
               updates.totalGoldMatched = {
                 increment: minGoldBalance,
               };
-              // start
-              if (parent.goldRewardLevel < 17) {
-                updates.goldRewardBalance = {
-                  increment: minGoldBalance,
-                };
-                // Find the current reward level config
-                const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                );
-
-                if (nextRewardLevel) {
-                  if (
-                    parseFloat(parent.goldRewardBalance + minGoldBalance) >=
-                    parseFloat(nextRewardLevel.pair)
-                  ) {
-                    // Reset reward balance
-                    rewardDetails.isRewardLevelReached = true;
-                    rewardDetails.amount = nextRewardLevel.amount;
-                    updates.goldRewardBalance = 0;
-                    updates.goldRewardLevel = {
-                      increment: 1,
-                    };
-                  }
-                }
-              }
-              // end
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
@@ -476,36 +491,10 @@ const check2_1Pass = async (member) => {
               updates.totalGoldMatched = {
                 increment: MAX_COMMISSIONS_PER_DAY,
               };
-              // start
-              if (parent.goldRewardLevel < 17) {
-                updates.goldRewardBalance = {
-                  increment: MAX_COMMISSIONS_PER_DAY,
-                };
-                // Find the current reward level config
-                const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                );
-
-                if (nextRewardLevel) {
-                  if (
-                    parseFloat(
-                      parent.goldRewardBalance + MAX_COMMISSIONS_PER_DAY
-                    ) >= parseFloat(nextRewardLevel.pair)
-                  ) {
-                    // Reset reward balance
-                    rewardDetails.isRewardLevelReached = true;
-                    rewardDetails.amount = nextRewardLevel.amount;
-                    updates.goldRewardBalance = 0;
-                    updates.goldRewardLevel = {
-                      increment: 1,
-                    };
-                  }
-                }
-              }
-              // end
             }
           }
-        } else if (parent.status === DIAMOND) {
+        }
+ else if (parent.status === DIAMOND) {
           // FOR ASSOCIATE
           if (isSameAssociateCommissionDay) {
             if (parent.associateCommissionCount < MAX_COMMISSIONS_PER_DAY) {
@@ -567,6 +556,13 @@ const check2_1Pass = async (member) => {
                 updates.totalSilverMatched = {
                   increment: availableCommissionCount,
                 };
+                applyGoldRewardProgress({
+                  parent,
+                  updates,
+                  rewardDetails,
+                  addedPairs: availableCommissionCount,
+                  is2_1Pass: true,
+                });
               } else {
                 matchingIncomeWalletBalance +=
                   minSilverBalance * SILVER_COMMISSION;
@@ -577,6 +573,13 @@ const check2_1Pass = async (member) => {
                 updates.totalSilverMatched = {
                   increment: minSilverBalance,
                 };
+                applyGoldRewardProgress({
+                  parent,
+                  updates,
+                  rewardDetails,
+                  addedPairs: minSilverBalance,
+                  is2_1Pass: true,
+                });
               }
             }
           } else {
@@ -589,6 +592,13 @@ const check2_1Pass = async (member) => {
               updates.totalSilverMatched = {
                 increment: minSilverBalance,
               };
+              applyGoldRewardProgress({
+                parent,
+                updates,
+                rewardDetails,
+                addedPairs: minSilverBalance,
+                is2_1Pass: true,
+              });
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * SILVER_COMMISSION;
@@ -596,6 +606,13 @@ const check2_1Pass = async (member) => {
               updates.totalSilverMatched = {
                 increment: MAX_COMMISSIONS_PER_DAY,
               };
+                applyGoldRewardProgress({
+                  parent,
+                  updates,
+                  rewardDetails,
+                  addedPairs: MAX_COMMISSIONS_PER_DAY,
+                  is2_1Pass: true,
+                });
             }
           }
           // FOR GOLD
@@ -613,33 +630,7 @@ const check2_1Pass = async (member) => {
                 updates.totalGoldMatched = {
                   increment: availableCommissionCount,
                 };
-                // start
-                if (parent.goldRewardLevel < 17) {
-                  updates.goldRewardBalance = {
-                    increment: availableCommissionCount,
-                  };
-                  // Find the current reward level config
-                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                  );
-
-                  if (nextRewardLevel) {
-                    if (
-                      parseFloat(
-                        parent.goldRewardBalance + availableCommissionCount
-                      ) >= parseFloat(nextRewardLevel.pair)
-                    ) {
-                      // Reset reward balance
-                      rewardDetails.isRewardLevelReached = true;
-                      rewardDetails.amount = nextRewardLevel.amount;
-                      updates.goldRewardBalance = 0;
-                      updates.goldRewardLevel = {
-                        increment: 1,
-                      };
-                    }
-                  }
-                }
-                // end
+            
               } else {
                 matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
 
@@ -649,35 +640,11 @@ const check2_1Pass = async (member) => {
                 updates.totalGoldMatched = {
                   increment: minGoldBalance,
                 };
-                // start
-                if (parent.goldRewardLevel < 17) {
-                  updates.goldRewardBalance = {
-                    increment: minGoldBalance,
-                  };
-                  // Find the current reward level config
-                  const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                    (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                  );
-
-                  if (nextRewardLevel) {
-                    if (
-                      parseFloat(parent.goldRewardBalance + minGoldBalance) >=
-                      parseFloat(nextRewardLevel.pair)
-                    ) {
-                      // Reset reward balance
-                      rewardDetails.isRewardLevelReached = true;
-                      rewardDetails.amount = nextRewardLevel.amount;
-                      updates.goldRewardBalance = 0;
-                      updates.goldRewardLevel = {
-                        increment: 1,
-                      };
-                    }
-                  }
-                }
-                // end
+              
               }
             }
-          } else {
+          }
+ else {
             updates.goldCommissionDate = today;
             if (minGoldBalance < MAX_COMMISSIONS_PER_DAY) {
               matchingIncomeWalletBalance += minGoldBalance * GOLD_COMMISSION;
@@ -686,32 +653,7 @@ const check2_1Pass = async (member) => {
               updates.totalGoldMatched = {
                 increment: minGoldBalance,
               };
-              // start
-              if (parent.goldRewardLevel < 17) {
-                updates.goldRewardBalance = {
-                  increment: minGoldBalance,
-                };
-                // Find the current reward level config
-                const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                );
-
-                if (nextRewardLevel) {
-                  if (
-                    parseFloat(parent.goldRewardBalance + minGoldBalance) >=
-                    parseFloat(nextRewardLevel.pair)
-                  ) {
-                    // Reset reward balance
-                    rewardDetails.isRewardLevelReached = true;
-                    rewardDetails.amount = nextRewardLevel.amount;
-                    updates.goldRewardBalance = 0;
-                    updates.goldRewardLevel = {
-                      increment: 1,
-                    };
-                  }
-                }
-              }
-              // end
+            
             } else {
               matchingIncomeWalletBalance +=
                 MAX_COMMISSIONS_PER_DAY * GOLD_COMMISSION;
@@ -719,33 +661,7 @@ const check2_1Pass = async (member) => {
               updates.totalGoldMatched = {
                 increment: MAX_COMMISSIONS_PER_DAY,
               };
-              // start
-              if (parent.goldRewardLevel < 17) {
-                updates.goldRewardBalance = {
-                  increment: MAX_COMMISSIONS_PER_DAY,
-                };
-                // Find the current reward level config
-                const nextRewardLevel = REWARDS_COMMISSIONS.find(
-                  (r) => r.rewardLevel === parent.goldRewardLevel + 1
-                );
-
-                if (nextRewardLevel) {
-                  if (
-                    parseFloat(
-                      parent.goldRewardBalance + MAX_COMMISSIONS_PER_DAY
-                    ) >= parseFloat(nextRewardLevel.pair)
-                  ) {
-                    // Reset reward balance
-                    rewardDetails.isRewardLevelReached = true;
-                    rewardDetails.amount = nextRewardLevel.amount;
-                    updates.goldRewardBalance = 0;
-                    updates.goldRewardLevel = {
-                      increment: 1,
-                    };
-                  }
-                }
-              }
-              // end
+            
             }
           }
           // FOR DIAMOND
@@ -881,6 +797,13 @@ const check2_1Pass = async (member) => {
           updates.silverCommissionCount = minSilverBalance;
           updates.totalSilverMatched = minSilverBalance;
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
+          applyGoldRewardProgress({
+            parent,
+            updates,
+            rewardDetails,
+            addedPairs: minSilverBalance,
+            is2_1Pass: false,
+          });
           updates.matchingIncomeWalletBalance = {
             increment: totalSilverCommission + ASSOCIATE_COMMISSION,
           };
@@ -890,33 +813,16 @@ const check2_1Pass = async (member) => {
           updates.silverCommissionCount = minSilverBalance;
           updates.totalSilverMatched = minSilverBalance;
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
+          applyGoldRewardProgress({
+            parent,
+            updates,
+            rewardDetails,
+            addedPairs: minSilverBalance,
+            is2_1Pass: false,
+          });
           updates.goldCommissionCount = minGoldBalance;
           updates.totalGoldMatched = minGoldBalance;
-          // start
-          if (parent.goldRewardLevel < 17) {
-            updates.goldRewardBalance = minGoldBalance;
-            // Find the current reward level config
-            const nextRewardLevel = REWARDS_COMMISSIONS.find(
-              (r) => r.rewardLevel === parent.goldRewardLevel + 1
-            );
-
-            if (nextRewardLevel) {
-              if (
-                parseFloat(minGoldBalance) >= parseFloat(nextRewardLevel.pair)
-              ) {
-                // Reset reward balance
-                rewardDetails.isRewardLevelReached = true;
-                rewardDetails.amount = nextRewardLevel.amount;
-                updates.goldRewardBalance = 0;
-                updates.goldRewardLevel = {
-                  increment: 1,
-                };
-              }
-            }
-          }
-          //write rewared transaction in commission.js
-          // i think logic is not writtin above .previous logic of matched
-          // end
+        
           let totalGoldCommission = minGoldBalance * GOLD_COMMISSION;
           updates.matchingIncomeWalletBalance = {
             increment:
@@ -930,33 +836,15 @@ const check2_1Pass = async (member) => {
           updates.silverCommissionCount = minSilverBalance;
           updates.totalSilverMatched = minSilverBalance;
           let totalSilverCommission = minSilverBalance * SILVER_COMMISSION;
+          applyGoldRewardProgress({
+            parent,
+            updates,
+            rewardDetails,
+            addedPairs: minSilverBalance,
+            is2_1Pass: false,
+          });
           updates.goldCommissionCount = minGoldBalance;
           updates.totalGoldMatched = minGoldBalance;
-          // start
-          if (parent.goldRewardLevel < 17) {
-            updates.goldRewardBalance = minGoldBalance;
-            // Find the current reward level config
-            const nextRewardLevel = REWARDS_COMMISSIONS.find(
-              (r) => r.rewardLevel === parent.goldRewardLevel + 1
-            );
-
-            if (nextRewardLevel) {
-              if (
-                parseFloat(minGoldBalance) >= parseFloat(nextRewardLevel.pair)
-              ) {
-                // Reset reward balance
-                rewardDetails.isRewardLevelReached = true;
-                rewardDetails.amount = nextRewardLevel.amount;
-                updates.goldRewardBalance = 0;
-                updates.goldRewardLevel = {
-                  increment: 1,
-                };
-              }
-            }
-          }
-
-          // end
-
           let totalGoldCommission = minGoldBalance * GOLD_COMMISSION;
           updates.diamondCommissionCount = minDiamondBalance;
           updates.totalDiamondMatched = minDiamondBalance;
