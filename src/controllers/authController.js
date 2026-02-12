@@ -9,7 +9,6 @@ const config = require("../config/config");
 const createError = require("http-errors");
 const jwtConfig = require("../config/jwt");
 const { SUPER_ADMIN, ADMIN } = require("../config/roles");
-const { generatePassword } = require("../utils/generatePassword");
 const dayjs = require("dayjs");
 const { findParent } = require("../utils/findParent");
 const { LEFT, RIGHT } = require("../config/data");
@@ -57,6 +56,10 @@ const register = async (req, res, next) => {
         .refine((val) => val === "" || /^\d{10}$/.test(val), {
           message: "Mobile number must be exactly 10 digits.",
         }),
+      password: z
+        .string()
+        .min(6, "Password must be at least 6 characters long.")
+        .min(1, "Password is required."),
     })
     .superRefine(async (data, ctx) => {
       if (data.email) {
@@ -88,8 +91,7 @@ const register = async (req, res, next) => {
 
   try {
     await validateRequest(schema, req.body, res);
-    const { name, sponsorId, position, email, mobile, state } = req.body;
-    const password = generatePassword(6);
+    const { name, sponsorId, position, email, mobile, state, password } = req.body;
     const tPin = generateTPin(4);
     let attempt = 0;
     let result = null;
@@ -140,7 +142,6 @@ const register = async (req, res, next) => {
               email,
               mobile,
               password: password,
-              // password: "abcd123",
               role: config.defaultUserRole,
               member: {
                 create: {
@@ -186,7 +187,7 @@ const register = async (req, res, next) => {
       }
     }
 
-    res.status(201).json(result.newUser);
+    res.status(201).json({ username: result.newUser.username });
   } catch (error) {
     return res.status(500).json({
       errors: {
@@ -324,11 +325,10 @@ const resetPassword = async (req, res, next) => {
         .status(400)
         .json({ errors: { message: "Invalid or expired token" } });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
     await prisma.user.update({
       where: { id: user.id },
       data: {
-        password: hashedPassword,
+        password: password,
         resetToken: null, // Clear the token after use
         resetTokenExpires: null,
       },
